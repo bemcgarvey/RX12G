@@ -316,6 +316,19 @@
     "subpart_first_id": 65,
     "subpart_id_separator": 0
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55",
+      ""
+    ],
+    [
+      "b62b96de-e432-4574-9c87-8a7836282189",
+      "Power, LEDs, IMU and Button"
+    ],
+    [
+      "fa6b46af-9aa0-418a-827b-b813d67253b3",
+      "Connectors"
+    ]
+  ],
   "text_variables": {}
 }

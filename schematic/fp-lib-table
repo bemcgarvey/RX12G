@@ -1,0 +1,6 @@
+(fp_lib_table
+  (lib (name "PIC32MK")(type "KiCad")(uri "C:/Microchip-KiCad/ul_PIC32MK1024GPK064-I-PT/KiCAD/2022-04-25_21-44-29/footprints.pretty")(options "")(descr ""))
+  (lib (name "IMU")(type "KiCad")(uri "C:/Microchip-KiCad/ul_LSM6DSO32TR/KiCAD/2022-04-25_21-46-56/footprints.pretty")(options "")(descr ""))
+  (lib (name "SamacSys Parts")(type "KiCad")(uri "C:/SamacSys_PCB_Library/KiCad/SamacSys_Parts.pretty")(options "")(descr ""))
+  (lib (name "JST_New")(type "KiCad")(uri "C:/SamacSys_PCB_Library/KiCad/Connector_JST.pretty")(options "")(descr ""))
+)
