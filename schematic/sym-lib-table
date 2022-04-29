@@ -1,4 +1,5 @@
 (sym_lib_table
   (lib (name "PIC32MK")(type "KiCad")(uri "C:/Microchip-KiCad/ul_PIC32MK1024GPK064-I-PT/KiCAD/2022-04-25_21-44-29/2022-04-25_21-44-29.kicad_sym")(options "")(descr ""))
   (lib (name "IMU")(type "Legacy")(uri "C:/Microchip-KiCad/ul_LSM6DSO32TR/KiCAD/2022-04-25_21-46-56/2022-04-25_21-46-56.lib")(options "")(descr ""))
+  (lib (name "Digikey")(type "Legacy")(uri "C:/digikey-kicad-library-master/digikey-symbols/dk_Transistors-FETs-MOSFETs-Single.lib")(options "")(descr ""))
 )
