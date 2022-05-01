@@ -1061,7 +1061,7 @@
     (property "Reference" "R3" (id 0) (at 57.658 134.9815 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "62R" (id 1) (at 57.658 137.7566 0)
+    (property "Value" "56R" (id 1) (at 57.658 137.7566 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (id 2) (at 54.102 135.89 90)

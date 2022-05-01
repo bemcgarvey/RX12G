@@ -2191,7 +2191,7 @@
       (reference "R2") (unit 1) (value "220R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/b62b96de-e432-4574-9c87-8a7836282189/166ecd64-7d16-4311-b1b4-61f66c9577a6"
-      (reference "R3") (unit 1) (value "62R") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R3") (unit 1) (value "56R") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/b62b96de-e432-4574-9c87-8a7836282189/652c13a1-1f11-4295-99f8-3ef9581881bc"
       (reference "R4") (unit 1) (value "220R") (footprint "Resistor_SMD:R_0603_1608Metric")
