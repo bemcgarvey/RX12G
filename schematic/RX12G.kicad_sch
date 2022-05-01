@@ -698,7 +698,7 @@
   (no_connect (at 229.87 76.2) (uuid a61827f9-8910-47c5-9e9c-40bdf2aab6b7))
   (no_connect (at 229.87 60.96) (uuid a61827f9-8910-47c5-9e9c-40bdf2aab6b8))
   (no_connect (at 229.87 81.28) (uuid d36372ad-7ff2-48fe-b98c-626930168fbb))
-  (no_connect (at 229.87 83.82) (uuid d36372ad-7ff2-48fe-b98c-626930168fbb))
+  (no_connect (at 229.87 83.82) (uuid d36372ad-7ff2-48fe-b98c-626930168fbc))
 
   (wire (pts (xy 114.935 170.815) (xy 121.285 170.815))
     (stroke (width 0) (type default) (color 0 0 0 0))
@@ -2155,7 +2155,7 @@
       (reference "D5") (unit 1) (value "MBR0520LT") (footprint "Diode_SMD:D_SOD-123")
     )
     (path "/b62b96de-e432-4574-9c87-8a7836282189/b7d31700-0e82-483e-966e-9d8039931700"
-      (reference "D6") (unit 1) (value "LED") (footprint "LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder")
+      (reference "D6") (unit 1) (value "LED") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/a554e3c3-f79d-4abe-ac1d-61f223617346"
       (reference "J1") (unit 1) (value "ICSP") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical")
