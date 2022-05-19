@@ -63,9 +63,6 @@ void EVIC_Initialize( void )
     /* Initialize External interrupt 3 callback object */
     extInt3CbObj.callback = NULL;
 
-
-    /* Configure Shadow Register Set */
-    PRISS = 0x76543210;
 }
 
 void EVIC_SourceEnable( INT_SOURCE source )

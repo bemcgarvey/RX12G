@@ -4,7 +4,7 @@
 
 
 project: RX12G
-creation_date: 2022-05-19T11:58:10.114-06:00[America/Denver]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2022-05-19T12:05:16.340-06:00[America/Denver]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Windows 10
 mhc_mode: IDE            # [IDE|Standalone|Headless]
 mhc_version: v3.8.2
@@ -14,5 +14,7 @@ compiler: XC32 (4.00)
 
 modules:
     - {name: "csp", version: "v3.10.0"}
+    - {name: "core", version: "v3.10.0"}
     - {name: "dev_packs", version: "v3.10.0"}
+    - {name: "CMSIS-FreeRTOS", version: "v10.3.1"}
 

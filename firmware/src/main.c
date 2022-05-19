@@ -58,8 +58,6 @@ int main ( void )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
-        LED_A_Toggle();
-        CORETIMER_DelayMs(1000);
     }
 
     /* Execution should not come here during normal operation */

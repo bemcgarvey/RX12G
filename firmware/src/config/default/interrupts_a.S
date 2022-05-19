@@ -1,14 +1,14 @@
 /*******************************************************************************
- System Interrupts File
+  System Interrupts File
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    interrupt.c
+    interrupt_a.S
 
   Summary:
-    Interrupt vectors mapping
+    Raw ISR definitions.
 
   Description:
     This file maps all the interrupt vectors to their corresponding
@@ -20,7 +20,7 @@
 
 // DOM-IGNORE-BEGIN
 /*******************************************************************************
-* Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
+* Copyright (C) 2019 Microchip Technology Inc. and its subsidiaries.
 *
 * Subject to your compliance with these terms, you may use Microchip software
 * and any derivatives exclusively with Microchip products. It is your
@@ -49,45 +49,61 @@
 // *****************************************************************************
 // *****************************************************************************
 
-#include "configuration.h"
-#include "interrupts.h"
-#include "definitions.h"
+#include <xc.h>
+#include "ISR_Support.h"
 
+    .extern  EXTERNAL_3_Handler
 
-// *****************************************************************************
-// *****************************************************************************
-// Section: System Interrupt Vector Functions
-// *****************************************************************************
-// *****************************************************************************
+    .section   .vector_18,code, keep
+    .equ     __vector_dispatch_18, IntVectorEXTERNAL_3_Handler
+    .global  __vector_dispatch_18
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorEXTERNAL_3_Handler
 
+IntVectorEXTERNAL_3_Handler:
+    portSAVE_CONTEXT
+    la    s6,  EXTERNAL_3_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorEXTERNAL_3_Handler
+    .extern  I2C2_BUS_Handler
 
-void EXTERNAL_3_InterruptHandler( void );
-void I2C2_BUS_InterruptHandler( void );
-void I2C2_MASTER_InterruptHandler( void );
+    .section   .vector_59,code, keep
+    .equ     __vector_dispatch_59, IntVectorI2C2_BUS_Handler
+    .global  __vector_dispatch_59
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorI2C2_BUS_Handler
 
+IntVectorI2C2_BUS_Handler:
+    portSAVE_CONTEXT
+    la    s6,  I2C2_BUS_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorI2C2_BUS_Handler
+    .extern  I2C2_MASTER_Handler
 
+    .section   .vector_61,code, keep
+    .equ     __vector_dispatch_61, IntVectorI2C2_MASTER_Handler
+    .global  __vector_dispatch_61
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorI2C2_MASTER_Handler
 
-/* All the handlers are defined here.  Each will call its PLIB-specific function. */
+IntVectorI2C2_MASTER_Handler:
+    portSAVE_CONTEXT
+    la    s6,  I2C2_MASTER_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorI2C2_MASTER_Handler
 
-
-void EXTERNAL_3_Handler (void)
-{
-    EXTERNAL_3_InterruptHandler();
-}
-
-void I2C2_BUS_Handler (void)
-{
-    I2C2_BUS_InterruptHandler();
-}
-
-void I2C2_MASTER_Handler (void)
-{
-    I2C2_MASTER_InterruptHandler();
-}
-
-
-
-
-/*******************************************************************************
- End of File
-*/

@@ -43,6 +43,7 @@
 // Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
+#include "configuration.h"
 #include "definitions.h"
 #include "device.h"
 
@@ -183,6 +184,9 @@ void SYS_Initialize ( void* data )
 
 
 
+
+
+    APP_Initialize();
 
 
     EVIC_Initialize();

@@ -1,21 +1,22 @@
 /*******************************************************************************
- System Interrupts File
-
-  Company:
-    Microchip Technology Inc.
+ System Tasks File
 
   File Name:
-    interrupt.c
+    tasks.c
 
   Summary:
-    Interrupt vectors mapping
+    This file contains source code necessary to maintain system's polled tasks.
 
   Description:
-    This file maps all the interrupt vectors to their corresponding
-    implementations. If a particular module interrupt is used, then its ISR
-    definition can be found in corresponding PLIB source file. If a module
-    interrupt is not used, then its ISR implementation is mapped to dummy
-    handler.
+    This file contains source code necessary to maintain system's polled tasks.
+    It implements the "SYS_Tasks" function that calls the individual "Tasks"
+    functions for all polled MPLAB Harmony modules in the system.
+
+  Remarks:
+    This file requires access to the systemObjects global data structure that
+    contains the object handles to all MPLAB Harmony module objects executing
+    polled in the system.  These handles are passed into the individual module
+    "Tasks" functions to identify the instance of the module to maintain.
  *******************************************************************************/
 
 // DOM-IGNORE-BEGIN
@@ -50,44 +51,75 @@
 // *****************************************************************************
 
 #include "configuration.h"
-#include "interrupts.h"
 #include "definitions.h"
 
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: System Interrupt Vector Functions
+// Section: RTOS "Tasks" Routine
+// *****************************************************************************
+// *****************************************************************************
+/* Handle for the APP_Tasks. */
+TaskHandle_t xAPP_Tasks;
+
+void _APP_Tasks(  void *pvParameters  )
+{   
+    while(1)
+    {
+        APP_Tasks();
+        vTaskDelay(200 / portTICK_PERIOD_MS);
+    }
+}
+
+
+
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: System "Tasks" Routine
 // *****************************************************************************
 // *****************************************************************************
 
+/*******************************************************************************
+  Function:
+    void SYS_Tasks ( void )
 
-void EXTERNAL_3_InterruptHandler( void );
-void I2C2_BUS_InterruptHandler( void );
-void I2C2_MASTER_InterruptHandler( void );
-
-
-
-/* All the handlers are defined here.  Each will call its PLIB-specific function. */
-
-
-void EXTERNAL_3_Handler (void)
+  Remarks:
+    See prototype in system/common/sys_module.h.
+*/
+void SYS_Tasks ( void )
 {
-    EXTERNAL_3_InterruptHandler();
+    /* Maintain system services */
+    
+
+    /* Maintain Device Drivers */
+    
+
+    /* Maintain Middleware & Other Libraries */
+    
+
+    /* Maintain the application's state machine. */
+        /* Create OS Thread for APP_Tasks. */
+    xTaskCreate((TaskFunction_t) _APP_Tasks,
+                "APP_Tasks",
+                1024,
+                NULL,
+                1,
+                &xAPP_Tasks);
+
+
+
+
+    /* Start RTOS Scheduler. */
+    
+     /**********************************************************************
+     * Create all Threads for APP Tasks before starting FreeRTOS Scheduler *
+     ***********************************************************************/
+    vTaskStartScheduler(); /* This function never returns. */
+
 }
-
-void I2C2_BUS_Handler (void)
-{
-    I2C2_BUS_InterruptHandler();
-}
-
-void I2C2_MASTER_Handler (void)
-{
-    I2C2_MASTER_InterruptHandler();
-}
-
-
-
 
 /*******************************************************************************
  End of File
-*/
+ */
+
