@@ -67,6 +67,7 @@ int main ( void )
 
 void externalInt3Callback(EXTERNAL_INT_PIN pin, uintptr_t context) {
     LED_B_Toggle();
+    SAT_POWER_Toggle();
 }
 
 /*******************************************************************************
