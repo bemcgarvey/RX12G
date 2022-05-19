@@ -42,15 +42,24 @@ int main ( void )
     SYS_Initialize ( NULL );
     EVIC_ExternalInterruptCallbackRegister(EXTERNAL_INT_3, &externalInt3Callback, 0);
     EVIC_ExternalInterruptEnable(EXTERNAL_INT_3);
-    SAT1_LED_Set();
+    if (OSCCONbits.COSC == 0b001) {
+        SAT1_LED_Set();
+    }
+    uint8_t reg = 0x0f;
+    uint8_t data;
+    CORETIMER_DelayMs(100);
+    I2C2_WriteRead(0X6a, &reg, 1, &data, 1);
+    while (I2C2_IsBusy());
     SAT2_LED_Set();
-    SAT3_LED_Set();
+    if (data == 0x6c) {
+        SAT3_LED_Set();
+    }
     while ( true )
     {
         /* Maintain state machines of all polled MPLAB Harmony modules. */
         SYS_Tasks ( );
         LED_A_Toggle();
-        for (int i = 0; i < 60000000; ++i);
+        CORETIMER_DelayMs(1000);
     }
 
     /* Execution should not come here during normal operation */

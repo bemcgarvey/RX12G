@@ -61,6 +61,8 @@
 
 
 void EXTERNAL_3_InterruptHandler( void );
+void I2C2_BUS_InterruptHandler( void );
+void I2C2_MASTER_InterruptHandler( void );
 
 
 
@@ -68,6 +70,16 @@ void EXTERNAL_3_InterruptHandler( void );
 void __ISR(_EXTERNAL_3_VECTOR, ipl1SRS) EXTERNAL_3_Handler (void)
 {
     EXTERNAL_3_InterruptHandler();
+}
+
+void __ISR(_I2C2_BUS_VECTOR, ipl1SRS) I2C2_BUS_Handler (void)
+{
+    I2C2_BUS_InterruptHandler();
+}
+
+void __ISR(_I2C2_MASTER_VECTOR, ipl1SRS) I2C2_MASTER_Handler (void)
+{
+    I2C2_MASTER_InterruptHandler();
 }
 
 
