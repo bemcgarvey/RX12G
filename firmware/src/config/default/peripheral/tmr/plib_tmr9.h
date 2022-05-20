@@ -1,24 +1,23 @@
 /*******************************************************************************
-  System Interrupts File
+  Data Type definition of Timer PLIB
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    interrupt_a.S
+    plib_tmr9.h
 
   Summary:
-    Raw ISR definitions.
+    Data Type definition of the Timer Peripheral Interface Plib.
 
   Description:
-    This file maps all the interrupt vectors to their corresponding
-    implementations. If a particular module interrupt is used, then its ISR
-    definition can be found in corresponding PLIB source file. If a module
-    interrupt is not used, then its ISR implementation is mapped to dummy
-    handler.
- *******************************************************************************/
+    This file defines the Data Types for the Timer Plib.
 
-// DOM-IGNORE-BEGIN
+  Remarks:
+    None.
+
+*******************************************************************************/
+
 /*******************************************************************************
 * Copyright (C) 2019 Microchip Technology Inc. and its subsidiaries.
 *
@@ -40,52 +39,62 @@
 * FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
 * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
- *******************************************************************************/
+*******************************************************************************/
+
+#ifndef PLIB_TMR9_H
+#define PLIB_TMR9_H
+
+#include <stddef.h>
+#include <stdint.h>
+#include "device.h"
+#include "plib_tmr_common.h"
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+
+    extern "C" {
+
+#endif
 // DOM-IGNORE-END
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: Included Files
+// Section: Data Types
 // *****************************************************************************
 // *****************************************************************************
 
-#include <xc.h>
-#include "ISR_Support.h"
+// *****************************************************************************
+// *****************************************************************************
+// Section: Interface Routines
+// *****************************************************************************
+// *****************************************************************************
 
-    .extern  EXTERNAL_3_Handler
+// *****************************************************************************
+void TMR9_Initialize(void);
 
-    .section   .vector_18,code, keep
-    .equ     __vector_dispatch_18, IntVectorEXTERNAL_3_Handler
-    .global  __vector_dispatch_18
-    .set     nomicromips
-    .set     noreorder
-    .set     nomips16
-    .set     noat
-    .ent  IntVectorEXTERNAL_3_Handler
+void TMR9_Start(void);
 
-IntVectorEXTERNAL_3_Handler:
-    portSAVE_CONTEXT
-    la    s6,  EXTERNAL_3_Handler
-    jalr  s6
-    nop
-    portRESTORE_CONTEXT
-    .end   IntVectorEXTERNAL_3_Handler
-    .extern  TIMER_9_Handler
+void TMR9_Stop(void);
 
-    .section   .vector_88,code, keep
-    .equ     __vector_dispatch_88, IntVectorTIMER_9_Handler
-    .global  __vector_dispatch_88
-    .set     nomicromips
-    .set     noreorder
-    .set     nomips16
-    .set     noat
-    .ent  IntVectorTIMER_9_Handler
+void TMR9_PeriodSet(uint16_t);
 
-IntVectorTIMER_9_Handler:
-    portSAVE_CONTEXT
-    la    s6,  TIMER_9_Handler
-    jalr  s6
-    nop
-    portRESTORE_CONTEXT
-    .end   IntVectorTIMER_9_Handler
+uint16_t TMR9_PeriodGet(void);
 
+uint16_t TMR9_CounterGet(void);
+
+uint32_t TMR9_FrequencyGet(void);
+
+void TMR9_InterruptEnable(void);
+
+void TMR9_InterruptDisable(void);
+
+void TMR9_CallbackRegister( TMR_CALLBACK callback_fn, uintptr_t context );
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+
+    }
+#endif
+// DOM-IGNORE-END
+
+#endif /* PLIB_TMR9_H */

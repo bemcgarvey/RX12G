@@ -43,7 +43,6 @@
 // Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
-#include "configuration.h"
 #include "definitions.h"
 #include "device.h"
 
@@ -180,13 +179,10 @@ void SYS_Initialize ( void* data )
 	GPIO_Initialize();
 
     CORETIMER_Initialize();
-    I2C2_Initialize();
+    TMR9_Initialize();
 
 
 
-
-
-    APP_Initialize();
 
 
     EVIC_Initialize();

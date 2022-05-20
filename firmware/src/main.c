@@ -1,73 +1,39 @@
-/*******************************************************************************
-  Main Source File
-
-  Company:
-    Microchip Technology Inc.
-
-  File Name:
-    main.c
-
-  Summary:
-    This file contains the "main" function for a project.
-
-  Description:
-    This file contains the "main" function for a project.  The
-    "main" function calls the "SYS_Initialize" function to initialize the state
-    machines of all modules in the system
- *******************************************************************************/
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Included Files
-// *****************************************************************************
-// *****************************************************************************
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: main.c                                    //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: main                               //
+/////////////////////////////////////////////////////
 
 #include <stddef.h>                     // Defines NULL
 #include <stdbool.h>                    // Defines true
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
+#include "timers.h"
 
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: Main Entry Point
-// *****************************************************************************
-// *****************************************************************************
-
-void externalInt3Callback(EXTERNAL_INT_PIN pin, uintptr_t context);
 
 int main ( void )
 {
     /* Initialize all modules */
     SYS_Initialize ( NULL );
-    EVIC_ExternalInterruptCallbackRegister(EXTERNAL_INT_3, &externalInt3Callback, 0);
-    EVIC_ExternalInterruptEnable(EXTERNAL_INT_3);
-    if (OSCCONbits.COSC == 0b001) {
-        SAT1_LED_Set();
-    }
-    uint8_t reg = 0x0f;
-    uint8_t data;
-    CORETIMER_DelayMs(100);
-    I2C2_WriteRead(0X6a, &reg, 1, &data, 1);
-    while (I2C2_IsBusy());
-    SAT2_LED_Set();
-    if (data == 0x6c) {
-        SAT3_LED_Set();
-    }
+    startSystemTime();
     while ( true )
     {
-        /* Maintain state machines of all polled MPLAB Harmony modules. */
+        if (getSystemTime() % 1000 == 0) {
+            LED_A_Set();
+        } 
+        else if (getSystemTime() % 500 == 0) {
+            LED_A_Clear();
+        }
         SYS_Tasks ( );
     }
 
     /* Execution should not come here during normal operation */
 
     return ( EXIT_FAILURE );
-}
-
-void externalInt3Callback(EXTERNAL_INT_PIN pin, uintptr_t context) {
-    LED_B_Toggle();
-    SAT_POWER_Toggle();
 }
 
 /*******************************************************************************

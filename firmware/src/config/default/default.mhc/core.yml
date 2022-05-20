@@ -1372,21 +1372,21 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: Boolean
     attributes: {id: EVIC_59_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: String
     attributes: {id: EVIC_59_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: I2C2_BUS_InterruptHandler}
+        attributes: {id: core, value: I2C2_BUS_Handler}
   - type: Boolean
     attributes: {id: EVIC_60_ENABLE}
     children:
@@ -1414,21 +1414,42 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: Boolean
     attributes: {id: EVIC_61_HANDLER_LOCK}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'true'}
+        attributes: {id: core, value: 'false'}
   - type: String
     attributes: {id: EVIC_61_INTERRUPT_HANDLER}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: I2C2_MASTER_InterruptHandler}
+        attributes: {id: core, value: I2C2_MASTER_Handler}
+  - type: Boolean
+    attributes: {id: EVIC_88_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: EVIC_88_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: EVIC_88_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: TIMER_9_InterruptHandler}
   - type: File
     attributes: {id: EVIC_INT_ASM}
     children:
@@ -1516,82 +1537,26 @@ children:
       - type: Dynamic
         attributes: {id: core, value: '0'}
   - type: Boolean
-    attributes: {id: I2C2_BUS_INTERRUPT_ENABLE}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: 'true'}
-  - type: Boolean
     attributes: {id: I2C2_BUS_INTERRUPT_ENABLE_UPDATE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
-  - type: String
-    attributes: {id: I2C2_BUS_INTERRUPT_HANDLER}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: I2C2_BUS_InterruptHandler}
-  - type: Boolean
-    attributes: {id: I2C2_BUS_INTERRUPT_HANDLER_LOCK}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: 'true'}
-  - type: Boolean
-    attributes: {id: I2C2_CLOCK_ENABLE}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: 'true'}
+        attributes: {id: core, value: 'true'}
   - type: Integer
     attributes: {id: I2C2_CLOCK_FREQUENCY}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '60000000'}
-  - type: Boolean
-    attributes: {id: I2C2_MASTER_INTERRUPT_ENABLE}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: 'true'}
+        attributes: {id: core, value: '0'}
   - type: Boolean
     attributes: {id: I2C2_MASTER_INTERRUPT_ENABLE_UPDATE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
-  - type: String
-    attributes: {id: I2C2_MASTER_INTERRUPT_HANDLER}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: I2C2_MASTER_InterruptHandler}
-  - type: Boolean
-    attributes: {id: I2C2_MASTER_INTERRUPT_HANDLER_LOCK}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: 'true'}
-  - type: Boolean
-    attributes: {id: I2C2_SLAVE_INTERRUPT_ENABLE}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: 'false'}
+        attributes: {id: core, value: 'true'}
   - type: Boolean
     attributes: {id: I2C2_SLAVE_INTERRUPT_ENABLE_UPDATE}
     children:
@@ -1599,20 +1564,6 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: 'true'}
-  - type: String
-    attributes: {id: I2C2_SLAVE_INTERRUPT_HANDLER}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: I2C2_SLAVE_Handler}
-  - type: Boolean
-    attributes: {id: I2C2_SLAVE_INTERRUPT_HANDLER_LOCK}
-    children:
-    - type: Values
-      children:
-      - type: Dynamic
-        attributes: {id: i2c2, value: 'false'}
   - type: Integer
     attributes: {id: I2C3_CLOCK_FREQUENCY}
     children:
@@ -1922,14 +1873,14 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '268370430'}
+        attributes: {id: core, value: '268370174'}
   - type: Hex
     attributes: {id: PMD5_REG_VALUE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '4077731647'}
+        attributes: {id: core, value: '4077862719'}
   - type: Hex
     attributes: {id: PMD6_REG_VALUE}
     children:
@@ -2630,6 +2581,34 @@ children:
       - type: Dynamic
         attributes: {id: core, value: 'false'}
   - type: Boolean
+    attributes: {id: TIMER_9_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tmr9, value: 'true'}
+  - type: Boolean
+    attributes: {id: TIMER_9_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: TIMER_9_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tmr9, value: TIMER_9_InterruptHandler}
+  - type: Boolean
+    attributes: {id: TIMER_9_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tmr9, value: 'true'}
+  - type: Boolean
     attributes: {id: TMR1_CLOCK_ENABLE}
     children:
     - type: Values
@@ -2692,13 +2671,20 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '0'}
+  - type: Boolean
+    attributes: {id: TMR9_CLOCK_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tmr9, value: 'true'}
   - type: Integer
     attributes: {id: TMR9_CLOCK_FREQUENCY}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '0'}
+        attributes: {id: core, value: '60000000'}
   - type: Integer
     attributes: {id: UART1_CLOCK_FREQUENCY}
     children:

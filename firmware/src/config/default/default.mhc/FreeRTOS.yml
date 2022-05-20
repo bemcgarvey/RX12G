@@ -2,5 +2,21 @@ format_version: v1.0
 type: UniqueComponent
 attributes: {id: FreeRTOS}
 children:
+- type: Symbols
+  children:
+  - type: Integer
+    attributes: {id: FREERTOS_MAX_SYSCALL_INTERRUPT_PRIORITY}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '5'}
+  - type: Integer
+    attributes: {id: FREERTOS_PERIPHERAL_CLOCK_HZ}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: FreeRTOS, value: '60000000'}
 - type: ElementPosition
-  attributes: {x: '193', y: '275', id: FreeRTOS}
+  attributes: {x: '190', y: '73', id: FreeRTOS}
