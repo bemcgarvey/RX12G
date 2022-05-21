@@ -14,10 +14,6 @@
 static bool detectedSatellites[3] = {false, false, false};
 
 enum {
-    SAT1 = 0, SAT2, SAT3
-};
-
-enum {
     DSMX_EXTERNAL_11MS = 10, DSMX_INTERNAL_11MS = 9
 };
 
@@ -32,15 +28,15 @@ void initSatellites(void) {
     CORETIMER_DelayMs(50);
     if (SAT1_RX_Get() == 1) {
         detectedSatellites[SAT1] = true;
-        SAT1_LED_Set();
+        //SAT1_LED_Set();
     }
     if (SAT2_RX_Get() == 1) {
         detectedSatellites[SAT2] = true;
-        SAT2_LED_Set();
+        //SAT2_LED_Set();
     }
     if (SAT3_RX_Get() == 1) {
         detectedSatellites[SAT3] = true;
-        SAT3_LED_Set();
+        //SAT3_LED_Set();
     }
     CNPDBbits.CNPDB0 = 0;
     CNPDCbits.CNPDC15 = 0;
@@ -76,7 +72,7 @@ bool bindSats(void) {
     } else if (detectedSatellites[SAT3]) {
         firstSat = SAT3;
     }
-    for (int i = 0; i < pulseCount; ++i) {
+   for (int i = 0; i < pulseCount; ++i) {
         if (firstSat == SAT1) {
             if (i < pulseCount - 1) {
                 LATBbits.LATB0 = 0;

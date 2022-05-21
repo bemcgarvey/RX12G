@@ -57,7 +57,11 @@ void EVIC_Initialize( void )
 
     /* Set up priority and subpriority of enabled interrupts */
     IPC4SET = 0x40000 | 0x0;  /* EXTERNAL_3:  Priority 1 / Subpriority 0 */
-    IPC22SET = 0x4 | 0x0;  /* TIMER_9:  Priority 1 / Subpriority 0 */
+    IPC16SET = 0x1000 | 0x0;  /* UART4_FAULT:  Priority 4 / Subpriority 0 */
+    IPC16SET = 0xc0000 | 0x0;  /* UART4_RX:  Priority 3 / Subpriority 0 */
+    IPC18SET = 0x14 | 0x0;  /* DMA0:  Priority 5 / Subpriority 0 */
+    IPC21SET = 0x4 | 0x0;  /* TIMER_8:  Priority 1 / Subpriority 0 */
+    IPC22SET = 0x1c | 0x0;  /* TIMER_9:  Priority 7 / Subpriority 0 */
 
     /* Initialize External interrupt 3 callback object */
     extInt3CbObj.callback = NULL;

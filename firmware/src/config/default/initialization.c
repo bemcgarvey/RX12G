@@ -179,6 +179,10 @@ void SYS_Initialize ( void* data )
 	GPIO_Initialize();
 
     CORETIMER_Initialize();
+    DMAC_Initialize();
+
+    TMR8_Initialize();
+
     TMR9_Initialize();
 
 

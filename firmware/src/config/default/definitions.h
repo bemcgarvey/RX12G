@@ -52,8 +52,10 @@
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
+#include "peripheral/dmac/plib_dmac.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "peripheral/tmr/plib_tmr8.h"
 #include "osal/osal.h"
 #include "peripheral/tmr/plib_tmr9.h"
 

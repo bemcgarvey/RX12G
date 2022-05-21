@@ -70,6 +70,78 @@ IntVectorEXTERNAL_3_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorEXTERNAL_3_Handler
+    .extern  UART4_FAULT_Handler
+
+    .section   .vector_65,code, keep
+    .equ     __vector_dispatch_65, IntVectorUART4_FAULT_Handler
+    .global  __vector_dispatch_65
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART4_FAULT_Handler
+
+IntVectorUART4_FAULT_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART4_FAULT_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART4_FAULT_Handler
+    .extern  UART4_RX_Handler
+
+    .section   .vector_66,code, keep
+    .equ     __vector_dispatch_66, IntVectorUART4_RX_Handler
+    .global  __vector_dispatch_66
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART4_RX_Handler
+
+IntVectorUART4_RX_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART4_RX_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART4_RX_Handler
+    .extern  DMA0_Handler
+
+    .section   .vector_72,code, keep
+    .equ     __vector_dispatch_72, IntVectorDMA0_Handler
+    .global  __vector_dispatch_72
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorDMA0_Handler
+
+IntVectorDMA0_Handler:
+    portSAVE_CONTEXT
+    la    s6,  DMA0_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorDMA0_Handler
+    .extern  TIMER_8_Handler
+
+    .section   .vector_84,code, keep
+    .equ     __vector_dispatch_84, IntVectorTIMER_8_Handler
+    .global  __vector_dispatch_84
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorTIMER_8_Handler
+
+IntVectorTIMER_8_Handler:
+    portSAVE_CONTEXT
+    la    s6,  TIMER_8_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorTIMER_8_Handler
     .extern  TIMER_9_Handler
 
     .section   .vector_88,code, keep

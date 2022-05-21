@@ -1,26 +1,25 @@
 /*******************************************************************************
- System Interrupts File
+  Data Type definition of Timer PLIB
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    interrupt.c
+    plib_tmr8.h
 
   Summary:
-    Interrupt vectors mapping
+    Data Type definition of the Timer Peripheral Interface Plib.
 
   Description:
-    This file maps all the interrupt vectors to their corresponding
-    implementations. If a particular module interrupt is used, then its ISR
-    definition can be found in corresponding PLIB source file. If a module
-    interrupt is not used, then its ISR implementation is mapped to dummy
-    handler.
- *******************************************************************************/
+    This file defines the Data Types for the Timer Plib.
 
-// DOM-IGNORE-BEGIN
+  Remarks:
+    None.
+
+*******************************************************************************/
+
 /*******************************************************************************
-* Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
+* Copyright (C) 2019 Microchip Technology Inc. and its subsidiaries.
 *
 * Subject to your compliance with these terms, you may use Microchip software
 * and any derivatives exclusively with Microchip products. It is your
@@ -40,80 +39,62 @@
 * FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
 * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
- *******************************************************************************/
+*******************************************************************************/
+
+#ifndef PLIB_TMR8_H
+#define PLIB_TMR8_H
+
+#include <stddef.h>
+#include <stdint.h>
+#include "device.h"
+#include "plib_tmr_common.h"
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+
+    extern "C" {
+
+#endif
 // DOM-IGNORE-END
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: Included Files
+// Section: Data Types
 // *****************************************************************************
 // *****************************************************************************
 
-#include "interrupts.h"
-#include "definitions.h"
-
-
 // *****************************************************************************
 // *****************************************************************************
-// Section: System Interrupt Vector Functions
+// Section: Interface Routines
 // *****************************************************************************
 // *****************************************************************************
 
+// *****************************************************************************
+void TMR8_Initialize(void);
 
-void EXTERNAL_3_InterruptHandler( void );
-void DMA0_InterruptHandler( void );
-void TIMER_8_InterruptHandler( void );
-void TIMER_9_InterruptHandler( void );
+void TMR8_Start(void);
 
+void TMR8_Stop(void);
 
+void TMR8_PeriodSet(uint16_t);
 
-/* All the handlers are defined here.  Each will call its PLIB-specific function. */
+uint16_t TMR8_PeriodGet(void);
 
+uint16_t TMR8_CounterGet(void);
 
-void EXTERNAL_3_Handler (void)
-{
-    EXTERNAL_3_InterruptHandler();
-}
+uint32_t TMR8_FrequencyGet(void);
 
-void UART4_FAULT_Handler (void)
-{
-    //TODO handle fault
-    if (U4STAbits.OERR == 1) {
-        U4STAbits.OERR = 0;
+void TMR8_InterruptEnable(void);
+
+void TMR8_InterruptDisable(void);
+
+void TMR8_CallbackRegister( TMR_CALLBACK callback_fn, uintptr_t context );
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+
     }
-    if (U4STAbits.FERR == 1) {
-        //TODO abort dma transfer if active
-    }
-    TMR8 = 0;
-    IFS2bits.U4EIF = 0;
-}
+#endif
+// DOM-IGNORE-END
 
-void UART4_RX_Handler (void)
-{
-    TMR8 = 0;
-    uint8_t rx = U4RXREG;
-    (void) rx;
-    IFS2bits.U4RXIF = 0;
-}
-
-void DMA0_Handler (void)
-{
-    DMA0_InterruptHandler();
-}
-
-void TIMER_8_Handler (void)
-{
-    TIMER_8_InterruptHandler();
-}
-
-void TIMER_9_Handler (void)
-{
-    TIMER_9_InterruptHandler();
-}
-
-
-
-
-/*******************************************************************************
- End of File
-*/
+#endif /* PLIB_TMR8_H */
