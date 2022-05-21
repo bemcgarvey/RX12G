@@ -15,7 +15,8 @@
 extern "C" {
 #endif
     
-    void initUARTs(void);
+    void initUARTs(bool detected[3]);
+    void disableUARTs(void);
 
 #ifdef	__cplusplus
 }

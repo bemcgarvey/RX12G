@@ -31,6 +31,8 @@
               <itemPath>../src/config/default/peripheral/tmr/plib_tmr_common.h</itemPath>
               <itemPath>../src/config/default/peripheral/tmr/plib_tmr9.h</itemPath>
               <itemPath>../src/config/default/peripheral/tmr/plib_tmr8.h</itemPath>
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr6.h</itemPath>
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr7.h</itemPath>
             </logicalFolder>
           </logicalFolder>
           <itemPath>../src/config/default/device.h</itemPath>
@@ -110,6 +112,8 @@
             <logicalFolder name="f6" displayName="tmr" projectFiles="true">
               <itemPath>../src/config/default/peripheral/tmr/plib_tmr9.c</itemPath>
               <itemPath>../src/config/default/peripheral/tmr/plib_tmr8.c</itemPath>
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr6.c</itemPath>
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr7.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <itemPath>../src/config/default/initialization.c</itemPath>
@@ -158,6 +162,8 @@
         <itemPath>../src/config/default/default.mhc/HarmonyCore.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/project.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/settings.yml</itemPath>
+        <itemPath>../src/config/default/default.mhc/tmr6.yml</itemPath>
+        <itemPath>../src/config/default/default.mhc/tmr7.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/tmr8.yml</itemPath>
         <itemPath>../src/config/default/default.mhc/tmr9.yml</itemPath>
       </logicalFolder>

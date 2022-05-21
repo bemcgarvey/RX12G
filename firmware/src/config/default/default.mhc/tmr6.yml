@@ -1,6 +1,6 @@
 format_version: v1.0
 type: UniqueComponent
-attributes: {id: tmr8}
+attributes: {id: tmr6}
 children:
 - type: Symbols
   children:
@@ -10,21 +10,21 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tmr8, value: '8224'}
+        attributes: {id: tmr6, value: '8224'}
   - type: Integer
     attributes: {id: TIMER_CLOCK_FREQ}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tmr8, value: '15000000'}
+        attributes: {id: tmr6, value: '15000000'}
   - type: Long
     attributes: {id: TIMER_PERIOD}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tmr8, value: '44999'}
+        attributes: {id: tmr6, value: '44999'}
   - type: KeyValueSet
     attributes: {id: TIMER_PRE_SCALER}
     children:
@@ -58,13 +58,13 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tmr8, value: '16'}
+        attributes: {id: tmr6, value: '16'}
   - type: Integer
     attributes: {id: TMR_PRESCALER_VALUE}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: tmr8, value: '4'}
+        attributes: {id: tmr6, value: '4'}
 - type: ElementPosition
-  attributes: {x: '172', y: '453', id: tmr8}
+  attributes: {x: '172', y: '320', id: tmr6}

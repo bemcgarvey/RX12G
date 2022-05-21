@@ -10,8 +10,9 @@
 
 #include "definitions.h"
 #include "satellites.h"
+#include "uart.h"
 
-static bool detectedSatellites[3] = {false, false, false};
+static bool detectedSatellites[3];
 
 enum {
     DSMX_EXTERNAL_11MS = 10, DSMX_INTERNAL_11MS = 9
@@ -38,6 +39,7 @@ void initSatellites(void) {
     CNPDBbits.CNPDB0 = 0;
     CNPDCbits.CNPDC15 = 0;
     CNPDAbits.CNPDA11 = 0;
+    initUARTs(detectedSatellites);
 }
 
 void satPowerOn(bool powerOn) {
@@ -49,7 +51,7 @@ void satPowerOn(bool powerOn) {
 }
 
 bool bindSats(void) {
-    //TODO disable UARTs
+    disableUARTs();
     satPowerOn(false);
     CORETIMER_DelayMs(500);
     LATBbits.LATB0 = 1;
@@ -100,6 +102,6 @@ bool bindSats(void) {
     TRISBbits.TRISB0 = 1;
     TRISCbits.TRISC15 = 1;
     TRISAbits.TRISA11 = 1;
-    //TODO re-enable UARTS and wait for packet 
+    initUARTs(detectedSatellites);
     return true;
 }

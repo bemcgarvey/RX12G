@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
     enum {
-        SAT1 = 1, SAT2 = 2, SAT3 = 3
+        SAT1 = 0, SAT2 = 1, SAT3 = 2
     };
     void initSatellites(void);
     void satPowerOn(bool powerOn);

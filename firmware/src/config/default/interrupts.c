@@ -62,6 +62,10 @@
 
 void EXTERNAL_3_InterruptHandler( void );
 void DMA0_InterruptHandler( void );
+void DMA1_InterruptHandler( void );
+void DMA2_InterruptHandler( void );
+void TIMER_6_InterruptHandler( void );
+void TIMER_7_InterruptHandler( void );
 void TIMER_8_InterruptHandler( void );
 void TIMER_9_InterruptHandler( void );
 
@@ -93,9 +97,47 @@ void UART4_RX_Handler (void)
     IFS2bits.U4RXIF = 0;
 }
 
+void UART5_FAULT_Handler (void)
+{
+    if (U5STAbits.OERR == 1) {
+        U5STAbits.OERR = 0;
+    }
+    SAT1_LED_Set();  //TODO remove
+    TMR7 = 0;
+    IFS2bits.U5EIF = 0;
+}
+
+void UART5_RX_Handler (void)
+{
+    TMR7 = 0;
+    uint8_t rx = U5RXREG;
+    (void) rx;
+    IFS2bits.U5RXIF = 0; 
+}
+
 void DMA0_Handler (void)
 {
     DMA0_InterruptHandler();
+}
+
+void DMA1_Handler (void)
+{
+    DMA1_InterruptHandler();
+}
+
+void DMA2_Handler (void)
+{
+    DMA2_InterruptHandler();
+}
+
+void TIMER_6_Handler (void)
+{
+    TIMER_6_InterruptHandler();
+}
+
+void TIMER_7_Handler (void)
+{
+    TIMER_7_InterruptHandler();
 }
 
 void TIMER_8_Handler (void)
@@ -106,6 +148,24 @@ void TIMER_8_Handler (void)
 void TIMER_9_Handler (void)
 {
     TIMER_9_InterruptHandler();
+}
+
+void UART6_FAULT_Handler (void)
+{
+    if (U6STAbits.OERR == 1) {
+        U6STAbits.OERR = 0;
+    }
+    SAT1_LED_Set();  //TODO remove
+    TMR6 = 0;
+    IFS5bits.U6EIF = 0;
+}
+
+void UART6_RX_Handler (void)
+{
+    TMR6 = 0;
+    uint8_t rx = U6RXREG;
+    (void) rx;
+    IFS5bits.U6RXIF = 0;
 }
 
 

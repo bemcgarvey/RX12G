@@ -106,6 +106,42 @@ IntVectorUART4_RX_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorUART4_RX_Handler
+    .extern  UART5_FAULT_Handler
+
+    .section   .vector_68,code, keep
+    .equ     __vector_dispatch_68, IntVectorUART5_FAULT_Handler
+    .global  __vector_dispatch_68
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART5_FAULT_Handler
+
+IntVectorUART5_FAULT_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART5_FAULT_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART5_FAULT_Handler
+    .extern  UART5_RX_Handler
+
+    .section   .vector_69,code, keep
+    .equ     __vector_dispatch_69, IntVectorUART5_RX_Handler
+    .global  __vector_dispatch_69
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART5_RX_Handler
+
+IntVectorUART5_RX_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART5_RX_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART5_RX_Handler
     .extern  DMA0_Handler
 
     .section   .vector_72,code, keep
@@ -124,6 +160,78 @@ IntVectorDMA0_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorDMA0_Handler
+    .extern  DMA1_Handler
+
+    .section   .vector_73,code, keep
+    .equ     __vector_dispatch_73, IntVectorDMA1_Handler
+    .global  __vector_dispatch_73
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorDMA1_Handler
+
+IntVectorDMA1_Handler:
+    portSAVE_CONTEXT
+    la    s6,  DMA1_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorDMA1_Handler
+    .extern  DMA2_Handler
+
+    .section   .vector_74,code, keep
+    .equ     __vector_dispatch_74, IntVectorDMA2_Handler
+    .global  __vector_dispatch_74
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorDMA2_Handler
+
+IntVectorDMA2_Handler:
+    portSAVE_CONTEXT
+    la    s6,  DMA2_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorDMA2_Handler
+    .extern  TIMER_6_Handler
+
+    .section   .vector_76,code, keep
+    .equ     __vector_dispatch_76, IntVectorTIMER_6_Handler
+    .global  __vector_dispatch_76
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorTIMER_6_Handler
+
+IntVectorTIMER_6_Handler:
+    portSAVE_CONTEXT
+    la    s6,  TIMER_6_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorTIMER_6_Handler
+    .extern  TIMER_7_Handler
+
+    .section   .vector_80,code, keep
+    .equ     __vector_dispatch_80, IntVectorTIMER_7_Handler
+    .global  __vector_dispatch_80
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorTIMER_7_Handler
+
+IntVectorTIMER_7_Handler:
+    portSAVE_CONTEXT
+    la    s6,  TIMER_7_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorTIMER_7_Handler
     .extern  TIMER_8_Handler
 
     .section   .vector_84,code, keep
@@ -160,4 +268,40 @@ IntVectorTIMER_9_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorTIMER_9_Handler
+    .extern  UART6_FAULT_Handler
+
+    .section   .vector_164,code, keep
+    .equ     __vector_dispatch_164, IntVectorUART6_FAULT_Handler
+    .global  __vector_dispatch_164
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART6_FAULT_Handler
+
+IntVectorUART6_FAULT_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART6_FAULT_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART6_FAULT_Handler
+    .extern  UART6_RX_Handler
+
+    .section   .vector_165,code, keep
+    .equ     __vector_dispatch_165, IntVectorUART6_RX_Handler
+    .global  __vector_dispatch_165
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUART6_RX_Handler
+
+IntVectorUART6_RX_Handler:
+    portSAVE_CONTEXT
+    la    s6,  UART6_RX_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUART6_RX_Handler
 
