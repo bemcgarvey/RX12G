@@ -28,15 +28,12 @@ void initSatellites(void) {
     CORETIMER_DelayMs(50);
     if (SAT1_RX_Get() == 1) {
         detectedSatellites[SAT1] = true;
-        //SAT1_LED_Set();
     }
     if (SAT2_RX_Get() == 1) {
         detectedSatellites[SAT2] = true;
-        //SAT2_LED_Set();
     }
     if (SAT3_RX_Get() == 1) {
         detectedSatellites[SAT3] = true;
-        //SAT3_LED_Set();
     }
     CNPDBbits.CNPDB0 = 0;
     CNPDCbits.CNPDC15 = 0;

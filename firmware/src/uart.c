@@ -60,8 +60,14 @@ void initUARTs(void) {
     EVIC_SourceEnable(INT_SOURCE_UART4_RX);
     EVIC_SourceEnable(INT_SOURCE_UART4_FAULT);
     DMAC_ChannelCallbackRegister(DMAC_CHANNEL_0, sat1DMADone, 0);
-    //DCH0ECONbits.CHAIRQ = INT_SOURCE_UART4_FAULT;
-    //DCH0ECONbits.AIRQEN = 1;
+    DCH0ECONbits.CHAIRQ = INT_SOURCE_UART4_FAULT;
+    DCH0ECONbits.AIRQEN = 1;
+    //Setup addresses
+    DCH0SSA = (uint32_t) KVA_TO_PA((uint32_t)&U4RXREG);
+    DCH0DSA = (uint32_t) KVA_TO_PA((uint32_t)sat1Packet);
+    DCH0SSIZ = 1;
+    DCH0DSIZ = 16;
+    DCH0CSIZ = 1;
     TMR8_CallbackRegister(startSat1DMA, 0);
     TMR8_Start();
     //U5MODEbits.ON = 1;
@@ -71,18 +77,16 @@ void initUARTs(void) {
 void startSat1DMA(uint32_t status, uintptr_t context) {
     TMR8_Stop();
     EVIC_SourceDisable(INT_SOURCE_UART4_RX);
-    bool success = DMAC_ChannelTransfer(DMAC_CHANNEL_0, (const void *) &U4RXREG, 1, (const void *) sat1Packet, 16, 1);
-    if (!success) {
-        TMR8_Start();
-        EVIC_SourceEnable(INT_SOURCE_UART4_RX);
-    }
+    DCH0CONbits.CHEN = 1;
 }
 
-volatile int count = 0;
+volatile int count = 0;  //TODO remove
 
 void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
         //TODO put packet in queue
+        
+        //TODO remove below after testing
         ++count;
         if (count == 50) {
             LED_B_Toggle();
@@ -108,6 +112,9 @@ void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
                 }
             }
         }
+    } else if (status == DMAC_TRANSFER_EVENT_ERROR) {
+        SAT1_LED_Set();  //TODO remove
+        DCH0ECONbits.CABORT = 1;
     }
     TMR8 = 0;
     TMR8_Start();

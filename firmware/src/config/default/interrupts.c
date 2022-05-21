@@ -77,13 +77,10 @@ void EXTERNAL_3_Handler (void)
 
 void UART4_FAULT_Handler (void)
 {
-    //TODO handle fault
     if (U4STAbits.OERR == 1) {
         U4STAbits.OERR = 0;
     }
-    if (U4STAbits.FERR == 1) {
-        //TODO abort dma transfer if active
-    }
+    SAT1_LED_Set();  //TODO remove
     TMR8 = 0;
     IFS2bits.U4EIF = 0;
 }
