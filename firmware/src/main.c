@@ -13,13 +13,14 @@
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
 #include "timers.h"
-
+#include "satellites.h"
 
 int main ( void )
 {
     /* Initialize all modules */
     SYS_Initialize ( NULL );
     startSystemTime();
+    initSatellites();
     while ( true )
     {
         if (getSystemTime() % 1000 == 0) {
@@ -27,6 +28,13 @@ int main ( void )
         } 
         else if (getSystemTime() % 500 == 0) {
             LED_A_Clear();
+        }
+        if (BIND_BUTTON_Get() == 0) {
+            CORETIMER_DelayMs(2000);
+            if (BIND_BUTTON_Get() == 0) {
+                LED_B_Toggle();
+                bindSats();
+            }
         }
         SYS_Tasks ( );
     }
