@@ -15,6 +15,9 @@
 extern "C" {
 #endif
 
+#define MS_COUNT    ((CPU_CLOCK_FREQUENCY / 2) / 1000)
+#define US_COUNT    ((CPU_CLOCK_FREQUENCY / 2) / 1000000)  
+
     void startSystemTime(void);
     uint32_t getSystemTime(void);
 

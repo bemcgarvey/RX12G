@@ -183,6 +183,8 @@ void SYS_Initialize ( void* data )
 
     TMR7_Initialize();
 
+    TMR2_Initialize();
+
     DMAC_Initialize();
 
     TMR8_Initialize();

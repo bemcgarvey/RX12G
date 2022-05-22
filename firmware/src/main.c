@@ -14,6 +14,7 @@
 #include "definitions.h"                // SYS function prototypes
 #include "timers.h"
 #include "satellites.h"
+#include "output.h"
 
 int main ( void )
 {
@@ -21,6 +22,8 @@ int main ( void )
     SYS_Initialize ( NULL );
     startSystemTime();
     initSatellites();
+    initOutputs();
+    enableActiveOutputs();
     while ( true )
     {
         if (getSystemTime() % 1000 == 0) {
