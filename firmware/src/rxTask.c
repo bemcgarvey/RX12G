@@ -1,27 +1,21 @@
 /////////////////////////////////////////////////////
 // Project: RX12G                                  //
-// File: uart.h                                    //
+// File: rxTask.c                                  //
 // Target: PIC32MK1024GPK064                       // 
 // Compiler: XC32                                  //
 // Author: Brad McGarvey                           //
 // License: GNU General Public License v3.0        //
-// Description: uart functions                     //
+// Description: packet rx rtos task                //
 /////////////////////////////////////////////////////
 
-#ifndef UART_H
-#define	UART_H
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+void rxTask(void *pvParameters) {
     
-    extern volatile bool validPacketReceived;
-    void initUARTs(bool detected[3]);
-    void disableUARTs(void);
-
-#ifdef	__cplusplus
+    
+    
+    //TODO remove after testing
+        /*int stack = uxTaskGetStackHighWaterMark(NULL);
+        if (stack < 1) {
+            while (1);
+        }*/
 }
-#endif
-
-#endif	/* UART_H */
-

@@ -11,9 +11,8 @@
 #include "output.h"
 #include "timers.h"
 
-uint32_t pwmPeriod = 50; //TODO set this from saved settings
+uint32_t pwmPeriod = 20; //TODO set this from saved settings
 
-//TODO reset values 0 - 2 after testing
 uint16_t servos[MAX_CHANNELS] = {
     0xffff, 0xffff, 0xffff, 0xffff, 
     0xffff, 0xffff, 0xffff, 0xffff, 

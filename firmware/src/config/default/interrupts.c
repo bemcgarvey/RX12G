@@ -90,7 +90,6 @@ void UART4_FAULT_Handler (void)
     if (U4STAbits.OERR == 1) {
         U4STAbits.OERR = 0;
     }
-    SAT1_LED_Set();  //TODO remove
     TMR8 = 0;
     IFS2bits.U4EIF = 0;
 }
@@ -108,7 +107,6 @@ void UART5_FAULT_Handler (void)
     if (U5STAbits.OERR == 1) {
         U5STAbits.OERR = 0;
     }
-    SAT1_LED_Set();  //TODO remove
     TMR7 = 0;
     IFS2bits.U5EIF = 0;
 }
@@ -161,7 +159,6 @@ void UART6_FAULT_Handler (void)
     if (U6STAbits.OERR == 1) {
         U6STAbits.OERR = 0;
     }
-    SAT1_LED_Set();  //TODO remove
     TMR6 = 0;
     IFS5bits.U6EIF = 0;
 }

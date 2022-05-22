@@ -1,27 +1,25 @@
 /////////////////////////////////////////////////////
 // Project: RX12G                                  //
-// File: uart.h                                    //
+// File: buttonTask.h                              //
 // Target: PIC32MK1024GPK064                       // 
 // Compiler: XC32                                  //
 // Author: Brad McGarvey                           //
 // License: GNU General Public License v3.0        //
-// Description: uart functions                     //
+// Description: bind button rtos task              //
 /////////////////////////////////////////////////////
 
-#ifndef UART_H
-#define	UART_H
+#ifndef BUTTONTASK_H
+#define	BUTTONTASK_H
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    
-    extern volatile bool validPacketReceived;
-    void initUARTs(bool detected[3]);
-    void disableUARTs(void);
+
+    void buttonTask(void *pvParameters);
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* UART_H */
+#endif	/* BUTTONTASK_H */
 

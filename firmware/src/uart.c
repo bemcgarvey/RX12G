@@ -15,6 +15,8 @@ static volatile __attribute__((coherent)) uint8_t sat1Packet[17];
 static volatile __attribute__((coherent)) uint8_t sat2Packet[17];
 static volatile __attribute__((coherent)) uint8_t sat3Packet[17];
 
+volatile bool validPacketReceived = false;
+
 void startSat1DMA(uint32_t status, uintptr_t context);
 void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle);
 void startSat2DMA(uint32_t status, uintptr_t context);
@@ -23,6 +25,7 @@ void startSat3DMA(uint32_t status, uintptr_t context);
 void sat3DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle);
 
 void initUARTs(bool detected[3]) {
+    validPacketReceived = false;
     sat1Packet[16] = SAT1;
     sat2Packet[16] = SAT2;
     sat3Packet[16] = SAT3;
@@ -110,34 +113,11 @@ void startSat1DMA(uint32_t status, uintptr_t context) {
     DCH0CONbits.CHEN = 1;
 }
 
-volatile int count = 0; //TODO remove
-
 void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
-        //TODO put packet in queue
-
-        //TODO remove below after testing
-        ++count;
-        if (count == 50) {
-            LED_B_Toggle();
-            count = 0;
-        }
-        uint16_t *p = (uint16_t *) sat1Packet;
-        for (int i = 1; i < 8; ++i) {
-            p[i] = p[i] >> 8 | p[i] << 8;
-            uint16_t ch = p[i] >> 11;
-            ch &= 0x000f;
-            uint16_t pos = p[i] & 0x07ff;
-            if (ch == 0) {
-                if (pos < 1024) {
-                    SAT1_LED_Clear();
-                } else {
-                    SAT1_LED_Set();
-                }
-            }
-        }
+        validPacketReceived = true;
+        //TODO put packet in queue        
     } else if (status == DMAC_TRANSFER_EVENT_ERROR) {
-        SAT1_LED_Set(); //TODO remove
         DCH0ECONbits.CABORT = 1;
     }
     TMR8 = 0;
@@ -153,30 +133,9 @@ void startSat2DMA(uint32_t status, uintptr_t context) {
 
 void sat2DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
+        validPacketReceived = true;
         //TODO put packet in queue
-
-        //TODO remove below after testing
-        ++count;
-        if (count == 50) {
-            LED_B_Toggle();
-            count = 0;
-        }
-        uint16_t *p = (uint16_t *) sat2Packet;
-        for (int i = 1; i < 8; ++i) {
-            p[i] = p[i] >> 8 | p[i] << 8;
-            uint16_t ch = p[i] >> 11;
-            ch &= 0x000f;
-            uint16_t pos = p[i] & 0x07ff;
-            if (ch == 1) {
-                if (pos < 1024) {
-                    SAT2_LED_Clear();
-                } else {
-                    SAT2_LED_Set();
-                }
-            } 
-        }
     } else if (status == DMAC_TRANSFER_EVENT_ERROR) {
-        SAT1_LED_Set(); //TODO remove
         DCH1ECONbits.CABORT = 1;
     }
     TMR7 = 0;
@@ -192,30 +151,9 @@ void startSat3DMA(uint32_t status, uintptr_t context) {
 
 void sat3DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
+        validPacketReceived = true;
         //TODO put packet in queue
-
-        //TODO remove below after testing
-        ++count;
-        if (count == 50) {
-            LED_B_Toggle();
-            count = 0;
-        }
-        uint16_t *p = (uint16_t *) sat3Packet;
-        for (int i = 1; i < 8; ++i) {
-            p[i] = p[i] >> 8 | p[i] << 8;
-            uint16_t ch = p[i] >> 11;
-            ch &= 0x000f;
-            uint16_t pos = p[i] & 0x07ff;
-            if (ch == 2) {
-                if (pos < 1024) {
-                    SAT3_LED_Clear();
-                } else {
-                    SAT3_LED_Set();
-                }
-            } 
-        }
     } else if (status == DMAC_TRANSFER_EVENT_ERROR) {
-        SAT1_LED_Set(); //TODO remove
         DCH2ECONbits.CABORT = 1;
     }
     TMR6 = 0;

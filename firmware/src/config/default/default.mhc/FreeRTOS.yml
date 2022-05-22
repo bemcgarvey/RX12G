@@ -4,6 +4,20 @@ attributes: {id: FreeRTOS}
 children:
 - type: Symbols
   children:
+  - type: Boolean
+    attributes: {id: FREERTOS_INCLUDE_UXTASKGETSTACKHIGHWATERMARK}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: 'true'}
+  - type: Integer
+    attributes: {id: FREERTOS_ISR_STACK_SIZE}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: '1024'}
   - type: Integer
     attributes: {id: FREERTOS_MAX_SYSCALL_INTERRUPT_PRIORITY}
     children:

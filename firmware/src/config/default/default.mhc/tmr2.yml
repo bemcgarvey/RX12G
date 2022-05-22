@@ -18,6 +18,13 @@ children:
       children:
       - type: User
         attributes: {value: '0'}
+  - type: Integer
+    attributes: {id: TIMER_CLOCK_FREQ}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: tmr2, value: '60000000'}
   - type: Long
     attributes: {id: TIMER_PERIOD}
     children:

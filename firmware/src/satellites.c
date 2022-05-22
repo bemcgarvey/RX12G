@@ -61,7 +61,7 @@ bool bindSats(void) {
     TRISCbits.TRISC15 = 0;
     TRISAbits.TRISA11 = 0;
     satPowerOn(true);
-    CORETIMER_DelayMs(100);
+    CORETIMER_DelayMs(70);
     int firstSat = -1;
     int pulseCount = DSMX_EXTERNAL_11MS;
     if (detectedSatellites[SAT1]) {

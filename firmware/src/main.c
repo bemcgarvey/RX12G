@@ -15,6 +15,7 @@
 #include "timers.h"
 #include "satellites.h"
 #include "output.h"
+#include "tasks.h"
 
 int main ( void )
 {
@@ -24,26 +25,12 @@ int main ( void )
     initSatellites();
     initOutputs();
     enableActiveOutputs();
+    
+    initTasks();  //Starts rtos tasks - Does not return
     while ( true )
     {
-        if (getSystemTime() % 1000 == 0) {
-            LED_A_Set();
-        } 
-        else if (getSystemTime() % 500 == 0) {
-            LED_A_Clear();
-        }
-        if (BIND_BUTTON_Get() == 0) {
-            CORETIMER_DelayMs(2000);
-            if (BIND_BUTTON_Get() == 0) {
-                LED_B_Toggle();
-                bindSats();
-            }
-        }
-        SYS_Tasks ( );
+        /* Execution should not come here during normal operation */
     }
-
-    /* Execution should not come here during normal operation */
-
     return ( EXIT_FAILURE );
 }
 

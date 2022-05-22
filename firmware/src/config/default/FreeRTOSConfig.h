@@ -92,7 +92,7 @@
 
 /* Interrupt nesting behaviour configuration. */
 #define configPERIPHERAL_CLOCK_HZ               ( 60000000UL )
-#define configISR_STACK_SIZE                    ( 512 )
+#define configISR_STACK_SIZE                    ( 1024 )
 /* The priority at which the tick interrupt runs.  This should probably be kept at lowest priority. */
 #define configKERNEL_INTERRUPT_PRIORITY         (1)
 /* The maximum interrupt priority from which FreeRTOS.org API functions can be called.
@@ -109,7 +109,7 @@
 #define INCLUDE_vTaskDelay                      1
 #define INCLUDE_xTaskGetSchedulerState          0
 #define INCLUDE_xTaskGetCurrentTaskHandle       0
-#define INCLUDE_uxTaskGetStackHighWaterMark     0
+#define INCLUDE_uxTaskGetStackHighWaterMark     1
 #define INCLUDE_xTaskGetIdleTaskHandle          0
 #define INCLUDE_eTaskGetState                   0
 #define INCLUDE_xTimerPendFunctionCall          0
