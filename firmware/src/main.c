@@ -8,9 +8,6 @@
 // Description: main                               //
 /////////////////////////////////////////////////////
 
-#include <stddef.h>                     // Defines NULL
-#include <stdbool.h>                    // Defines true
-#include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
 #include "timers.h"
 #include "satellites.h"
@@ -19,13 +16,11 @@
 
 int main ( void )
 {
-    /* Initialize all modules */
     SYS_Initialize ( NULL );
+    initQueues();
     startSystemTime();
     initSatellites();
     initOutputs();
-    enableActiveOutputs();
-    
     initTasks();  //Starts rtos tasks - Does not return
     while ( true )
     {

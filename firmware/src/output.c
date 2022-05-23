@@ -13,12 +13,9 @@
 
 uint32_t pwmPeriod = 20; //TODO set this from saved settings
 
-uint16_t servos[MAX_CHANNELS] = {
-    0xffff, 0xffff, 0xffff, 0xffff, 
-    0xffff, 0xffff, 0xffff, 0xffff, 
-    0xffff, 0xffff, 0xffff, 0xffff, 
-    0xffff, 0xffff, 0xffff, 0xffff
-};
+bool outputsActive = false;
+
+uint16_t outputServos[MAX_CHANNELS];
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
     0, OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET};
@@ -42,6 +39,9 @@ volatile unsigned int* const OCxCONCLRRegister[NUM_OUTPUTS] = {&OC11CONCLR, &OC1
 void updatePulses(uint32_t status, uintptr_t context);
 
 void initOutputs(void) {
+    for (int i = 0; i < MAX_CHANNELS; ++i) {
+        outputServos[i] = 0xffff;
+    }
     //Ch 0 (zero based so this is actually Ch 1 on the Rx board)
     OC11CONbits.OC32 = 1;
     OC11CONbits.OCM = 0b101;
@@ -83,15 +83,16 @@ void initOutputs(void) {
     }
     TMR2_PeriodSet(pwmPeriod * MS_COUNT - 1);
     TMR2_CallbackRegister(updatePulses, 0);
-    TMR2_Start();
 }
 
 void enableActiveOutputs(void) {
     for (int i = 0; i < NUM_OUTPUTS; ++i) {
-        if (servos[i] != 0xffff) {
+        if (outputServos[i] != 0xffff) {
             *OCxCONSETRegister[i] = 0x8000; //ON bit
         }
     }
+    TMR2_Start();
+    outputsActive = true;
     //TODO make sure first pulse is correct
 }
 
@@ -105,7 +106,9 @@ void enableThrottle(void) {
 
 void updatePulses(uint32_t status, uintptr_t context) {
     for (int i = 0; i < NUM_OUTPUTS; ++i) {
-        uint32_t out = ((1194 * US_COUNT) * servos[i]) / 2048;
+        uint32_t out = ((1194 * US_COUNT) * outputServos[i]) / 2048;
         *pulseRegister[i] = out + pulseOffsets[i];
     }
 }
+
+//TODO handle S.Bus here based on outputServos[]

@@ -11,8 +11,10 @@
 #include "definitions.h"
 #include "satellites.h"
 #include "uart.h"
+#include "timers.h"
 
 static bool detectedSatellites[3];
+TaskHandle_t satLedTaskHandle;
 
 enum {
     DSMX_EXTERNAL_11MS = 10, DSMX_INTERNAL_11MS = 9
@@ -104,4 +106,27 @@ bool bindSats(void) {
     TRISAbits.TRISA11 = 1;
     initUARTs(detectedSatellites);
     return true;
+}
+
+void satLedTask(void *pvParameters) {
+    while (1) {
+        uint32_t time = getSystemTime();
+        if (time - lastRxTime[SAT1] < 100) {
+            SAT1_LED_Set();
+        } else {
+            SAT1_LED_Clear();
+        }
+        if (time - lastRxTime[SAT2] < 100) {
+            SAT2_LED_Set();
+        } else {
+            SAT2_LED_Clear();
+        }
+        if (time - lastRxTime[SAT3] < 100) {
+            SAT3_LED_Set();
+        } else {
+            SAT3_LED_Clear();
+        }
+        //TODO is this the place to activate failsafe?
+        vTaskDelay(100);
+    }
 }

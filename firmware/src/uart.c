@@ -10,12 +10,15 @@
 #include "definitions.h"
 #include "uart.h"
 #include "satellites.h"
+#include "rtosHandles.h"
+#include "timers.h"
 
-static volatile __attribute__((coherent)) uint8_t sat1Packet[17];
-static volatile __attribute__((coherent)) uint8_t sat2Packet[17];
-static volatile __attribute__((coherent)) uint8_t sat3Packet[17];
+static volatile __attribute__((coherent)) uint8_t sat1Packet[16];
+static volatile __attribute__((coherent)) uint8_t sat2Packet[16];
+static volatile __attribute__((coherent)) uint8_t sat3Packet[16];
 
 volatile bool validPacketReceived = false;
+volatile uint32_t lastRxTime[3] = {0, 0, 0};
 
 void startSat1DMA(uint32_t status, uintptr_t context);
 void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle);
@@ -26,9 +29,6 @@ void sat3DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle);
 
 void initUARTs(bool detected[3]) {
     validPacketReceived = false;
-    sat1Packet[16] = SAT1;
-    sat2Packet[16] = SAT2;
-    sat3Packet[16] = SAT3;
     //SAT1 = UART4
     U4BRG = 129; //115200 baud
     U4MODEbits.BRGH = 1;
@@ -116,7 +116,10 @@ void startSat1DMA(uint32_t status, uintptr_t context) {
 void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
         validPacketReceived = true;
-        //TODO put packet in queue        
+        lastRxTime[SAT1] = getSystemTime();
+        BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+        xQueueSendToBackFromISR(rxQueue, (void *) sat1Packet, &pxHigherPriorityTaskWoken);
+        portEND_SWITCHING_ISR(pxHigherPriorityTaskWoken);
     } else if (status == DMAC_TRANSFER_EVENT_ERROR) {
         DCH0ECONbits.CABORT = 1;
     }
@@ -134,7 +137,10 @@ void startSat2DMA(uint32_t status, uintptr_t context) {
 void sat2DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
         validPacketReceived = true;
-        //TODO put packet in queue
+        lastRxTime[SAT2] = getSystemTime();
+        BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+        xQueueSendToBackFromISR(rxQueue, (void *) sat2Packet, &pxHigherPriorityTaskWoken);
+        portEND_SWITCHING_ISR(pxHigherPriorityTaskWoken);
     } else if (status == DMAC_TRANSFER_EVENT_ERROR) {
         DCH1ECONbits.CABORT = 1;
     }
@@ -152,7 +158,10 @@ void startSat3DMA(uint32_t status, uintptr_t context) {
 void sat3DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
         validPacketReceived = true;
-        //TODO put packet in queue
+        lastRxTime[SAT3] = getSystemTime();
+        BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+        xQueueSendToBackFromISR(rxQueue, (void *) sat3Packet, &pxHigherPriorityTaskWoken);
+        portEND_SWITCHING_ISR(pxHigherPriorityTaskWoken);
     } else if (status == DMAC_TRANSFER_EVENT_ERROR) {
         DCH2ECONbits.CABORT = 1;
     }

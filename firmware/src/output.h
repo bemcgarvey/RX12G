@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#define MAX_CHANNELS    18
+#define MAX_CHANNELS    20
 #define NUM_OUTPUTS     12
 #define OFFSET          (2097 * US_COUNT)
 #define PULSE           (903 * US_COUNT)
@@ -27,7 +27,8 @@ extern "C" {
         AUX2 = 6, AUX3 = 7, AUX4 = 8, AUX5 = 9, AUX6 = 10, AUX7 = 11
     };
 
-    extern uint16_t servos[MAX_CHANNELS];
+    extern uint16_t outputServos[MAX_CHANNELS];
+    extern bool outputsActive;
     
     void initOutputs(void);
     void enableActiveOutputs(void);

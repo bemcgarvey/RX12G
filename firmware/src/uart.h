@@ -16,6 +16,7 @@ extern "C" {
 #endif
     
     extern volatile bool validPacketReceived;
+    extern volatile uint32_t lastRxTime[3];
     void initUARTs(bool detected[3]);
     void disableUARTs(void);
 
