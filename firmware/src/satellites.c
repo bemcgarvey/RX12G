@@ -12,6 +12,7 @@
 #include "satellites.h"
 #include "uart.h"
 #include "timers.h"
+#include "output.h"
 
 static bool detectedSatellites[3];
 TaskHandle_t satLedTaskHandle;
@@ -109,24 +110,36 @@ bool bindSats(void) {
 }
 
 void satLedTask(void *pvParameters) {
+    bool activity;
     while (1) {
+        activity = false;
         uint32_t time = getSystemTime();
         if (time - lastRxTime[SAT1] < 100) {
             SAT1_LED_Set();
+            activity = true;
+            failsafeEngaged = false;
         } else {
             SAT1_LED_Clear();
         }
         if (time - lastRxTime[SAT2] < 100) {
             SAT2_LED_Set();
+            activity = true;
+            failsafeEngaged = false;
         } else {
             SAT2_LED_Clear();
         }
         if (time - lastRxTime[SAT3] < 100) {
             SAT3_LED_Set();
+            activity = true;
+            failsafeEngaged = false;
         } else {
             SAT3_LED_Clear();
         }
-        //TODO is this the place to activate failsafe?
+        if (!activity) {
+            if (!failsafeEngaged) {
+                engageFailsafe();
+            }
+        }
         vTaskDelay(100);
     }
 }

@@ -14,6 +14,9 @@
 uint32_t pwmPeriod = 20; //TODO set this from saved settings
 
 volatile uint16_t outputServos[MAX_CHANNELS];
+uint16_t presetServos[MAX_CHANNELS]; //TODO load from settings
+int failsafeMode = NORMAL_FAILSAFE;
+volatile bool failsafeEngaged = false;
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
     0, OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET};
@@ -21,6 +24,8 @@ const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
 const unsigned int pulseOffsets[NUM_OUTPUTS] = {0 + PULSE, OFFSET + PULSE,
     0 + PULSE, OFFSET + PULSE, 0 + PULSE, OFFSET + PULSE, 0 + PULSE, OFFSET + PULSE,
     2 * OFFSET + PULSE, 2 * OFFSET + PULSE, 2 * OFFSET + PULSE, 2 * OFFSET + PULSE};
+
+//TODO may need to adjust upper channel offsets for higher servo rates
 
 volatile unsigned int* const pulseRegister[NUM_OUTPUTS] = {&OC11RS, &OC10RS, &OC9RS,
     &OC13RS, &OC2RS, &OC6RS, &OC8RS, &OC5RS, &OC14RS, &OC1RS, &OC7RS, &OC4RS};
@@ -34,49 +39,18 @@ volatile unsigned int* const OCxCONSETRegister[NUM_OUTPUTS] = {&OC11CONSET, &OC1
 volatile unsigned int* const OCxCONCLRRegister[NUM_OUTPUTS] = {&OC11CONCLR, &OC10CONCLR, &OC9CONCLR,
     &OC13CONCLR, &OC2CONCLR, &OC6CONCLR, &OC8CONCLR, &OC5CONCLR, &OC14CONCLR, &OC1CONCLR, &OC7CONCLR, &OC4CONCLR};
 
+volatile unsigned int* const OCxCONRegister[NUM_OUTPUTS] = {&OC11CON, &OC10CON, &OC9CON,
+    &OC13CON, &OC2CON, &OC6CON, &OC8CON, &OC5CON, &OC14CON, &OC1CON, &OC7CON, &OC4CON};
+
 void updatePulses(uint32_t status, uintptr_t context);
 
 void initOutputs(void) {
     for (int i = 0; i < MAX_CHANNELS; ++i) {
         outputServos[i] = 0xffff;
     }
-    //Ch 0 (zero based so this is actually Ch 1 on the Rx board)
-    OC11CONbits.OC32 = 1;
-    OC11CONbits.OCM = 0b101;
-    //Ch 1
-    OC10CONbits.OC32 = 1;
-    OC10CONbits.OCM = 0b101;
-    //Ch 2
-    OC9CONbits.OC32 = 1;
-    OC9CONbits.OCM = 0b101;
-    //Ch 3
-    OC13CONbits.OC32 = 1;
-    OC13CONbits.OCM = 0b101;
-    //Ch 4
-    OC2CONbits.OC32 = 1;
-    OC2CONbits.OCM = 0b101;
-    //Ch 5
-    OC6CONbits.OC32 = 1;
-    OC6CONbits.OCM = 0b101;
-    //Ch 6
-    OC8CONbits.OC32 = 1;
-    OC8CONbits.OCM = 0b101;
-    //Ch 7
-    OC5CONbits.OC32 = 1;
-    OC5CONbits.OCM = 0b101;
-    //Ch 8
-    OC14CONbits.OC32 = 1;
-    OC14CONbits.OCM = 0b101;
-    //Ch 9
-    OC1CONbits.OC32 = 1;
-    OC1CONbits.OCM = 0b101;
-    //Ch 10
-    OC7CONbits.OC32 = 1;
-    OC7CONbits.OCM = 0b101;
-    //Ch 11
-    OC4CONbits.OC32 = 1;
-    OC4CONbits.OCM = 0b101;
+    //Channels are zero based in firmware but start at 1 on board
     for (int i = 0; i < NUM_OUTPUTS; ++i) {
+        *OCxCONSETRegister[i] = 0x0025;  //OC32 = 1, OCM = 0b101
         *startRegister[i] = startOffsets[i];
     }
     TMR2_PeriodSet(pwmPeriod * MS_COUNT - 1);
@@ -86,15 +60,26 @@ void initOutputs(void) {
 
 void disableThrottle(void) {
     outputServos[THROTTLE] = 0xffff;
+    *OCxCONCLRRegister[THROTTLE] = 0x8000;
 }
 
-//TODO make sure first pulse is correct
+void engageFailsafe(void) {
+    if (failsafeMode == NORMAL_FAILSAFE) {
+        disableThrottle();
+    } else if (failsafeMode == PRESET_FAILSAFE) {
+        for (int i = 0; i < MAX_CHANNELS; ++i) {
+            outputServos[i] = presetServos[i];
+        }
+    }
+    failsafeEngaged = true;
+}
+
 void updatePulses(uint32_t status, uintptr_t context) {
-    for (int i = 0; i < NUM_OUTPUTS; ++i) {  //TODO only update outputs not used by S.Bus
-        if (outputServos[i] & 0x8000) {  //Out of range
-            *OCxCONCLRRegister[i] = 0x8000; //clear ON bit
-        } else {
-            *OCxCONSETRegister[i] = 0x8000; //set ON bit
+    for (int i = 0; i < NUM_OUTPUTS; ++i) { //TODO only update outputs not used by S.Bus
+        if (outputServos[i] != 0xffff && !failsafeEngaged) {
+            if (!(*OCxCONRegister[i] & 0x8000)) {
+                *OCxCONSETRegister[i] = 0x8000; //set ON bit
+            }
         }
         uint32_t out = ((1194 * US_COUNT) * outputServos[i]) / 2048;
         *pulseRegister[i] = out + pulseOffsets[i];

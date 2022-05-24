@@ -27,10 +27,18 @@ extern "C" {
         AUX2 = 6, AUX3 = 7, AUX4 = 8, AUX5 = 9, AUX6 = 10, AUX7 = 11
     };
 
+    enum {
+        NORMAL_FAILSAFE = 0, PRESET_FAILSAFE = 1
+    };
+    
     extern volatile uint16_t outputServos[MAX_CHANNELS];
+    extern uint16_t presetServos[MAX_CHANNELS];
+    extern int failsafeMode;
+    extern volatile bool failsafeEngaged;
     
     void initOutputs(void);
     void disableThrottle(void);
+    void engageFailsafe(void);
 
 #ifdef	__cplusplus
 }
