@@ -32,8 +32,6 @@ extern "C" {
     };
     
     extern volatile uint16_t outputServos[MAX_CHANNELS];
-    //extern uint16_t presetServos[MAX_CHANNELS];
-    //extern int failsafeMode;
     extern volatile bool failsafeEngaged;
     
     void initOutputs(void);

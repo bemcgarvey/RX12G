@@ -1,9 +1,12 @@
-/* 
- * File:   settings.h
- * Author: bemcg
- *
- * Created on May 24, 2022, 12:39 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: settings.h                                //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: rx and gyro settings               //
+/////////////////////////////////////////////////////
 
 #ifndef SETTINGS_H
 #define	SETTINGS_H

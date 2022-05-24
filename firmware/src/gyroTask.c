@@ -1,18 +1,27 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: gyroTask.c                                //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: gyro and stability code            //
+/////////////////////////////////////////////////////
 
 #include "definitions.h"
 #include "gyroTask.h"
 #include "rtosHandles.h"
 #include "output.h"
 
-GyroMode currentMode;
+GyroMode currentGyroMode;
 TaskHandle_t gyroTaskHandle;
 
 volatile uint16_t rawServoPositions[MAX_CHANNELS];
 
 void gyroTask(void *pvParameters) {
-    currentMode = GYRO_MODE_OFF; //TODO use channel data to set this or settings
+    currentGyroMode = GYRO_MODE_NORMAL; //TODO use channel data to set this or settings
     while (1) {
-        if (currentMode == GYRO_MODE_OFF) {
+        if (currentGyroMode == GYRO_MODE_OFF || GYRO_MODE_NORMAL) {
             for (int i = 0; i < MAX_CHANNELS; ++i) {
                 outputServos[i] = rawServoPositions[i];
             }

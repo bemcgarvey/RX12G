@@ -86,6 +86,7 @@
       <itemPath>../src/tasks.h</itemPath>
       <itemPath>../src/gyroTask.h</itemPath>
       <itemPath>../src/settings.h</itemPath>
+      <itemPath>../src/statusLedTask.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -170,6 +171,7 @@
       <itemPath>../src/tasks.c</itemPath>
       <itemPath>../src/gyroTask.c</itemPath>
       <itemPath>../src/settings.c</itemPath>
+      <itemPath>../src/statusLedTask.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

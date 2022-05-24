@@ -1,3 +1,12 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: gyroTask.h                                //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: gyro and stability code            //
+/////////////////////////////////////////////////////
 
 #ifndef GYROTASK_H
 #define	GYROTASK_H
@@ -13,6 +22,7 @@ extern "C" {
         GYRO_MODE_ATTITUDE_LOCK, GYRO_MODE_LAUNCH_ASSIST
     } GyroMode;
     
+    extern GyroMode currentGyroMode;
     extern volatile uint16_t rawServoPositions[MAX_CHANNELS];
     
     void gyroTask(void *pvParameters);

@@ -1,3 +1,13 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: settings.c                                //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: rx and gyro settings               //
+/////////////////////////////////////////////////////
+
 #include "definitions.h"
 #include "settings.h"
 

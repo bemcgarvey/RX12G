@@ -1,33 +1,25 @@
 /////////////////////////////////////////////////////
 // Project: RX12G                                  //
-// File: rtosHandles.h                             //
+// File: statusLedTask.h                           //
 // Target: PIC32MK1024GPK064                       // 
 // Compiler: XC32                                  //
 // Author: Brad McGarvey                           //
 // License: GNU General Public License v3.0        //
-// Description: handles for rtos objects           //
+// Description: status and mode led control        //
 /////////////////////////////////////////////////////
 
-#ifndef RTOSHANDLES_H
-#define	RTOSHANDLES_H
+#ifndef STATUSLEDTASK_H
+#define	STATUSLEDTASK_H
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-    //Queues
-    extern QueueHandle_t rxQueue;
-
-    //Tasks
-    extern TaskHandle_t buttonTaskHandle;
-    extern TaskHandle_t rxTaskHandle;
-    extern TaskHandle_t gyroTaskHandle;
-    extern TaskHandle_t satLedTaskHandle;
-    extern TaskHandle_t statusLedTaskHandle;
+void statusLedTask(void *pvParameters);
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* RTOSHANDLES_H */
+#endif	/* STATUSLEDTASK_H */
 
