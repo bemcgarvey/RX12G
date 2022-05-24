@@ -13,10 +13,15 @@
 #include "satellites.h"
 #include "output.h"
 #include "tasks.h"
+#include "settings.h"
 
 int main ( void )
 {
     SYS_Initialize ( NULL );
+    if (!loadSettings()) {
+        loadDefaultSettings();
+        saveSettings();
+    }
     initQueues();
     startSystemTime();
     initSatellites();

@@ -10,12 +10,9 @@
 #include "definitions.h"
 #include "output.h"
 #include "timers.h"
-
-uint32_t pwmPeriod = 20; //TODO set this from saved settings
+#include "settings.h"
 
 volatile uint16_t outputServos[MAX_CHANNELS];
-uint16_t presetServos[MAX_CHANNELS]; //TODO load from settings
-int failsafeMode = NORMAL_FAILSAFE;
 volatile bool failsafeEngaged = false;
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
@@ -53,7 +50,7 @@ void initOutputs(void) {
         *OCxCONSETRegister[i] = 0x0025;  //OC32 = 1, OCM = 0b101
         *startRegister[i] = startOffsets[i];
     }
-    TMR2_PeriodSet(pwmPeriod * MS_COUNT - 1);
+    TMR2_PeriodSet(((1000 / settings.outputHz) * MS_COUNT) - 1);
     TMR2_CallbackRegister(updatePulses, 0);
     TMR2_Start();
 }
@@ -64,11 +61,11 @@ void disableThrottle(void) {
 }
 
 void engageFailsafe(void) {
-    if (failsafeMode == NORMAL_FAILSAFE) {
+    if (settings.failsafeType == NORMAL_FAILSAFE) {
         disableThrottle();
-    } else if (failsafeMode == PRESET_FAILSAFE) {
+    } else if (settings.failsafeType == PRESET_FAILSAFE) {
         for (int i = 0; i < MAX_CHANNELS; ++i) {
-            outputServos[i] = presetServos[i];
+            outputServos[i] = settings.channelPresets[i];
         }
     }
     failsafeEngaged = true;

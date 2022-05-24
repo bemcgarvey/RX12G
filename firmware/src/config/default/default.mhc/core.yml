@@ -1047,6 +1047,13 @@ children:
       children:
       - type: User
         attributes: {value: '60000000'}
+  - type: Boolean
+    attributes: {id: CONFIG_SYS_CLK_PBCLK2_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: eeprom, value: 'true'}
   - type: String
     attributes: {id: CONFIG_SYS_CLK_PBCLK2_FREQ}
     children:
@@ -1514,13 +1521,20 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: EEPROM_CLOCK_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: eeprom, value: 'true'}
   - type: Integer
     attributes: {id: EEPROM_CLOCK_FREQUENCY}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '0'}
+        attributes: {id: core, value: '60000000'}
   - type: Boolean
     attributes: {id: EVIC_0_ENABLE}
     children:
@@ -2719,6 +2733,13 @@ children:
       children:
       - type: User
         attributes: {value: RANGE_13_26_MHZ}
+  - type: Hex
+    attributes: {id: PMD1_REG_VALUE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '369'}
   - type: Hex
     attributes: {id: PMD4_REG_VALUE}
     children:

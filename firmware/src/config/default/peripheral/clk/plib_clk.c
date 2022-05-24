@@ -98,7 +98,7 @@ void CLK_Initialize( void )
     /* Peripheral Module Disable Configuration */
 
 /*
-    PMD1 = 0x371;
+    PMD1 = 0x171;
     PMD2 = 0x17001f;
     PMD3 = 0xffffffff;
     PMD4 = 0xfff001c;

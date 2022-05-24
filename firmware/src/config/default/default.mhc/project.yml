@@ -41,13 +41,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 972E955D94A63BA89BF6ABD6AADB1023
-- generatedChecksum: DA19A92AE07461AEDA1F4AC02A0A9B07
+- generatedChecksum: 8C08445D87251774F49C553FEABF6E70
   logicalPath: config/default
   name: initialization.c
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: DA19A92AE07461AEDA1F4AC02A0A9B07
+  userChecksum: 8C08445D87251774F49C553FEABF6E70
 - generatedChecksum: E753CCEC8C2A7C48C47E20A0EA2F3F28
   logicalPath: config/default
   name: interrupts.c
@@ -83,13 +83,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 8FDD6248506F28B32C4F5FD9AA0D9C6F
-- generatedChecksum: 54AE333AF2713D947A028353D265D8BC
+- generatedChecksum: 33919D2A21F53FD06E9427315EE85D19
   logicalPath: config/default/peripheral/clk
   name: plib_clk.c
   physicalPath: peripheral/clk
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 8032627C37F0AC4261E7640D745F4E5C
+  userChecksum: 5DFCE5EBCFAA265CFD4E18249320B4D4
 - generatedChecksum: F8BB2BAA74068083A80E6E229BBCF3E3
   logicalPath: config/default/peripheral/coretimer
   name: plib_coretimer.c
@@ -104,6 +104,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: C8E14775DDE7943B12EFDA9A895DACD8
+- generatedChecksum: F0F77E9605002F86303776FD504751EB
+  logicalPath: config/default/peripheral/eeprom
+  name: plib_eeprom.c
+  physicalPath: peripheral/eeprom
+  security: NON_SECURE
+  type: SOURCE
+  userChecksum: F0F77E9605002F86303776FD504751EB
 - generatedChecksum: BCFF78F70078235CFB27F9EF756057EA
   logicalPath: config/default/peripheral/evic
   name: plib_evic.c
@@ -216,13 +223,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 48B661D8C967C6BC397001F10FB43D1D
-- generatedChecksum: 2ED83C8EA51AB82208ECB3A69F62804F
+- generatedChecksum: 67A6600F986E6220C33AE75B00B58302
   logicalPath: config/default
   name: definitions.h
   physicalPath: ''
   security: NON_SECURE
   type: HEADER
-  userChecksum: 2ED83C8EA51AB82208ECB3A69F62804F
+  userChecksum: 67A6600F986E6220C33AE75B00B58302
 - generatedChecksum: 1EA4EDD5EA90F43EC407DE32441159A9
   logicalPath: FreeRTOS/Source/include
   name: deprecated_definitions.h
@@ -321,6 +328,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: AC36F429D7162D7D1A68B9955ED194A3
+- generatedChecksum: B97B50D5217602B30A68AA8AA5D77BFB
+  logicalPath: config/default/peripheral/eeprom
+  name: plib_eeprom.h
+  physicalPath: peripheral/eeprom
+  security: NON_SECURE
+  type: HEADER
+  userChecksum: B97B50D5217602B30A68AA8AA5D77BFB
 - generatedChecksum: 8523A870D93A9CD1B51CC6515BA9D042
   logicalPath: config/default/peripheral/evic
   name: plib_evic.h

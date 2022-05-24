@@ -185,6 +185,8 @@ void SYS_Initialize ( void* data )
 
     TMR2_Initialize();
 
+    EEPROM_Initialize();
+
     DMAC_Initialize();
 
     TMR8_Initialize();
