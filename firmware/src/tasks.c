@@ -18,12 +18,9 @@
 #include "satellites.h"
 
 QueueHandle_t rxQueue;
-QueueHandle_t rawServoQueue;
-
 
 void initQueues(void) {
     rxQueue = xQueueCreate(6, 16);  //TODO find best length for this
-    rawServoQueue = xQueueCreate(1, MAX_CHANNELS * sizeof(uint16_t));
 }
 
 void initTasks(void) {

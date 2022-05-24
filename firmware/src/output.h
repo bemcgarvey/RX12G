@@ -27,13 +27,10 @@ extern "C" {
         AUX2 = 6, AUX3 = 7, AUX4 = 8, AUX5 = 9, AUX6 = 10, AUX7 = 11
     };
 
-    extern uint16_t outputServos[MAX_CHANNELS];
-    extern bool outputsActive;
+    extern volatile uint16_t outputServos[MAX_CHANNELS];
     
     void initOutputs(void);
-    void enableActiveOutputs(void);
     void disableThrottle(void);
-    void enableThrottle(void);
 
 #ifdef	__cplusplus
 }

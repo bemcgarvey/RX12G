@@ -13,9 +13,9 @@
 #include "output.h"
 #include "timers.h"
 #include "rtosHandles.h"
+#include "gyroTask.h"
 
 TaskHandle_t rxTaskHandle;
-static uint16_t rawServoPositions[MAX_CHANNELS];
 
 void rxTask(void *pvParameters) {
     for (int i = 0; i < MAX_CHANNELS; ++i) {
@@ -39,7 +39,6 @@ void rxTask(void *pvParameters) {
                     rawServoPositions[channel] = channelData & 0x07ff;
                 }
             }
-            xQueueOverwrite(rawServoQueue, rawServoPositions);
         }
     }
 }

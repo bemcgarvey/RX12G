@@ -13,9 +13,7 @@
 
 uint32_t pwmPeriod = 20; //TODO set this from saved settings
 
-bool outputsActive = false;
-
-uint16_t outputServos[MAX_CHANNELS];
+volatile uint16_t outputServos[MAX_CHANNELS];
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
     0, OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET};
@@ -83,29 +81,21 @@ void initOutputs(void) {
     }
     TMR2_PeriodSet(pwmPeriod * MS_COUNT - 1);
     TMR2_CallbackRegister(updatePulses, 0);
-}
-
-void enableActiveOutputs(void) {
-    for (int i = 0; i < NUM_OUTPUTS; ++i) {
-        if (outputServos[i] != 0xffff) {
-            *OCxCONSETRegister[i] = 0x8000; //ON bit
-        }
-    }
     TMR2_Start();
-    outputsActive = true;
-    //TODO make sure first pulse is correct
 }
 
 void disableThrottle(void) {
-    *OCxCONCLRRegister[THROTTLE] = 0x8000; //clear ON bit
+    outputServos[THROTTLE] = 0xffff;
 }
 
-void enableThrottle(void) {
-    *OCxCONSETRegister[THROTTLE] = 0x8000; //set ON bit
-}
-
+//TODO make sure first pulse is correct
 void updatePulses(uint32_t status, uintptr_t context) {
-    for (int i = 0; i < NUM_OUTPUTS; ++i) {
+    for (int i = 0; i < NUM_OUTPUTS; ++i) {  //TODO only update outputs not used by S.Bus
+        if (outputServos[i] & 0x8000) {  //Out of range
+            *OCxCONCLRRegister[i] = 0x8000; //clear ON bit
+        } else {
+            *OCxCONSETRegister[i] = 0x8000; //set ON bit
+        }
         uint32_t out = ((1194 * US_COUNT) * outputServos[i]) / 2048;
         *pulseRegister[i] = out + pulseOffsets[i];
     }
