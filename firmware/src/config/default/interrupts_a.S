@@ -88,6 +88,24 @@ IntVectorEXTERNAL_3_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorEXTERNAL_3_Handler
+    .extern  TIMER_5_Handler
+
+    .section   .vector_24,code, keep
+    .equ     __vector_dispatch_24, IntVectorTIMER_5_Handler
+    .global  __vector_dispatch_24
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorTIMER_5_Handler
+
+IntVectorTIMER_5_Handler:
+    portSAVE_CONTEXT
+    la    s6,  TIMER_5_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorTIMER_5_Handler
     .extern  UART4_FAULT_Handler
 
     .section   .vector_65,code, keep

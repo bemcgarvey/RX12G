@@ -15,6 +15,8 @@
 #include "tasks.h"
 #include "settings.h"
 
+//BUG sometimes channel 15 is getting a value of 0x7ff
+
 int main ( void )
 {
     SYS_Initialize ( NULL );
@@ -22,6 +24,7 @@ int main ( void )
         loadDefaultSettings();
         saveSettings();
     }
+    settings.numSBusOutputs = 1; //TODO remove
     initQueues();
     startSystemTime();
     initSatellites();

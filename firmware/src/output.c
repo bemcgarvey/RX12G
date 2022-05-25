@@ -11,9 +11,11 @@
 #include "output.h"
 #include "timers.h"
 #include "settings.h"
+#include "sbus.h"
 
 volatile uint16_t outputServos[MAX_CHANNELS];
 volatile bool failsafeEngaged = false;
+int numPWMOutputs = NUM_OUTPUTS;
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
     0, OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET};
@@ -50,9 +52,11 @@ void initOutputs(void) {
         *OCxCONSETRegister[i] = 0x0025;  //OC32 = 1, OCM = 0b101
         *startRegister[i] = startOffsets[i];
     }
+    numPWMOutputs = NUM_OUTPUTS - settings.numSBusOutputs;
     TMR2_PeriodSet(((1000 / settings.outputHz) * MS_COUNT) - 1);
     TMR2_CallbackRegister(updatePulses, 0);
     TMR2_Start();
+    initSBus();
 }
 
 void disableThrottle(void) {
@@ -72,7 +76,7 @@ void engageFailsafe(void) {
 }
 
 void updatePulses(uint32_t status, uintptr_t context) {
-    for (int i = 0; i < NUM_OUTPUTS; ++i) { //TODO only update outputs not used by S.Bus
+    for (int i = 0; i < numPWMOutputs; ++i) {
         if (outputServos[i] != 0xffff && !failsafeEngaged) {
             if (!(*OCxCONRegister[i] & 0x8000)) {
                 *OCxCONSETRegister[i] = 0x8000; //set ON bit
@@ -82,5 +86,3 @@ void updatePulses(uint32_t status, uintptr_t context) {
         *pulseRegister[i] = out + pulseOffsets[i];
     }
 }
-
-//TODO handle S.Bus here based on outputServos[]

@@ -282,6 +282,24 @@ void DMAC_Initialize( void )
     DCH2INT = 0xb0000;
 
 
+    /* DMA channel 3 configuration */
+    /* CHPRI = 3, CHAEN= 0, CHCHN= 0, CHCHNS= 0x0, CHAED= 0 */
+    DCH3CON = 0x3;
+    /* CHSIRQ = 64, SIRQEN = 1 */
+    DCH3ECON = 0x4010;
+    /* CHBCIE = 1, CHTAIE=1, CHERIE=1, CHSHIE= 0, CHDHIE= 0 */
+    DCH3INT = 0xb0000;
+
+
+    /* DMA channel 4 configuration */
+    /* CHPRI = 3, CHAEN= 0, CHCHN= 0, CHCHNS= 0x0, CHAED= 0 */
+    DCH4CON = 0x3;
+    /* CHSIRQ = 40, SIRQEN = 1 */
+    DCH4ECON = 0x2810;
+    /* CHBCIE = 1, CHTAIE=1, CHERIE=1, CHSHIE= 0, CHDHIE= 0 */
+    DCH4INT = 0xb0000;
+
+
     /* Enable DMA channel interrupts */
     IEC2SET = 0 | 0x100 | 0x200 | 0x400;
 

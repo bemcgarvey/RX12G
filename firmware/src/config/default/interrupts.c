@@ -62,6 +62,7 @@
 
 void TIMER_2_InterruptHandler( void );
 void EXTERNAL_3_InterruptHandler( void );
+void TIMER_5_InterruptHandler( void );
 void DMA0_InterruptHandler( void );
 void DMA1_InterruptHandler( void );
 void DMA2_InterruptHandler( void );
@@ -83,6 +84,11 @@ void TIMER_2_Handler (void)
 void EXTERNAL_3_Handler (void)
 {
     EXTERNAL_3_InterruptHandler();
+}
+
+void TIMER_5_Handler (void)
+{
+    TIMER_5_InterruptHandler();
 }
 
 void UART4_FAULT_Handler (void)
