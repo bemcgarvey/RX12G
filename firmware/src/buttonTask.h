@@ -15,6 +15,7 @@
 extern "C" {
 #endif
 
+    extern volatile bool isBinding;
     void buttonTask(void *pvParameters);
 
 #ifdef	__cplusplus

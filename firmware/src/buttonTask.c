@@ -14,6 +14,7 @@
 #include "satellites.h"
 #include "uart.h"
 
+volatile bool isBinding = false;
 TaskHandle_t buttonTaskHandle;
 
 void buttonHandler(EXTERNAL_INT_PIN pin, uintptr_t context) {
@@ -29,7 +30,7 @@ void buttonTask(void *pvParameters) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         vTaskDelay(2000);
         if (BIND_BUTTON_Get() == 0) {
-            LED_B_Set();
+            isBinding = true;
             bindSats();
             while (1) {
                 int n = ulTaskNotifyTake(pdTRUE, 100);
@@ -43,7 +44,7 @@ void buttonTask(void *pvParameters) {
                     break;
                 }
             }
-            LED_B_Clear();
+            isBinding = false;
         }
     }
 }

@@ -28,7 +28,6 @@ void initTasks(void) {
     xTaskCreate(buttonTask, "button", 128, NULL, 5, &buttonTaskHandle);
     xTaskCreate(rxTask, "rxtask", 128, NULL, 4, &rxTaskHandle);
     xTaskCreate(gyroTask, "gyroTask", 1024, NULL, 2, &gyroTaskHandle);
-    xTaskCreate(satLedTask, "satLedTask", 128, NULL, 1, &satLedTaskHandle);
     xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, 1, &statusLedTaskHandle);
     vTaskStartScheduler();
 }

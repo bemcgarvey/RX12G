@@ -13,6 +13,9 @@
 #include "rtosHandles.h"
 #include "output.h"
 #include "gyroTask.h"
+#include "buttonTask.h"
+#include "satellites.h"
+#include "uart.h"
 
 TaskHandle_t statusLedTaskHandle;
 
@@ -21,10 +24,42 @@ typedef enum {
 } LedState;
 
 void statusLedTask(void *pvParameters) {
+    bool activity;
     LedState LED_A_State = LED_OFF;
     LedState LED_B_State = LED_OFF;
     int blinkCount = 0;
     while (1) {
+        //Check sat activity and set LEDs and failsafe
+        activity = false;
+        uint32_t time = getSystemTime();
+        if (time - lastRxTime[SAT1] < 100) {
+            SAT1_LED_Set();
+            activity = true;
+            failsafeEngaged = false;
+        } else {
+            SAT1_LED_Clear();
+        }
+        if (time - lastRxTime[SAT2] < 100) {
+            SAT2_LED_Set();
+            activity = true;
+            failsafeEngaged = false;
+        } else {
+            SAT2_LED_Clear();
+        }
+        if (time - lastRxTime[SAT3] < 100) {
+            SAT3_LED_Set();
+            activity = true;
+            failsafeEngaged = false;
+        } else {
+            SAT3_LED_Clear();
+        }
+        if (!activity) {
+            if (!failsafeEngaged) {
+                engageFailsafe();
+            }
+        }
+        
+        //Set status LEDs
         switch (currentGyroMode) {
             case GYRO_MODE_OFF:
                 LED_A_State = LED_OFF;
@@ -48,9 +83,13 @@ void statusLedTask(void *pvParameters) {
                 LED_A_State = LED_OFF;
                 LED_B_State = LED_OFF;
         }
-        if (failsafeEngaged) {
+        if (isBinding) {
             LED_A_State = LED_BLINK_FAST;
             LED_B_State = LED_BLINK_FAST;
+        }
+        else if (failsafeEngaged) {
+            LED_A_State = LED_BLINK_SLOW;
+            LED_B_State = LED_BLINK_SLOW;
         }
         switch (LED_A_State) {
             case LED_OFF:
@@ -76,7 +115,7 @@ void statusLedTask(void *pvParameters) {
                 LED_B_Set();
                 break;
             case LED_BLINK_SLOW:
-                if (blinkCount % 5 == 0) {
+                if (blinkCount % 10 == 0) {
                     LED_B_Toggle();
                 }
                 break;
