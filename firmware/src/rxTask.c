@@ -29,6 +29,9 @@ void rxTask(void *pvParameters) {
             for (int i = 1; i < 8; ++i) {
                 uint16_t channelData = (buffer[i] >> 8) | (buffer[i] << 8);
                 uint16_t channel = (channelData >> 11) & 0x000f;
+                if (channel > 12) {
+                    continue;
+                }
                 if (channel == 12) { //XPlus channels - this is not tested!
                     channel += (channelData >> 9) & 0x0003;
                     if (channelData & 0x80) { //phase = 1
