@@ -87,3 +87,5 @@ target_wrapper.*
 CMakeLists.txt.user*
 *.exe
 *appdatalocaltemp*
+**/Release
+**/Debug
