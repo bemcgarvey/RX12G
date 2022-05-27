@@ -9,14 +9,24 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    HidUSBLink.cpp \
+    QHidWatcher.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    HidUSBLink.h \
+    QHidWatcher.h \
+    RX12G.h \
     mainwindow.h
 
 FORMS += \
     mainwindow.ui
+
+
+win32: LIBS += -lhid
+win32: LIBS += -lsetupapi
+win32: LIBS += -luser32
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

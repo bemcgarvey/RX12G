@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
+#include "QHidWatcher.h"
+#include "HidUSBLink.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,6 +19,17 @@ public:
     ~MainWindow();
 
 private:
+    QLabel *connectLabel;
+    QHidWatcher* hidWatcher;
+    HidUSBLink usb;
     Ui::MainWindow *ui;
+
+private slots:
+    void onUsbConnected();
+    void onUsbRemoved();
+    void on_loadPushButton_clicked();
+    void on_connectPushButton_clicked();
+    void on_savePushButton_clicked();
 };
+
 #endif // MAINWINDOW_H

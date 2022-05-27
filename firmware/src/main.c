@@ -24,6 +24,7 @@ int main ( void )
         LED_A_Set();
         USBMain();
     }
+    while (1);
     if (!loadSettings()) {
         loadDefaultSettings();
         saveSettings();

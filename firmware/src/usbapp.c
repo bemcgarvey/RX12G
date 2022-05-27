@@ -49,10 +49,11 @@ USB_DEVICE_HID_EVENT_RESPONSE APP_USBDeviceHIDEventHandler
             /* The eventData parameter will be USB_DEVICE_HID_EVENT_REPORT_RECEIVED
              * pointer type containing details about the report that was
              * received. */
-
+            SAT3_LED_Toggle();
             reportReceived = (USB_DEVICE_HID_EVENT_DATA_REPORT_RECEIVED *) eventData;
             if(reportReceived->handle == appData.rxTransferHandle )
             {
+                SAT2_LED_Toggle();
                 // Transfer progressed.
                 appData.hidDataReceived = true;
             }
@@ -214,65 +215,74 @@ void APP_Tasks (void )
             }
             else if( appData.hidDataReceived )
             {
+                USB_DEVICE_HID_ReportReceive (USB_DEVICE_HID_INDEX_0,
+                                &appData.rxTransferHandle, receiveDataBuffer, 64 );
+                if (receiveDataBuffer[0] == 0x80) {
+                    LED_B_Toggle();
+                }
+                if (receiveDataBuffer[0] == 0x81) {
+                    LED_A_Toggle();
+                }
+                appData.hidDataReceived = false;
                 /* Look at the data the host sent, to see what
                  * kind of application specific command it sent. */
 
-                switch(appData.receiveDataBuffer[0])
-                {
-                    case 0x80:
-
-                        LED_B_Toggle();
-
-                        appData.hidDataReceived = false;
-
-                        /* Place a new read request. */
-                        USB_DEVICE_HID_ReportReceive (USB_DEVICE_HID_INDEX_0,
-                                &appData.rxTransferHandle, appData.receiveDataBuffer, 64 );
-
-                        break;
-
-                    case 0x81:
-
-                        if(appData.hidDataTransmitted)
-                        {
-                            /* Echo back to the host PC the command we are fulfilling in
-                             * the first byte.  In this case, the Get Push-button State
-                             * command. */
-
-                            appData.transmitDataBuffer[0] = 0x81;
-
-                            if(BIND_BUTTON_Get() == 0)
-                            {
-                                appData.transmitDataBuffer[1] = 0x00;
-                            }
-                            else
-                            {
-                                appData.transmitDataBuffer[1] = 0x01;
-                            }
-
-                            appData.hidDataTransmitted = false;
-
-                            /* Prepare the USB module to send the data packet to the host */
-                            USB_DEVICE_HID_ReportSend (USB_DEVICE_HID_INDEX_0,
-                                    &appData.txTransferHandle, appData.transmitDataBuffer, 64 );
-
-                            appData.hidDataReceived = false;
-
-                            /* Place a new read request. */
-                            USB_DEVICE_HID_ReportReceive (USB_DEVICE_HID_INDEX_0,
-                                    &appData.rxTransferHandle, appData.receiveDataBuffer, 64 );
-                        }
-                        break;
-
-                    default:
-
-                        appData.hidDataReceived = false;
-
-                        /* Place a new read request. */
-                        USB_DEVICE_HID_ReportReceive (USB_DEVICE_HID_INDEX_0,
-                                &appData.rxTransferHandle, appData.receiveDataBuffer, 64 );
-                        break;
-                }
+//                switch(appData.receiveDataBuffer[0])
+//                {
+//                    case 0x80:
+//
+//                        SAT1_LED_Toggle();
+//
+//                        appData.hidDataReceived = false;
+//
+//                        /* Place a new read request. */
+//                        USB_DEVICE_HID_ReportReceive (USB_DEVICE_HID_INDEX_0,
+//                                &appData.rxTransferHandle, appData.receiveDataBuffer, 64 );
+//
+//                        break;
+//
+//                    case 0x81:
+//
+//                        if(appData.hidDataTransmitted)
+//                        {
+//                            /* Echo back to the host PC the command we are fulfilling in
+//                             * the first byte.  In this case, the Get Push-button State
+//                             * command. */
+//
+//                            appData.transmitDataBuffer[0] = 0x81;
+//
+//                            if(BIND_BUTTON_Get() == 0)
+//                            {
+//                                appData.transmitDataBuffer[1] = 0x00;
+//                            }
+//                            else
+//                            {
+//                                appData.transmitDataBuffer[1] = 0x01;
+//                            }
+//
+//                            appData.hidDataTransmitted = false;
+//
+//                            /* Prepare the USB module to send the data packet to the host */
+//                            USB_DEVICE_HID_ReportSend (USB_DEVICE_HID_INDEX_0,
+//                                    &appData.txTransferHandle, appData.transmitDataBuffer, 64 );
+//
+//                            appData.hidDataReceived = false;
+//
+//                            /* Place a new read request. */
+//                            USB_DEVICE_HID_ReportReceive (USB_DEVICE_HID_INDEX_0,
+//                                    &appData.rxTransferHandle, appData.receiveDataBuffer, 64 );
+//                        }
+//                        break;
+//
+//                    default:
+//
+//                        appData.hidDataReceived = false;
+//
+//                        /* Place a new read request. */
+//                        USB_DEVICE_HID_ReportReceive (USB_DEVICE_HID_INDEX_0,
+//                                &appData.rxTransferHandle, appData.receiveDataBuffer, 64 );
+//                        break;
+//                }
             }
         case APP_STATE_ERROR:
             break;
