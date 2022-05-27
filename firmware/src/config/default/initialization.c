@@ -217,22 +217,22 @@ void SYS_Initialize ( void* data )
 
 	GPIO_Initialize();
 
-    //DMAC_Initialize();
+    DMAC_Initialize();
 
-    //CORETIMER_Initialize();
-    //TMR6_Initialize();
+    CORETIMER_Initialize();
+    TMR6_Initialize();
 
-//    TMR7_Initialize();
-//
-//    TMR5_Initialize();
-//
-//    EEPROM_Initialize();
-//
-//    TMR2_Initialize();
-//
-//    TMR8_Initialize();
-//
-//    TMR9_Initialize();
+    TMR7_Initialize();
+
+    TMR5_Initialize();
+
+    EEPROM_Initialize();
+
+    TMR2_Initialize();
+
+    TMR8_Initialize();
+
+    TMR9_Initialize();
 
 
 

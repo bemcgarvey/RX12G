@@ -39,12 +39,6 @@ typedef struct
       /* Device layer handle returned by device layer open function */
     USB_DEVICE_HANDLE  usbDevHandle;
 
-    /* Recieve data buffer */
-    uint8_t * receiveDataBuffer;
-
-    /* Transmit data buffer */
-    uint8_t * transmitDataBuffer;
-
     /* Device configured */
     bool deviceConfigured;
 

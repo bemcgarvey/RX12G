@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "RX12G.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), usb(64, false)
@@ -60,5 +61,11 @@ void MainWindow::on_savePushButton_clicked()
     uint8_t buffer[64];
     buffer[0] = 0x81;
     usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    if (buffer[1] == 0) {
+        QMessageBox::information(this, "Button", "Pressed");
+    } else {
+       QMessageBox::information(this, "Button", "Not Pressed");
+    }
 }
 
