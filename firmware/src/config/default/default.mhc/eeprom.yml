@@ -12,4 +12,4 @@ children:
       - type: Dynamic
         attributes: {id: eeprom, value: '2'}
 - type: ElementPosition
-  attributes: {x: '352', y: '203', id: eeprom}
+  attributes: {x: '19', y: '182', id: eeprom}

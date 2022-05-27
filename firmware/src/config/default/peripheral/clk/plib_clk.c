@@ -90,7 +90,16 @@ void CLK_Initialize( void )
     SYSKEY = 0x556699AA;
 
  
-        /* Disable Peripheral Bus 6 */
+      
+    /* Configure UPLL */
+    /* UPOSCEN = UPLL */
+    /* PLLODIV = DIV_8 */
+    /* PLLMULT = MUL_16 */
+    /* PLLIDIV = DIV_1 */
+    /* PLLRANGE = RANGE_13_26_MHZ */
+    UPLLCON = 0x30f0003;
+
+    /* Disable Peripheral Bus 6 */
     PB6DIVCLR = 0x00008000;
 
   
@@ -102,7 +111,7 @@ void CLK_Initialize( void )
     PMD2 = 0x17001f;
     PMD3 = 0xffffffff;
     PMD4 = 0xfff000c;
-    PMD5 = 0xf30f3f3f;
+    PMD5 = 0xf20f3f3f;
     PMD6 = 0xf0d0000;
     PMD7 = 0x0;
 */

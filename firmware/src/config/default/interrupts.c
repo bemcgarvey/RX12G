@@ -49,6 +49,7 @@
 // *****************************************************************************
 // *****************************************************************************
 
+#include "configuration.h"
 #include "interrupts.h"
 #include "definitions.h"
 
@@ -63,6 +64,7 @@
 void TIMER_2_InterruptHandler( void );
 void EXTERNAL_3_InterruptHandler( void );
 void TIMER_5_InterruptHandler( void );
+void DRV_USBFS_USB1_Handler( void );
 void DMA0_InterruptHandler( void );
 void DMA1_InterruptHandler( void );
 void DMA2_InterruptHandler( void );
@@ -89,6 +91,11 @@ void EXTERNAL_3_Handler (void)
 void TIMER_5_Handler (void)
 {
     TIMER_5_InterruptHandler();
+}
+
+void USB_1_Handler (void)
+{
+    DRV_USBFS_USB1_Handler();
 }
 
 void UART4_FAULT_Handler (void)
@@ -176,6 +183,7 @@ void UART6_RX_Handler (void)
     (void) rx;
     IFS5bits.U6RXIF = 0;
 }
+
 
 
 

@@ -106,6 +106,24 @@ IntVectorTIMER_5_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorTIMER_5_Handler
+    .extern  USB_1_Handler
+
+    .section   .vector_34,code, keep
+    .equ     __vector_dispatch_34, IntVectorUSB_1_Handler
+    .global  __vector_dispatch_34
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorUSB_1_Handler
+
+IntVectorUSB_1_Handler:
+    portSAVE_CONTEXT
+    la    s6,  USB_1_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorUSB_1_Handler
     .extern  UART4_FAULT_Handler
 
     .section   .vector_65,code, keep

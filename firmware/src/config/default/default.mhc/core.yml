@@ -1132,7 +1132,7 @@ children:
     - type: Values
       children:
       - type: User
-        attributes: {value: 'OFF'}
+        attributes: {value: 'ON'}
   - type: Boolean
     attributes: {id: CORE_SOFTWARE_0_INTERRUPT_ENABLE}
     children:
@@ -1969,6 +1969,27 @@ children:
       children:
       - type: Dynamic
         attributes: {id: core, value: '24'}
+  - type: Boolean
+    attributes: {id: EVIC_34_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: EVIC_34_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: EVIC_34_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: DRV_USBFS_USB1_Handler}
   - type: Boolean
     attributes: {id: EVIC_40_ENABLE}
     children:
@@ -3068,7 +3089,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '4077862719'}
+        attributes: {id: core, value: '4061085503'}
   - type: Hex
     attributes: {id: PMD6_REG_VALUE}
     children:
@@ -3124,7 +3145,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '120000000'}
+        attributes: {id: core, value: '6000000'}
   - type: Integer
     attributes: {id: RTCC_CLOCK_FREQUENCY}
     children:
@@ -4173,14 +4194,49 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: 'false'}
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: USB1_CLOCK_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: drv_usbfs_index_0, value: 'true'}
   - type: Integer
     attributes: {id: USB1_CLOCK_FREQUENCY}
     children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '0'}
+        attributes: {id: core, value: '120000000'}
+  - type: Boolean
+    attributes: {id: USB_1_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: drv_usbfs_index_0, value: 'true'}
+  - type: Boolean
+    attributes: {id: USB_1_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: USB_1_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: drv_usbfs_index_0, value: DRV_USBFS_USB1_Handler}
+  - type: Boolean
+    attributes: {id: USB_1_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: drv_usbfs_index_0, value: 'true'}
   - type: Boolean
     attributes: {id: USE_PPS_INPUT_0}
     children:

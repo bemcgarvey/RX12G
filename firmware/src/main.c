@@ -14,10 +14,16 @@
 #include "output.h"
 #include "tasks.h"
 #include "settings.h"
+#include "usbmain.h"
 
 int main ( void )
 {
     SYS_Initialize ( NULL );
+    CORETIMER_DelayMs(30);
+    if (U1OTGSTATbits.VBUSVD == 1) {
+        LED_A_Set();
+        USBMain();
+    }
     if (!loadSettings()) {
         loadDefaultSettings();
         saveSettings();
