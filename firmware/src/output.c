@@ -69,7 +69,7 @@ void engageFailsafe(void) {
         disableThrottle();
     } else if (settings.failsafeType == PRESET_FAILSAFE) {
         for (int i = 0; i < MAX_CHANNELS; ++i) {
-            outputServos[i] = settings.channelPresets[i];
+            outputServos[i] = channelPresets[i];
         }
     }
     failsafeEngaged = true;

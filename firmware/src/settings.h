@@ -16,19 +16,22 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    typedef struct __attribute__((packed)) {
-        uint16_t outputHz;
-        uint16_t channelPresets[MAX_CHANNELS];
-        uint8_t sBusPeriodMs;
-        uint8_t numSBusOutputs;
-        uint8_t failsafeType;
+    typedef struct {
+        uint32_t outputHz;
+        uint32_t sBusPeriodMs;
+        uint32_t numSBusOutputs;
+        uint32_t failsafeType;
     } Settings;
 
+    extern uint16_t channelPresets[MAX_CHANNELS];
+    
     extern Settings settings;
     
     uint32_t calculateCRC(void *data, int len);
     bool loadSettings(void);
     bool saveSettings(void);
+    bool loadPresets(void);
+    bool savePresets(void);
     void loadDefaultSettings(void);
     
 #ifdef	__cplusplus

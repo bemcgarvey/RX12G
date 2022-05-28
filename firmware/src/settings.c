@@ -12,8 +12,10 @@
 #include "settings.h"
 
 #define SETTINGS_ADDRESS    0
+#define PRESET_ADDRESS      0x200
 
 Settings settings;
+uint16_t channelPresets[MAX_CHANNELS];
 
 uint32_t calculateCRC(void *data, int len) {
     uint32_t crc = 0x12345678;
@@ -66,12 +68,20 @@ bool saveSettings(void) {
 }
 
 void loadDefaultSettings(void) {
-    settings.numSBusOutputs = 0;
     settings.outputHz = 50;
     settings.sBusPeriodMs = 7;
     settings.numSBusOutputs = 0;
     settings.failsafeType = NORMAL_FAILSAFE;
+}
+
+bool loadPresets(void) {
     for (int i = 0; i < MAX_CHANNELS; ++i) {
-        settings.channelPresets[i] = 0xffff;
+        channelPresets[i] = 0xffff;  //TODO load this from EEPROM
     }
+    return true;
+}
+    
+bool savePresets(void) {
+    //TODO save to EEPROM
+    return true;
 }

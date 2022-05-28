@@ -8,7 +8,7 @@
 // Description: main                               //
 /////////////////////////////////////////////////////
 
-#include "definitions.h"                // SYS function prototypes
+#include "definitions.h"  
 #include "timers.h"
 #include "satellites.h"
 #include "output.h"
@@ -22,6 +22,7 @@ int main(void) {
         loadDefaultSettings();
         saveSettings();
     }
+    loadPresets();
     CORETIMER_DelayMs(30);
     if (U1OTGSTATbits.VBUSVD == 1) {
         startMode = START_USB;

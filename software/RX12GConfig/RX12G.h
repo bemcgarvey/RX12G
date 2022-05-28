@@ -23,12 +23,11 @@ enum {
 
 #define MAX_CHANNELS    20
 
-typedef struct __attribute__((packed)) {
-    uint16_t outputHz;
-    uint16_t channelPresets[MAX_CHANNELS];
-    uint8_t sBusPeriodMs;
-    uint8_t numSBusOutputs;
-    uint8_t failsafeType;
+typedef struct {
+    uint32_t outputHz;
+    uint32_t sBusPeriodMs;
+    uint32_t numSBusOutputs;
+    uint32_t failsafeType;
 } Settings;
 
 uint32_t calculateCRC(void *data, int len);

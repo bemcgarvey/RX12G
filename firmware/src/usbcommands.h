@@ -19,7 +19,8 @@ extern "C" {
         GET_CHANNELS = 0x03,
         SET_PRESETS = 0x04,
         CMD_ACK = 0x80,
-        CMD_NACK = 0x7f
+        CMD_NACK = 0x7f,
+        REBOOT = 0x88
     };
 
 
