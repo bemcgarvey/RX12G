@@ -24,7 +24,7 @@ private:
     HidUSBLink usb;
     Ui::MainWindow *ui;
     uint8_t buffer[64];
-
+    uint32_t calculateChecksum(uint32_t *data, int len);
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
@@ -33,6 +33,8 @@ private slots:
     void on_savePushButton_clicked();
     void on_actionExit_triggered();
     void on_sbusEnableCheckBox_stateChanged(int arg1);
+    void on_normalFailsafeRadioButton_clicked();
+    void on_presetFailsafeRadioButton_clicked();
 };
 
 #endif // MAINWINDOW_H

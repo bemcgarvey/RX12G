@@ -24,56 +24,96 @@
        <attribute name="title">
         <string>Receiver</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QGroupBox" name="servoSettingsGroupBox">
-            <property name="title">
-             <string>Servo Settings</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Servo Output Rate</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="servoRateComboBox">
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QGroupBox" name="servoSettingsGroupBox">
+              <property name="title">
+               <string>Servo Settings</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
                <item>
-                <property name="text">
-                 <string>50Hz</string>
-                </property>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Servo Output Rate</string>
+                 </property>
+                </widget>
                </item>
                <item>
-                <property name="text">
-                 <string>100Hz</string>
-                </property>
+                <widget class="QComboBox" name="servoRateComboBox">
+                 <item>
+                  <property name="text">
+                   <string>50Hz</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>100Hz</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>200Hz</string>
+                  </property>
+                 </item>
+                </widget>
                </item>
                <item>
-                <property name="text">
-                 <string>200Hz</string>
-                </property>
+                <spacer name="verticalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="failsafeGroupBox">
+              <property name="title">
+               <string>Failsafe</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <item>
+                <widget class="QRadioButton" name="normalFailsafeRadioButton">
+                 <property name="text">
+                  <string>Normal</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="presetFailsafeRadioButton">
+                 <property name="text">
+                  <string>Preset</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="savePresetsPushButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Save presets</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QGroupBox" name="sbusSettingsGroupBox">
@@ -129,7 +169,7 @@
               </widget>
              </item>
              <item>
-              <spacer name="verticalSpacer_2">
+              <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
@@ -166,7 +206,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout">
            <item row="1" column="3">
-            <widget class="QProgressBar" name="progressBar_8">
+            <widget class="QProgressBar" name="ch8ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -193,7 +233,7 @@
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QProgressBar" name="progressBar_5">
+            <widget class="QProgressBar" name="ch5ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -206,7 +246,7 @@
             </widget>
            </item>
            <item row="5" column="1">
-            <widget class="QProgressBar" name="progressBar_6">
+            <widget class="QProgressBar" name="ch6ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -219,7 +259,7 @@
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QProgressBar" name="progressBar_4">
+            <widget class="QProgressBar" name="ch4ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -232,7 +272,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QProgressBar" name="progressBar">
+            <widget class="QProgressBar" name="ch1ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -248,7 +288,7 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QProgressBar" name="progressBar_3">
+            <widget class="QProgressBar" name="ch3ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -261,7 +301,7 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QProgressBar" name="progressBar_2">
+            <widget class="QProgressBar" name="ch2ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -281,7 +321,7 @@
             </widget>
            </item>
            <item row="0" column="3">
-            <widget class="QProgressBar" name="progressBar_7">
+            <widget class="QProgressBar" name="ch7ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -308,7 +348,7 @@
             </widget>
            </item>
            <item row="5" column="3">
-            <widget class="QProgressBar" name="progressBar_12">
+            <widget class="QProgressBar" name="ch12ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -321,7 +361,7 @@
             </widget>
            </item>
            <item row="3" column="3">
-            <widget class="QProgressBar" name="progressBar_10">
+            <widget class="QProgressBar" name="ch10ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -334,7 +374,7 @@
             </widget>
            </item>
            <item row="2" column="3">
-            <widget class="QProgressBar" name="progressBar_9">
+            <widget class="QProgressBar" name="ch9ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>
@@ -347,7 +387,7 @@
             </widget>
            </item>
            <item row="4" column="3">
-            <widget class="QProgressBar" name="progressBar_11">
+            <widget class="QProgressBar" name="ch11ProgressBar">
              <property name="maximum">
               <number>2047</number>
              </property>

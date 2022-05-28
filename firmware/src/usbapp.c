@@ -127,6 +127,7 @@ void USBAppInitialize(void) {
 }
 
 void USBAppTasks(void *pvParameters) {
+    uint32_t crc;
     USBAppInitialize();
     while (1) {
         switch (state) {
@@ -164,6 +165,8 @@ void USBAppTasks(void *pvParameters) {
                         case GET_SETTINGS:
                             while (!hidDataTransmitted);
                             memcpy(transmitDataBuffer, &settings, sizeof (settings));
+                            crc = calculateCRC(&settings, sizeof(settings));
+                            memcpy(&transmitDataBuffer[sizeof(settings)], &crc, sizeof(uint32_t));
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
@@ -171,6 +174,22 @@ void USBAppTasks(void *pvParameters) {
                         case GET_CHANNELS:
                             while (!hidDataTransmitted);
                             memcpy(transmitDataBuffer, (void *) rawServoPositions, sizeof (uint16_t) * MAX_CHANNELS);
+                            hidDataTransmitted = false;
+                            USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                    &txTransferHandle, transmitDataBuffer, 64);
+                            break;
+                        case SAVE_SETTINGS:
+                            crc = calculateCRC(&receiveDataBuffer[1], sizeof(Settings));
+                            if (memcmp(&crc, &receiveDataBuffer[sizeof(Settings) + 1], sizeof(uint32_t)) == 0) {
+                                memcpy(&settings, &receiveDataBuffer[1], sizeof(Settings));
+                                if (saveSettings()) {
+                                    transmitDataBuffer[0] = CMD_ACK;
+                                } else {
+                                    transmitDataBuffer[0] = CMD_NACK;
+                                }
+                            } else {
+                                transmitDataBuffer[0] = CMD_NACK;
+                            }
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);

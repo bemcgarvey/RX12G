@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     HidUSBLink.cpp \
     QHidWatcher.cpp \
+    RX12G.cpp \
     main.cpp \
     mainwindow.cpp
 

@@ -20,6 +20,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+uint32_t MainWindow::calculateChecksum(uint32_t *data, int len)
+{
+    uint32_t crc = 0x12345678;
+    while (len > 0) {
+        crc ^= *data;
+        ++data;
+        --len;
+    }
+    return crc;
+}
+
 void MainWindow::onUsbConnected()
 {
     on_connectPushButton_clicked();
@@ -40,6 +51,13 @@ void MainWindow::on_loadPushButton_clicked()
     buffer[0] = GET_SETTINGS;
     usb.SendReport(buffer);
     usb.GetReport(buffer);
+    uint32_t crc = calculateCRC(buffer, sizeof(Settings));
+    uint32_t sentCRC;
+    memcpy(&sentCRC, &buffer[sizeof(Settings)], sizeof(uint32_t));
+    if (crc != sentCRC) {
+        QMessageBox::critical(this, QApplication::applicationName(), "Error loading settings");
+        return;
+    }
     Settings settings;
     memcpy(&settings, buffer, sizeof(Settings));
     if (settings.numSBusOutputs > 0) {
@@ -60,6 +78,16 @@ void MainWindow::on_loadPushButton_clicked()
         ui->servoRateComboBox->setCurrentIndex(2);
         break;
     }
+    if (settings.failsafeType == NORMAL_FAILSAFE) {
+        ui->normalFailsafeRadioButton->setChecked(true);
+        ui->presetFailsafeRadioButton->setChecked(false);
+        ui->savePresetsPushButton->setEnabled(false);
+    } else {
+        ui->normalFailsafeRadioButton->setChecked(false);
+        ui->presetFailsafeRadioButton->setChecked(true);
+        ui->savePresetsPushButton->setEnabled(true);
+    }
+    ui->statusbar->showMessage("Settings loaded.", 2000);
 }
 
 
@@ -87,7 +115,40 @@ void MainWindow::on_connectPushButton_clicked()
 
 void MainWindow::on_savePushButton_clicked()
 {
-
+    Settings settings;
+    if (ui->sbusEnableCheckBox->isChecked()) {
+        settings.numSBusOutputs = ui->sbusOutputsSpinBox->value();
+        settings.sBusPeriodMs = ui->sbusPeriodSpinBox->value();
+    } else {
+        settings.numSBusOutputs = 0;
+        settings.sBusPeriodMs = 7;
+    }
+    switch (ui->servoRateComboBox->currentIndex()) {
+        case 0: settings.outputHz = 50;
+        break;
+    case 1: settings.outputHz = 100;
+        break;
+    case 2: settings.outputHz = 200;
+        break;
+    default: settings.outputHz = 50;
+        break;
+    }
+    if (ui->normalFailsafeRadioButton->isChecked()) {
+        settings.failsafeType = NORMAL_FAILSAFE;
+    } else {
+        settings.failsafeType = PRESET_FAILSAFE;
+    }
+    buffer[0] = SAVE_SETTINGS;
+    memcpy(&buffer[1], &settings, sizeof(settings));
+    uint32_t crc = calculateCRC(&settings, sizeof(Settings));
+    memcpy(&buffer[sizeof(Settings) + 1], &crc, sizeof(uint32_t));
+    usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    if (buffer[0] == CMD_ACK) {
+        ui->statusbar->showMessage("Settings saved", 2000);
+    } else {
+        QMessageBox::critical(this, QApplication::applicationName(), "Unable to save settings");
+    }
 }
 
 
@@ -106,5 +167,17 @@ void MainWindow::on_sbusEnableCheckBox_stateChanged(int arg1)
         ui->sbusOutputsSpinBox->setEnabled(false);
         ui->sbusPeriodSpinBox->setEnabled(false);
     }
+}
+
+
+void MainWindow::on_normalFailsafeRadioButton_clicked()
+{
+    ui->savePresetsPushButton->setEnabled(!ui->normalFailsafeRadioButton->isChecked());
+}
+
+
+void MainWindow::on_presetFailsafeRadioButton_clicked()
+{
+    ui->savePresetsPushButton->setEnabled(!ui->normalFailsafeRadioButton->isChecked());
 }
 
