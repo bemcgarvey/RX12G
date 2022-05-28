@@ -23,6 +23,7 @@ private:
     QHidWatcher* hidWatcher;
     HidUSBLink usb;
     Ui::MainWindow *ui;
+    uint8_t buffer[64];
 
 private slots:
     void onUsbConnected();
@@ -30,6 +31,8 @@ private slots:
     void on_loadPushButton_clicked();
     void on_connectPushButton_clicked();
     void on_savePushButton_clicked();
+    void on_actionExit_triggered();
+    void on_sbusEnableCheckBox_stateChanged(int arg1);
 };
 
 #endif // MAINWINDOW_H

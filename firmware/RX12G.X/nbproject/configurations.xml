@@ -252,6 +252,7 @@
       <itemPath>../src/sbus.h</itemPath>
       <itemPath>../src/version.h</itemPath>
       <itemPath>../src/usbapp.h</itemPath>
+      <itemPath>../src/usbcommands.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"

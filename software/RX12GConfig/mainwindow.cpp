@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     connectLabel = new QLabel("Not connected");
-    ui->statusbar->addWidget(connectLabel);
+    ui->statusbar->addPermanentWidget(connectLabel);
     hidWatcher = new QHidWatcher(PID, VID, this);
     connect(hidWatcher, &QHidWatcher::connected, this, &MainWindow::onUsbConnected);
     connect(hidWatcher, &QHidWatcher::removed, this, &MainWindow::onUsbRemoved);
@@ -31,14 +31,35 @@ void MainWindow::onUsbRemoved()
         usb.Close();
     }
     connectLabel->setText("Not connected");
+    ui->loadPushButton->setEnabled(false);
+    ui->savePushButton->setEnabled(false);
 }
-
 
 void MainWindow::on_loadPushButton_clicked()
 {
-    uint8_t buffer[64];
-    buffer[0] = 0x80;
+    buffer[0] = GET_SETTINGS;
     usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    Settings settings;
+    memcpy(&settings, buffer, sizeof(Settings));
+    if (settings.numSBusOutputs > 0) {
+        ui->sbusEnableCheckBox->setChecked(true);
+    } else {
+        ui->sbusEnableCheckBox->setChecked(false);
+    }
+    ui->sbusOutputsSpinBox->setValue(settings.numSBusOutputs);
+    ui->sbusPeriodSpinBox->setValue(settings.sBusPeriodMs);
+    switch(settings.outputHz) {
+    case 50:
+        ui->servoRateComboBox->setCurrentIndex(0);
+        break;
+    case 100:
+        ui->servoRateComboBox->setCurrentIndex(1);
+        break;
+    case 200:
+        ui->servoRateComboBox->setCurrentIndex(2);
+        break;
+    }
 }
 
 
@@ -49,23 +70,41 @@ void MainWindow::on_connectPushButton_clicked()
     }
     usb.Open(PID, VID);
     if (usb.Connected()) {
-        connectLabel->setText("Connected");
+        buffer[0] = GET_VERSION;
+        usb.SendReport(buffer);
+        usb.GetReport(buffer);
+        QString version = QString("Firmware Version %1.%2").arg(buffer[1]).arg(buffer[0]);
+        connectLabel->setText("Connected: " + version);
+        ui->loadPushButton->setEnabled(true);
+        ui->savePushButton->setEnabled(true);
     } else {
         connectLabel->setText("Not connected");
+        ui->loadPushButton->setEnabled(false);
+        ui->savePushButton->setEnabled(false);
     }
 }
 
 
 void MainWindow::on_savePushButton_clicked()
 {
-    uint8_t buffer[64];
-    buffer[0] = 0x81;
-    usb.SendReport(buffer);
-    usb.GetReport(buffer);
-    if (buffer[1] == 0) {
-        QMessageBox::information(this, "Button", "Pressed");
+
+}
+
+
+void MainWindow::on_actionExit_triggered()
+{
+    close();
+}
+
+
+void MainWindow::on_sbusEnableCheckBox_stateChanged(int arg1)
+{
+    if (arg1) {
+        ui->sbusOutputsSpinBox->setEnabled(true);
+        ui->sbusPeriodSpinBox->setEnabled(true);
     } else {
-       QMessageBox::information(this, "Button", "Not Pressed");
+        ui->sbusOutputsSpinBox->setEnabled(false);
+        ui->sbusPeriodSpinBox->setEnabled(false);
     }
 }
 

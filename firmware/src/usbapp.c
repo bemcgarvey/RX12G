@@ -4,6 +4,10 @@
 #include "usb/usb_chapter_9.h"
 #include "usb/usb_device.h"
 #include "usbapp.h"
+#include "usbcommands.h"
+#include "version.h"
+#include "settings.h"
+#include "gyroTask.h"
 
 typedef enum {
     APP_STATE_INIT,
@@ -42,9 +46,7 @@ USB_DEVICE_HID_EVENT_RESPONSE APP_USBDeviceHIDEventHandler
             if (reportSent->handle == txTransferHandle) {
                 hidDataTransmitted = true;
             }
-
             break;
-
         case USB_DEVICE_HID_EVENT_REPORT_RECEIVED:
             reportReceived = (USB_DEVICE_HID_EVENT_DATA_REPORT_RECEIVED *) eventData;
             if (reportReceived->handle == rxTransferHandle) {
@@ -151,21 +153,28 @@ void USBAppTasks(void *pvParameters) {
                 if (!deviceConfigured) {
                     state = APP_STATE_WAIT_FOR_CONFIGURATION;
                 } else if (hidDataReceived) {
-                    //TODO implement commands and responses here
-                    if (receiveDataBuffer[0] == 0x80) {
-                        LED_B_Toggle();
-                    }
-                    if (receiveDataBuffer[0] == 0x81) {
-                        LED_A_Toggle();
-                        transmitDataBuffer[0] = 0x81;
-                        if (BIND_BUTTON_Get() == 0) {
-                            transmitDataBuffer[1] = 0x00;
-                        } else {
-                            transmitDataBuffer[1] = 0x01;
-                        }
-                        hidDataTransmitted = false;
-                        USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
-                                &txTransferHandle, transmitDataBuffer, 64);
+                    switch (receiveDataBuffer[0]) {
+                        case GET_VERSION:
+                            while (!hidDataTransmitted);
+                            *(uint16_t *) transmitDataBuffer = firmwareVersion;
+                            hidDataTransmitted = false;
+                            USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                    &txTransferHandle, transmitDataBuffer, 64);
+                            break;
+                        case GET_SETTINGS:
+                            while (!hidDataTransmitted);
+                            memcpy(transmitDataBuffer, &settings, sizeof (settings));
+                            hidDataTransmitted = false;
+                            USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                    &txTransferHandle, transmitDataBuffer, 64);
+                            break;
+                        case GET_CHANNELS:
+                            while (!hidDataTransmitted);
+                            memcpy(transmitDataBuffer, (void *) rawServoPositions, sizeof (uint16_t) * MAX_CHANNELS);
+                            hidDataTransmitted = false;
+                            USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                    &txTransferHandle, transmitDataBuffer, 64);
+                            break;
                     }
                     hidDataReceived = false;
                     USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
