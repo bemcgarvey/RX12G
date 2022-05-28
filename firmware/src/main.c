@@ -14,35 +14,32 @@
 #include "output.h"
 #include "tasks.h"
 #include "settings.h"
-#include "usbmain.h"
 
-int main ( void )
-{
-    SYS_Initialize ( NULL );
-    CORETIMER_DelayMs(30);
-    if (U1OTGSTATbits.VBUSVD == 1) {
-        LED_A_Set();
-        USBMain();
-    }
-    while (1);
+int main(void) {
+    startMode = START_NORMAL;
+    SYS_Initialize(NULL);
     if (!loadSettings()) {
         loadDefaultSettings();
         saveSettings();
     }
-    settings.numSBusOutputs = 1; //TODO remove
+    CORETIMER_DelayMs(30);
+    if (U1OTGSTATbits.VBUSVD == 1) {
+        startMode = START_USB;
+    } else {
+        U1PWRCbits.USBPWR = 0;
+    }
     initQueues();
     startSystemTime();
     initSatellites();
     initOutputs();
-    initTasks();  //Starts rtos tasks - Does not return
-    while ( true )
-    {
+    initTasks(); //Starts rtos tasks - Does not return
+    while (true) {
         /* Execution should not come here during normal operation */
     }
-    return ( EXIT_FAILURE );
+    return ( EXIT_FAILURE);
 }
 
 /*******************************************************************************
  End of File
-*/
+ */
 

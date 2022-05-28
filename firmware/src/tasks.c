@@ -8,6 +8,7 @@
 // Description: task creation and scheduler start  //
 /////////////////////////////////////////////////////
 
+#include "configuration.h"
 #include "definitions.h"
 #include "tasks.h"
 #include "buttonTask.h"
@@ -17,18 +18,33 @@
 #include "gyroTask.h"
 #include "satellites.h"
 #include "statusLedTask.h"
+#include "usbapp.h"
 
 QueueHandle_t rxQueue;
 
+int startMode = START_NORMAL;
+
+void _USB_DEVICE_Tasks(void *pvParameters) {
+    while (1) {
+        /* USB Device layer tasks routine */
+        USB_DEVICE_Tasks(sysObj.usbDevObject0);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
 void initQueues(void) {
-    rxQueue = xQueueCreate(6, 16);  //TODO find best length for this
+    rxQueue = xQueueCreate(6, 16); //TODO find best length for this
 }
 
 void initTasks(void) {
     xTaskCreate(buttonTask, "button", 128, NULL, 5, &buttonTaskHandle);
     xTaskCreate(rxTask, "rxtask", 128, NULL, 4, &rxTaskHandle);
-    xTaskCreate(gyroTask, "gyroTask", 1024, NULL, 2, &gyroTaskHandle);
+    xTaskCreate(gyroTask, "gyroTask", 1024, NULL, 3, &gyroTaskHandle);
     xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, 1, &statusLedTaskHandle);
+    if (startMode == START_USB) {
+        xTaskCreate(_USB_DEVICE_Tasks, "USB_DEVICE_TASKS", 1024, NULL, 1, NULL);
+        xTaskCreate(USBAppTasks, "USBAppTasks", 1024, NULL, 1, &usbAppTaskHandle);
+    }
     vTaskStartScheduler();
 }
 

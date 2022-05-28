@@ -1,18 +1,30 @@
 
+#include "configuration.h"
 #include "definitions.h"
+#include "usb/usb_chapter_9.h"
+#include "usb/usb_device.h"
 #include "usbapp.h"
 
-uint8_t receiveDataBuffer[64] CACHE_ALIGN;
-uint8_t transmitDataBuffer[64] CACHE_ALIGN;
-APP_STATES state;
-USB_DEVICE_HANDLE usbDevHandle;
-bool deviceConfigured;
-USB_DEVICE_HID_TRANSFER_HANDLE txTransferHandle;
-USB_DEVICE_HID_TRANSFER_HANDLE rxTransferHandle;
-uint8_t configurationValue;
-bool hidDataReceived;
-bool hidDataTransmitted;
-uint8_t idleRate;
+typedef enum {
+    APP_STATE_INIT,
+    APP_STATE_WAIT_FOR_CONFIGURATION,
+    APP_STATE_MAIN_TASK,
+    APP_STATE_ERROR
+} USBAppStates;
+
+TaskHandle_t usbAppTaskHandle;
+
+static uint8_t receiveDataBuffer[64] CACHE_ALIGN;
+static uint8_t transmitDataBuffer[64] CACHE_ALIGN;
+static USBAppStates state;
+static USB_DEVICE_HANDLE usbDevHandle;
+static bool deviceConfigured;
+static USB_DEVICE_HID_TRANSFER_HANDLE txTransferHandle;
+static USB_DEVICE_HID_TRANSFER_HANDLE rxTransferHandle;
+static uint8_t configurationValue;
+static bool hidDataReceived;
+static bool hidDataTransmitted;
+static uint8_t idleRate;
 
 USB_DEVICE_HID_EVENT_RESPONSE APP_USBDeviceHIDEventHandler
 (
@@ -82,7 +94,7 @@ void APP_USBDeviceEventHandler(USB_DEVICE_EVENT event, void * eventData, uintptr
             /* Save the other details for later use. */
             configurationValue = ((USB_DEVICE_EVENT_DATA_CONFIGURED*) eventData)->configurationValue;
             /* Register application HID event handler */
-            USB_DEVICE_HID_EventHandlerSet(USB_DEVICE_HID_INDEX_0, APP_USBDeviceHIDEventHandler, (uintptr_t)0);
+            USB_DEVICE_HID_EventHandlerSet(USB_DEVICE_HID_INDEX_0, APP_USBDeviceHIDEventHandler, (uintptr_t) 0);
             break;
         case USB_DEVICE_EVENT_SUSPENDED:
             break;
@@ -102,7 +114,7 @@ void APP_USBDeviceEventHandler(USB_DEVICE_EVENT event, void * eventData, uintptr
     }
 }
 
-void APP_Initialize(void) {
+void USBAppInitialize(void) {
     state = APP_STATE_INIT;
     usbDevHandle = USB_DEVICE_HANDLE_INVALID;
     deviceConfigured = false;
@@ -112,55 +124,59 @@ void APP_Initialize(void) {
     hidDataTransmitted = true;
 }
 
-void APP_Tasks(void) {
-    switch (state) {
-        case APP_STATE_INIT:
-            usbDevHandle = USB_DEVICE_Open(USB_DEVICE_INDEX_0, DRV_IO_INTENT_READWRITE);
-            if (usbDevHandle != USB_DEVICE_HANDLE_INVALID) {
-                USB_DEVICE_EventHandlerSet(usbDevHandle, APP_USBDeviceEventHandler, 0);
-                state = APP_STATE_WAIT_FOR_CONFIGURATION;
-            } else {
-                /* The Device Layer is not ready to be opened. We should try
-                 * again later. */
-            }
-            break;
-        case APP_STATE_WAIT_FOR_CONFIGURATION:
-            if (deviceConfigured == true) {
-                hidDataReceived = false;
-                hidDataTransmitted = true;
-                state = APP_STATE_MAIN_TASK;
-                USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
-                        &rxTransferHandle, receiveDataBuffer, 64);
-            }
-            break;
-        case APP_STATE_MAIN_TASK:
-            if (!deviceConfigured) {
-                state = APP_STATE_WAIT_FOR_CONFIGURATION;
-            } else if (hidDataReceived) {
-                //TODO implement commands and responses here
-                if (receiveDataBuffer[0] == 0x80) {
-                    LED_B_Toggle();
+void USBAppTasks(void *pvParameters) {
+    USBAppInitialize();
+    while (1) {
+        switch (state) {
+            case APP_STATE_INIT:
+                usbDevHandle = USB_DEVICE_Open(USB_DEVICE_INDEX_0, DRV_IO_INTENT_READWRITE);
+                if (usbDevHandle != USB_DEVICE_HANDLE_INVALID) {
+                    USB_DEVICE_EventHandlerSet(usbDevHandle, APP_USBDeviceEventHandler, 0);
+                    state = APP_STATE_WAIT_FOR_CONFIGURATION;
+                } else {
+                    /* The Device Layer is not ready to be opened. We should try
+                     * again later. */
                 }
-                if (receiveDataBuffer[0] == 0x81) {
-                    LED_A_Toggle();
-                    transmitDataBuffer[0] = 0x81;
-                    if (BIND_BUTTON_Get() == 0) {
-                        transmitDataBuffer[1] = 0x00;
-                    } else {
-                        transmitDataBuffer[1] = 0x01;
+                break;
+            case APP_STATE_WAIT_FOR_CONFIGURATION:
+                if (deviceConfigured == true) {
+                    hidDataReceived = false;
+                    hidDataTransmitted = true;
+                    state = APP_STATE_MAIN_TASK;
+                    USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
+                            &rxTransferHandle, receiveDataBuffer, 64);
+                }
+                break;
+            case APP_STATE_MAIN_TASK:
+                if (!deviceConfigured) {
+                    state = APP_STATE_WAIT_FOR_CONFIGURATION;
+                } else if (hidDataReceived) {
+                    //TODO implement commands and responses here
+                    if (receiveDataBuffer[0] == 0x80) {
+                        LED_B_Toggle();
                     }
-                    hidDataTransmitted = false;
-                    USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
-                            &txTransferHandle, transmitDataBuffer, 64);
+                    if (receiveDataBuffer[0] == 0x81) {
+                        LED_A_Toggle();
+                        transmitDataBuffer[0] = 0x81;
+                        if (BIND_BUTTON_Get() == 0) {
+                            transmitDataBuffer[1] = 0x00;
+                        } else {
+                            transmitDataBuffer[1] = 0x01;
+                        }
+                        hidDataTransmitted = false;
+                        USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                &txTransferHandle, transmitDataBuffer, 64);
+                    }
+                    hidDataReceived = false;
+                    USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
+                            &rxTransferHandle, receiveDataBuffer, 64);
                 }
-                hidDataReceived = false;
-                USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
-                        &rxTransferHandle, receiveDataBuffer, 64);
-            }
-        case APP_STATE_ERROR:
-            break;
-        default:
-            break;
+            case APP_STATE_ERROR:
+                break;
+            default:
+                break;
+        }
+        vTaskDelay(10);
     }
 }
 

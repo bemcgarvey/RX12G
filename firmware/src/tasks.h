@@ -14,7 +14,11 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
+    
+    enum {START_NORMAL = 0, START_USB, START_BOR, START_WDT};
+    
+    extern int startMode;
+    
     void initQueues(void);
     void initTasks(void);
 

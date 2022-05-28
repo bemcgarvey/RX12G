@@ -251,7 +251,6 @@
       <itemPath>../src/statusLedTask.h</itemPath>
       <itemPath>../src/sbus.h</itemPath>
       <itemPath>../src/version.h</itemPath>
-      <itemPath>../src/usbmain.h</itemPath>
       <itemPath>../src/usbapp.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -364,7 +363,6 @@
       <itemPath>../src/statusLedTask.c</itemPath>
       <itemPath>../src/sbus.c</itemPath>
       <itemPath>../src/version.c</itemPath>
-      <itemPath>../src/usbmain.c</itemPath>
       <itemPath>../src/usbapp.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
