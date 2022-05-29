@@ -12,6 +12,7 @@
 #include "gyroTask.h"
 #include "rtosHandles.h"
 #include "output.h"
+#include "tasks.h"
 
 GyroMode currentGyroMode;
 TaskHandle_t gyroTaskHandle;
@@ -20,8 +21,10 @@ volatile uint16_t rawServoPositions[MAX_CHANNELS];
 
 void gyroTask(void *pvParameters) {
     currentGyroMode = GYRO_MODE_NORMAL; //TODO use channel data to set this or settings
+    //TODO remove GYRO_MODE_NORMAL from if below
     while (1) {
-        if (currentGyroMode == GYRO_MODE_OFF || GYRO_MODE_NORMAL) {
+        if (currentGyroMode == GYRO_MODE_OFF || currentGyroMode == GYRO_MODE_NORMAL
+                || startMode == START_USB) {
             for (int i = 0; i < MAX_CHANNELS; ++i) {
                 outputServos[i] = rawServoPositions[i];
             }

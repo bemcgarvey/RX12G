@@ -173,7 +173,7 @@ void USBAppTasks(void *pvParameters) {
                             break;
                         case GET_CHANNELS:
                             while (!hidDataTransmitted);
-                            memcpy(transmitDataBuffer, (void *) rawServoPositions, sizeof (uint16_t) * MAX_CHANNELS);
+                            memcpy(transmitDataBuffer, (void *)outputServos, sizeof (uint16_t) * MAX_CHANNELS);
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);

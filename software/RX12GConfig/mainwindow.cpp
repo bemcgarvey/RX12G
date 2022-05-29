@@ -13,6 +13,20 @@ MainWindow::MainWindow(QWidget *parent)
     hidWatcher = new QHidWatcher(PID, VID, this);
     connect(hidWatcher, &QHidWatcher::connected, this, &MainWindow::onUsbConnected);
     connect(hidWatcher, &QHidWatcher::removed, this, &MainWindow::onUsbRemoved);
+    getChannelsTimer = new QTimer(this);
+    connect(getChannelsTimer, &QTimer::timeout, this, &MainWindow::onGetChannelTimout);
+    channelBars[0] = ui->ch1ProgressBar;
+    channelBars[1] = ui->ch2ProgressBar;
+    channelBars[2] = ui->ch3ProgressBar;
+    channelBars[3] = ui->ch4ProgressBar;
+    channelBars[4] = ui->ch5ProgressBar;
+    channelBars[5] = ui->ch6ProgressBar;
+    channelBars[6] = ui->ch7ProgressBar;
+    channelBars[7] = ui->ch8ProgressBar;
+    channelBars[8] = ui->ch9ProgressBar;
+    channelBars[9] = ui->ch10ProgressBar;
+    channelBars[10] = ui->ch11ProgressBar;
+    channelBars[11] = ui->ch12ProgressBar;
 }
 
 MainWindow::~MainWindow()
@@ -44,6 +58,11 @@ void MainWindow::onUsbRemoved()
     connectLabel->setText("Not connected");
     ui->loadPushButton->setEnabled(false);
     ui->savePushButton->setEnabled(false);
+    getChannelsTimer->stop();
+    for (int i = 0; i < 12; ++i) {
+        channelBars[i]->setValue(0);
+        channelBars[i]->setEnabled(false);
+    }
 }
 
 void MainWindow::on_loadPushButton_clicked()
@@ -105,10 +124,16 @@ void MainWindow::on_connectPushButton_clicked()
         connectLabel->setText("Connected: " + version);
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
+        getChannelsTimer->start(100);
     } else {
         connectLabel->setText("Not connected");
         ui->loadPushButton->setEnabled(false);
         ui->savePushButton->setEnabled(false);
+        getChannelsTimer->stop();
+        for (int i = 0; i < 12; ++i) {
+            channelBars[i]->setValue(0);
+            channelBars[i]->setEnabled(false);
+        }
     }
 }
 
@@ -179,5 +204,22 @@ void MainWindow::on_normalFailsafeRadioButton_clicked()
 void MainWindow::on_presetFailsafeRadioButton_clicked()
 {
     ui->savePresetsPushButton->setEnabled(!ui->normalFailsafeRadioButton->isChecked());
+}
+
+void MainWindow::onGetChannelTimout()
+{
+    buffer[0] = GET_CHANNELS;
+    usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    uint16_t *channels = (uint16_t *)buffer;
+    for (int i = 0; i < 12; ++i) {
+        if (channels[i] == 0xffff) {
+            channelBars[i]->setEnabled(false);
+            channelBars[i]->setValue(0);
+        } else {
+            channelBars[i]->setEnabled(true);
+            channelBars[i]->setValue(channels[i]);
+        }
+    }
 }
 
