@@ -42,6 +42,7 @@ private slots:
     void on_presetFailsafeRadioButton_clicked();
     void onGetChannelTimout(void);
     void on_savePresetsPushButton_clicked();
+    void on_tabWidget_currentChanged(int index);
 };
 
 #endif // MAINWINDOW_H

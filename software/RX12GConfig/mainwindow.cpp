@@ -124,7 +124,9 @@ void MainWindow::on_connectPushButton_clicked()
         connectLabel->setText("Connected: " + version);
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
-        getChannelsTimer->start(100);
+        if (ui->tabWidget->currentIndex() == 0) {
+            getChannelsTimer->start(100);
+        }
     } else {
         connectLabel->setText("Not connected");
         ui->loadPushButton->setEnabled(false);
@@ -233,6 +235,16 @@ void MainWindow::on_savePresetsPushButton_clicked()
         ui->statusbar->showMessage("Presets saved", 2000);
     } else {
         QMessageBox::critical(this, QApplication::applicationName(), "Unable to save presets");
+    }
+}
+
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if (index == 0) {
+        getChannelsTimer->start(100);
+    } else {
+        getChannelsTimer->stop();
     }
 }
 
