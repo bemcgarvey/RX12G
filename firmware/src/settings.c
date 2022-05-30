@@ -75,13 +75,28 @@ void loadDefaultSettings(void) {
 }
 
 bool loadPresets(void) {
+    uint32_t address = PRESET_ADDRESS;
+    for (int i = 0; i < MAX_CHANNELS; i += 2) {
+        if (!EEPROM_WordRead(address, (uint32_t *)&channelPresets[i])) {
+            return false;
+        }
+        address += sizeof(uint32_t);
+    }
     for (int i = 0; i < MAX_CHANNELS; ++i) {
-        channelPresets[i] = 0xffff;  //TODO load this from EEPROM
+        if (channelPresets[i] > 2047) { //if out of bounds set to off
+            channelPresets[i] = 0xffff;
+        }
     }
     return true;
 }
     
 bool savePresets(void) {
-    //TODO save to EEPROM
+    uint32_t address = PRESET_ADDRESS;
+    for (int i = 0; i < MAX_CHANNELS; i += 2) {
+        if (!EEPROM_WordWrite(address, *(uint32_t *)&channelPresets[i])) {
+            return false;
+        }
+        address += sizeof(uint32_t);
+    }
     return true;
 }

@@ -223,3 +223,16 @@ void MainWindow::onGetChannelTimout()
     }
 }
 
+
+void MainWindow::on_savePresetsPushButton_clicked()
+{
+    buffer[0] = SET_PRESETS;
+    usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    if (buffer[0] == CMD_ACK) {
+        ui->statusbar->showMessage("Presets saved", 2000);
+    } else {
+        QMessageBox::critical(this, QApplication::applicationName(), "Unable to save presets");
+    }
+}
+

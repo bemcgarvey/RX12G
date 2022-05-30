@@ -12,6 +12,7 @@
 #include "timers.h"
 #include "settings.h"
 #include "sbus.h"
+#include "gyroTask.h"
 
 volatile uint16_t outputServos[MAX_CHANNELS];
 volatile bool failsafeEngaged = false;
@@ -60,7 +61,7 @@ void initOutputs(void) {
 }
 
 void disableThrottle(void) {
-    outputServos[THROTTLE] = 0xffff;
+    rawServoPositions[THROTTLE] = 0xffff;
     *OCxCONCLRRegister[THROTTLE] = 0x8000;
 }
 
@@ -69,7 +70,7 @@ void engageFailsafe(void) {
         disableThrottle();
     } else if (settings.failsafeType == PRESET_FAILSAFE) {
         for (int i = 0; i < MAX_CHANNELS; ++i) {
-            outputServos[i] = channelPresets[i];
+            rawServoPositions[i] = channelPresets[i];
         }
     }
     failsafeEngaged = true;
