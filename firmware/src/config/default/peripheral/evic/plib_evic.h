@@ -453,7 +453,6 @@ typedef enum
 
 typedef enum
 {
-    EXTERNAL_INT_1 = _IEC0_INT1IE_MASK,
     EXTERNAL_INT_2 = _IEC0_INT2IE_MASK,
     EXTERNAL_INT_3 = _IEC0_INT3IE_MASK,
 

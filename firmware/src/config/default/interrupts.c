@@ -61,7 +61,6 @@
 // *****************************************************************************
 
 
-void EXTERNAL_1_InterruptHandler( void );
 void TIMER_2_InterruptHandler( void );
 void EXTERNAL_2_InterruptHandler( void );
 void EXTERNAL_3_InterruptHandler( void );
@@ -81,11 +80,6 @@ void TIMER_9_InterruptHandler( void );
 
 /* All the handlers are defined here.  Each will call its PLIB-specific function. */
 
-
-void EXTERNAL_1_Handler (void)
-{
-    EXTERNAL_1_InterruptHandler();
-}
 
 void TIMER_2_Handler (void)
 {

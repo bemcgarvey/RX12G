@@ -18,6 +18,7 @@ extern "C" {
         SAVE_SETTINGS = 0x02,
         GET_CHANNELS = 0x03,
         SET_PRESETS = 0x04,
+        GET_SENSORS = 0x05,
         CMD_ACK = 0x80,
         CMD_NACK = 0x7f,
         REBOOT = 0x88

@@ -8,6 +8,7 @@
 #include "version.h"
 #include "settings.h"
 #include "gyroTask.h"
+#include "imu.h"
 
 typedef enum {
     APP_STATE_INIT,
@@ -203,6 +204,13 @@ void USBAppTasks(void *pvParameters) {
                             } else {
                                 transmitDataBuffer[0] = CMD_NACK;
                             }
+                            hidDataTransmitted = false;
+                            USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                    &txTransferHandle, transmitDataBuffer, 64);
+                            break;
+                        case GET_SENSORS:
+                            while (!hidDataTransmitted);
+                            memcpy(transmitDataBuffer, (void *) xlData, sizeof (uint16_t) * 3);
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);

@@ -44,7 +44,7 @@
 
 TaskHandle_t imuTaskHandle;
 
-uint16_t xlData[3];
+int16_t xlData[3];
 
 void imuIntHandler(EXTERNAL_INT_PIN pin, uintptr_t context);
 
@@ -82,17 +82,11 @@ bool initIMU(void) {
 
 
 void imuTask(void *pvParameters) {
-    static int count = 0;
     static uint8_t reg = OUTX_L_A;
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         I2C2_WriteRead(IMU_DEVICE_ADDRESS, &reg, 1, (uint8_t *)xlData, 6);
         while (I2C2_IsBusy());
-        ++count;
-        if (count == 104) {
-            SAT2_LED_Toggle();
-            count = 0;
-        }
     }
 }
 

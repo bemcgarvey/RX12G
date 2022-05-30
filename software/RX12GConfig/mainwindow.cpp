@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget *parent)
     hidWatcher = new QHidWatcher(PID, VID, this);
     connect(hidWatcher, &QHidWatcher::connected, this, &MainWindow::onUsbConnected);
     connect(hidWatcher, &QHidWatcher::removed, this, &MainWindow::onUsbRemoved);
-    getChannelsTimer = new QTimer(this);
-    connect(getChannelsTimer, &QTimer::timeout, this, &MainWindow::onGetChannelTimout);
+    channelsTimer = new QTimer(this);
+    connect(channelsTimer, &QTimer::timeout, this, &MainWindow::onChannelTimout);
+    sensorTimer = new QTimer(this);
+    connect(sensorTimer, &QTimer::timeout, this, &MainWindow::onSensorTimout);
     channelBars[0] = ui->ch1ProgressBar;
     channelBars[1] = ui->ch2ProgressBar;
     channelBars[2] = ui->ch3ProgressBar;
@@ -58,7 +60,7 @@ void MainWindow::onUsbRemoved()
     connectLabel->setText("Not connected");
     ui->loadPushButton->setEnabled(false);
     ui->savePushButton->setEnabled(false);
-    getChannelsTimer->stop();
+    channelsTimer->stop();
     for (int i = 0; i < 12; ++i) {
         channelBars[i]->setValue(0);
         channelBars[i]->setEnabled(false);
@@ -125,13 +127,17 @@ void MainWindow::on_connectPushButton_clicked()
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
         if (ui->tabWidget->currentIndex() == 0) {
-            getChannelsTimer->start(100);
+            channelsTimer->start(100);
+        }
+        if (ui->tabWidget->currentIndex() == 4) {
+            sensorTimer->start(100);
         }
     } else {
         connectLabel->setText("Not connected");
         ui->loadPushButton->setEnabled(false);
         ui->savePushButton->setEnabled(false);
-        getChannelsTimer->stop();
+        channelsTimer->stop();
+        sensorTimer->stop();
         for (int i = 0; i < 12; ++i) {
             channelBars[i]->setValue(0);
             channelBars[i]->setEnabled(false);
@@ -208,7 +214,7 @@ void MainWindow::on_presetFailsafeRadioButton_clicked()
     ui->savePresetsPushButton->setEnabled(!ui->normalFailsafeRadioButton->isChecked());
 }
 
-void MainWindow::onGetChannelTimout()
+void MainWindow::onChannelTimout()
 {
     buffer[0] = GET_CHANNELS;
     usb.SendReport(buffer);
@@ -241,10 +247,23 @@ void MainWindow::on_savePresetsPushButton_clicked()
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
+    channelsTimer->stop();
+    sensorTimer->stop();
     if (index == 0) {
-        getChannelsTimer->start(100);
-    } else {
-        getChannelsTimer->stop();
+        channelsTimer->start(100);
+    } else if (index == 4) {
+        sensorTimer->start(100);
     }
+}
+
+void MainWindow::onSensorTimout()
+{
+    buffer[0] = GET_SENSORS;
+    usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    int16_t *data = (int16_t *)buffer;
+    ui->xAccel->setText(QString().setNum(data[0]));
+    ui->yAccel->setText(QString().setNum(data[1]));
+    ui->zAccel->setText(QString().setNum(data[2]));
 }
 

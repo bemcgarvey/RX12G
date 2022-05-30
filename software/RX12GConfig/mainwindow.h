@@ -27,8 +27,9 @@ private:
     Ui::MainWindow *ui;
     uint8_t buffer[64];
     uint32_t calculateChecksum(uint32_t *data, int len);
-    QTimer *getChannelsTimer;
+    QTimer *channelsTimer;
     QProgressBar *channelBars[12];
+    QTimer *sensorTimer;
 
 private slots:
     void onUsbConnected();
@@ -40,9 +41,10 @@ private slots:
     void on_sbusEnableCheckBox_stateChanged(int arg1);
     void on_normalFailsafeRadioButton_clicked();
     void on_presetFailsafeRadioButton_clicked();
-    void onGetChannelTimout(void);
+    void onChannelTimout(void);
     void on_savePresetsPushButton_clicked();
     void on_tabWidget_currentChanged(int index);
+    void onSensorTimout(void);
 };
 
 #endif // MAINWINDOW_H

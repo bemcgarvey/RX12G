@@ -40,11 +40,11 @@ void statusLedTask(void *pvParameters) {
             SAT1_LED_Clear();
         }
         if (time - lastRxTime[SAT2] < 100) {
-            //SAT2_LED_Set();  //TODO put back in when done testing
+            SAT2_LED_Set();
             activity = true;
             failsafeEngaged = false;
         } else {
-            //SAT2_LED_Clear(); //TODO put back in when done testing
+            SAT2_LED_Clear();
         }
         if (time - lastRxTime[SAT3] < 100) {
             SAT3_LED_Set();

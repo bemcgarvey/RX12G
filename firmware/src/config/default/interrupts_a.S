@@ -52,24 +52,6 @@
 #include <xc.h>
 #include "ISR_Support.h"
 
-    .extern  EXTERNAL_1_Handler
-
-    .section   .vector_8,code, keep
-    .equ     __vector_dispatch_8, IntVectorEXTERNAL_1_Handler
-    .global  __vector_dispatch_8
-    .set     nomicromips
-    .set     noreorder
-    .set     nomips16
-    .set     noat
-    .ent  IntVectorEXTERNAL_1_Handler
-
-IntVectorEXTERNAL_1_Handler:
-    portSAVE_CONTEXT
-    la    s6,  EXTERNAL_1_Handler
-    jalr  s6
-    nop
-    portRESTORE_CONTEXT
-    .end   IntVectorEXTERNAL_1_Handler
     .extern  TIMER_2_Handler
 
     .section   .vector_9,code, keep

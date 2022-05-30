@@ -44,7 +44,6 @@
 #include "plib_evic.h"
 
 
-EXT_INT_PIN_CALLBACK_OBJ extInt1CbObj;
 EXT_INT_PIN_CALLBACK_OBJ extInt2CbObj;
 EXT_INT_PIN_CALLBACK_OBJ extInt3CbObj;
 // *****************************************************************************
@@ -58,9 +57,8 @@ void EVIC_Initialize( void )
     INTCONSET = _INTCON_MVEC_MASK;
 
     /* Set up priority and subpriority of enabled interrupts */
-    IPC2SET = 0x18 | 0x0;  /* EXTERNAL_1:  Priority 6 / Subpriority 0 */
     IPC2SET = 0x1c00 | 0x0;  /* TIMER_2:  Priority 7 / Subpriority 0 */
-    IPC3SET = 0x1800 | 0x0;  /* EXTERNAL_2:  Priority 6 / Subpriority 0 */
+    IPC3SET = 0x1400 | 0x0;  /* EXTERNAL_2:  Priority 5 / Subpriority 0 */
     IPC4SET = 0x40000 | 0x0;  /* EXTERNAL_3:  Priority 1 / Subpriority 0 */
     IPC6SET = 0x8 | 0x0;  /* TIMER_5:  Priority 2 / Subpriority 0 */
     IPC8SET = 0x40000 | 0x0;  /* USB_1:  Priority 1 / Subpriority 0 */
@@ -80,8 +78,6 @@ void EVIC_Initialize( void )
     IPC41SET = 0x10 | 0x1;  /* UART6_FAULT:  Priority 4 / Subpriority 1 */
     IPC41SET = 0xc00 | 0x100;  /* UART6_RX:  Priority 3 / Subpriority 1 */
 
-    /* Initialize External interrupt 1 callback object */
-    extInt1CbObj.callback = NULL;
     /* Initialize External interrupt 2 callback object */
     extInt2CbObj.callback = NULL;
     /* Initialize External interrupt 3 callback object */
@@ -179,10 +175,6 @@ bool EVIC_ExternalInterruptCallbackRegister(
     bool status = true;
     switch  (extIntPin)
         {
-        case EXTERNAL_INT_1:
-            extInt1CbObj.callback = callback;
-            extInt1CbObj.context  = context;
-            break;
         case EXTERNAL_INT_2:
             extInt2CbObj.callback = callback;
             extInt2CbObj.context  = context;
@@ -197,27 +189,6 @@ bool EVIC_ExternalInterruptCallbackRegister(
         }
 
     return status;
-}
-
-
-// *****************************************************************************
-/* Function:
-    void EXTERNAL_1_InterruptHandler(void)
-
-  Summary:
-    Interrupt Handler for External Interrupt pin 1.
-
-  Remarks:
-	It is an internal function called from ISR, user should not call it directly.
-*/
-void EXTERNAL_1_InterruptHandler(void)
-{
-    IFS0CLR = _IFS0_INT1IF_MASK;
-
-    if(extInt1CbObj.callback != NULL)
-    {
-        extInt1CbObj.callback (EXTERNAL_INT_1, extInt1CbObj.context);
-    }
 }
 
 

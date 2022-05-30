@@ -12,6 +12,8 @@
 extern "C" {
 #endif
 
+    extern int16_t xlData[3];
+    
     bool initIMU(void);
     void imuTask(void *pvParameters);
 
