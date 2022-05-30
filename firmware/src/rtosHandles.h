@@ -24,6 +24,7 @@ extern "C" {
     extern TaskHandle_t gyroTaskHandle;
     extern TaskHandle_t statusLedTaskHandle;
     extern TaskHandle_t usbAppTaskHandle;
+    extern TaskHandle_t imuTaskHandle;
 
 #ifdef	__cplusplus
 }

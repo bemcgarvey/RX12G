@@ -61,10 +61,14 @@
 // *****************************************************************************
 
 
+void EXTERNAL_1_InterruptHandler( void );
 void TIMER_2_InterruptHandler( void );
+void EXTERNAL_2_InterruptHandler( void );
 void EXTERNAL_3_InterruptHandler( void );
 void TIMER_5_InterruptHandler( void );
 void DRV_USBFS_USB1_Handler( void );
+void I2C2_BUS_InterruptHandler( void );
+void I2C2_MASTER_InterruptHandler( void );
 void DMA0_InterruptHandler( void );
 void DMA1_InterruptHandler( void );
 void DMA2_InterruptHandler( void );
@@ -78,9 +82,19 @@ void TIMER_9_InterruptHandler( void );
 /* All the handlers are defined here.  Each will call its PLIB-specific function. */
 
 
+void EXTERNAL_1_Handler (void)
+{
+    EXTERNAL_1_InterruptHandler();
+}
+
 void TIMER_2_Handler (void)
 {
     TIMER_2_InterruptHandler();
+}
+
+void EXTERNAL_2_Handler (void)
+{
+    EXTERNAL_2_InterruptHandler();
 }
 
 void EXTERNAL_3_Handler (void)
@@ -98,9 +112,19 @@ void USB_1_Handler (void)
     DRV_USBFS_USB1_Handler();
 }
 
+void I2C2_BUS_Handler (void)
+{
+    I2C2_BUS_InterruptHandler();
+    }
+
+void I2C2_MASTER_Handler (void)
+{
+    I2C2_MASTER_InterruptHandler();
+}
+
 void UART4_FAULT_Handler (void)
 {
-    if (U4STAbits.OERR == 1) {
+if (U4STAbits.OERR == 1) {
         U4STAbits.OERR = 0;
     }
     TMR8 = 0;

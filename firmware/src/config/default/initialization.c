@@ -222,6 +222,8 @@ void SYS_Initialize ( void* data )
     CORETIMER_Initialize();
     TMR6_Initialize();
 
+    I2C2_Initialize();
+
     TMR7_Initialize();
 
     TMR5_Initialize();

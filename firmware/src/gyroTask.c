@@ -21,10 +21,24 @@ volatile uint16_t rawServoPositions[MAX_CHANNELS];
 
 void gyroTask(void *pvParameters) {
     currentGyroMode = GYRO_MODE_NORMAL; //TODO use channel data to set this or settings
-    //TODO remove GYRO_MODE_NORMAL from if below
     while (1) {
-        if (currentGyroMode == GYRO_MODE_OFF || currentGyroMode == GYRO_MODE_NORMAL
-                || startMode == START_USB) {
+        if (currentGyroMode == GYRO_MODE_OFF || startMode == START_USB) {
+            for (int i = 0; i < MAX_CHANNELS; ++i) {
+                outputServos[i] = rawServoPositions[i];
+            }
+        } else if (currentGyroMode == GYRO_MODE_NORMAL) {
+            //TODO update channels here
+            for (int i = 0; i < MAX_CHANNELS; ++i) {
+                outputServos[i] = rawServoPositions[i];
+            }
+        } else if (currentGyroMode == GYRO_MODE_LEVEL) {
+            
+        } else if (currentGyroMode == GYRO_MODE_ATTITUDE_LOCK) {
+            
+        } else if (currentGyroMode == GYRO_MODE_LAUNCH_ASSIST) {
+            
+        } else {
+            //Mode is unrecognized so same as off
             for (int i = 0; i < MAX_CHANNELS; ++i) {
                 outputServos[i] = rawServoPositions[i];
             }

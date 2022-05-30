@@ -52,6 +52,24 @@
 #include <xc.h>
 #include "ISR_Support.h"
 
+    .extern  EXTERNAL_1_Handler
+
+    .section   .vector_8,code, keep
+    .equ     __vector_dispatch_8, IntVectorEXTERNAL_1_Handler
+    .global  __vector_dispatch_8
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorEXTERNAL_1_Handler
+
+IntVectorEXTERNAL_1_Handler:
+    portSAVE_CONTEXT
+    la    s6,  EXTERNAL_1_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorEXTERNAL_1_Handler
     .extern  TIMER_2_Handler
 
     .section   .vector_9,code, keep
@@ -70,6 +88,24 @@ IntVectorTIMER_2_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorTIMER_2_Handler
+    .extern  EXTERNAL_2_Handler
+
+    .section   .vector_13,code, keep
+    .equ     __vector_dispatch_13, IntVectorEXTERNAL_2_Handler
+    .global  __vector_dispatch_13
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorEXTERNAL_2_Handler
+
+IntVectorEXTERNAL_2_Handler:
+    portSAVE_CONTEXT
+    la    s6,  EXTERNAL_2_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorEXTERNAL_2_Handler
     .extern  EXTERNAL_3_Handler
 
     .section   .vector_18,code, keep
@@ -124,6 +160,42 @@ IntVectorUSB_1_Handler:
     nop
     portRESTORE_CONTEXT
     .end   IntVectorUSB_1_Handler
+    .extern  I2C2_BUS_Handler
+
+    .section   .vector_59,code, keep
+    .equ     __vector_dispatch_59, IntVectorI2C2_BUS_Handler
+    .global  __vector_dispatch_59
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorI2C2_BUS_Handler
+
+IntVectorI2C2_BUS_Handler:
+    portSAVE_CONTEXT
+    la    s6,  I2C2_BUS_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorI2C2_BUS_Handler
+    .extern  I2C2_MASTER_Handler
+
+    .section   .vector_61,code, keep
+    .equ     __vector_dispatch_61, IntVectorI2C2_MASTER_Handler
+    .global  __vector_dispatch_61
+    .set     nomicromips
+    .set     noreorder
+    .set     nomips16
+    .set     noat
+    .ent  IntVectorI2C2_MASTER_Handler
+
+IntVectorI2C2_MASTER_Handler:
+    portSAVE_CONTEXT
+    la    s6,  I2C2_MASTER_Handler
+    jalr  s6
+    nop
+    portRESTORE_CONTEXT
+    .end   IntVectorI2C2_MASTER_Handler
     .extern  UART4_FAULT_Handler
 
     .section   .vector_65,code, keep

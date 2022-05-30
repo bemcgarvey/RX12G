@@ -57,6 +57,7 @@
 #include "driver/usb/usbfs/drv_usbfs.h"
 #include "peripheral/coretimer/plib_coretimer.h"
 #include "peripheral/tmr/plib_tmr6.h"
+#include "peripheral/i2c/master/plib_i2c2_master.h"
 #include "peripheral/tmr/plib_tmr7.h"
 #include "usb/usb_device_hid.h"
 #include "usb/usb_hid.h"

@@ -10,5 +10,5 @@ settings:
   GENERATE_BACKUP: 'true'
   TRUSTZONE: 'false'
   CMSISPath: .\dev_packs\arm\CMSIS\5.8.0
-  MERGE_STRATEGY: USER_ALL
+  MERGE_STRATEGY: USER_RECENT
   DFPPath: .\dev_packs\Microchip\PIC32MK-GP_DFP\1.6.144\atdf\PIC32MK1024GPK064.atdf

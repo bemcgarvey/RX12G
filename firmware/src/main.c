@@ -14,6 +14,11 @@
 #include "output.h"
 #include "tasks.h"
 #include "settings.h"
+#include "imu.h"
+
+//TODO add clock monitoring and NMI handler
+//TODO enable BOR and do fast start when detected
+//TODO enable WDT and/or DMT
 
 int main(void) {
     startMode = START_NORMAL;
@@ -33,6 +38,11 @@ int main(void) {
     startSystemTime();
     initSatellites();
     initOutputs();
+    if (!initIMU()) {
+        SAT2_LED_Set();
+        while(1); 
+    }
+    //TODO lock PPS here since all pins should be assigned.
     initTasks(); //Starts rtos tasks - Does not return
     while (true) {
         /* Execution should not come here during normal operation */
