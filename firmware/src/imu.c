@@ -64,7 +64,7 @@ bool initIMU(void) {
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     CORETIMER_DelayUs(50);
-    //Accel data ready on INT1
+    //Device settings
     wValue[0] = INT1_CTRL;
     wValue[1] = 1; //INT1_DRDY_XL
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
@@ -73,14 +73,19 @@ bool initIMU(void) {
     wValue[1] = 0b00000010;  //No DEN stamping, I3C disabled
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    //Configure accelerometer
-    //TODO determine best ODR and filter values
-    wValue[0] = CTRL1_XL;
-    wValue[1] = 0b01010010;  //208Hz, 4g range, LPF2_XL_EN
+    wValue[0] = CTRL3_C;
+    wValue[1] = 0b01000100;  //BDU, IF_INC  //TODO is this needed? look for bogus values in data
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL4_C;
     wValue[1] = 0b00001000;  //DRDY_MASK
+    I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
+    while (I2C2_IsBusy());
+    //Configure accelerometer
+    //TODO determine best ODR and filter values
+    //TODO use offset values for level adjust, values should be stored in settings.
+    wValue[0] = CTRL1_XL;
+    wValue[1] = 0b01010010;  //208Hz, 4g range, LPF2_XL_EN
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL8_XL;
@@ -93,7 +98,7 @@ bool initIMU(void) {
     wValue[1] = 0b01011100; //208Hz, 2000dps
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    
+    //Configure IMU_INT1 interrupt
     INTCONbits.INT2EP = 1;  //Rising edge
     EVIC_ExternalInterruptCallbackRegister(EXTERNAL_INT_2, imuIntHandler, 0);
     EVIC_ExternalInterruptEnable(EXTERNAL_INT_2);
@@ -105,6 +110,8 @@ void imuTask(void *pvParameters) {
     static uint8_t reg = OUTX_L_G;
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        //TODO can we enable rounding and just do a read here
+        // We would need to do a write at end of init function to set register.
         I2C2_WriteRead(IMU_DEVICE_ADDRESS, &reg, 1, (uint8_t *)imuData, 12);
         while (I2C2_IsBusy());
     }

@@ -489,9 +489,9 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="planeTab">
        <attribute name="title">
-        <string>Orientation</string>
+        <string>Plane</string>
        </attribute>
        <widget class="QGroupBox" name="groupBox_4">
         <property name="geometry">
@@ -503,7 +503,7 @@
          </rect>
         </property>
         <property name="title">
-         <string>GroupBox</string>
+         <string>Rx Orientation</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
@@ -536,18 +536,13 @@
          </item>
         </layout>
        </widget>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Wing/Tail Type</string>
-       </attribute>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>0</y>
+          <x>160</x>
+          <y>40</y>
           <width>151</width>
-          <height>201</height>
+          <height>141</height>
          </rect>
         </property>
         <property name="title">
@@ -580,7 +575,7 @@
        <widget class="QGroupBox" name="groupBox_3">
         <property name="geometry">
          <rect>
-          <x>210</x>
+          <x>330</x>
           <y>20</y>
           <width>121</width>
           <height>121</height>
@@ -925,6 +920,11 @@
              </item>
              <item>
               <property name="text">
+               <string>Trainer</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>Attitude Lock</string>
               </property>
              </item>
@@ -960,6 +960,11 @@
              <item>
               <property name="text">
                <string>Auto Level</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Trainer</string>
               </property>
              </item>
              <item>
@@ -1003,6 +1008,11 @@
              </item>
              <item>
               <property name="text">
+               <string>Trainer</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>Attitude Lock</string>
               </property>
              </item>
@@ -1038,6 +1048,11 @@
              <item>
               <property name="text">
                <string>Auto Level</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Trainer</string>
               </property>
              </item>
              <item>
@@ -1081,6 +1096,11 @@
              </item>
              <item>
               <property name="text">
+               <string>Trainer</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>Attitude Lock</string>
               </property>
              </item>
@@ -1116,6 +1136,11 @@
              <item>
               <property name="text">
                <string>Auto Level</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Trainer</string>
               </property>
              </item>
              <item>
@@ -1873,6 +1898,314 @@
         </layout>
        </widget>
       </widget>
+      <widget class="QWidget" name="limitsTab">
+       <attribute name="title">
+        <string>Limits</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_11">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>40</y>
+          <width>140</width>
+          <height>114</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Trainer/Takeoff Limits</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_37">
+           <property name="text">
+            <string>Roll Limit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="spinBox_2">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="prefix">
+            <string>±</string>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_38">
+           <property name="text">
+            <string>Pitch Limit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="spinBox_6">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="prefix">
+            <string>±</string>
+           </property>
+           <property name="maximum">
+            <number>90</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_39">
+           <property name="text">
+            <string>Takeoff Pitch</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBox_9">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="minimum">
+            <number>5</number>
+           </property>
+           <property name="maximum">
+            <number>30</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_12">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>401</width>
+          <height>261</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Travel Limits</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item>
+            <widget class="QLabel" name="label_40">
+             <property name="text">
+              <string>Aileron</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_43">
+             <property name="text">
+              <string>Elevator</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>Rudder</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_49">
+             <property name="text">
+              <string>Aileron2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_52">
+             <property name="text">
+              <string>Elevator2</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+           <item>
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_44">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_47">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_50">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_53">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <item>
+            <widget class="QProgressBar" name="progressBar">
+             <property name="value">
+              <number>24</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="progressBar_2">
+             <property name="value">
+              <number>24</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="progressBar_3">
+             <property name="value">
+              <number>24</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="progressBar_4">
+             <property name="value">
+              <number>24</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="progressBar_5">
+             <property name="value">
+              <number>24</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_45">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_51">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_54">
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_16">
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string>Set</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_3">
+             <property name="text">
+              <string>Set</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_4">
+             <property name="text">
+              <string>Set</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_5">
+             <property name="text">
+              <string>Set</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_6">
+             <property name="text">
+              <string>Set</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
       <widget class="QWidget" name="sensorTab">
        <attribute name="title">
         <string>Sensors</string>
@@ -1999,8 +2332,21 @@
          </item>
         </layout>
        </widget>
+       <widget class="QPushButton" name="pushButton">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>80</y>
+          <width>111</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Level Calibration</string>
+        </property>
+       </widget>
       </widget>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="tuningTab">
        <attribute name="title">
         <string>Tuning</string>
        </attribute>

@@ -20,6 +20,7 @@ TaskHandle_t gyroTaskHandle;
 volatile uint16_t rawServoPositions[MAX_CHANNELS];
 
 void gyroTask(void *pvParameters) {
+    //TODO we probably need a FP context here
     currentGyroMode = GYRO_MODE_NORMAL; //TODO use channel data to set this or settings
     while (1) {
         if (currentGyroMode == GYRO_MODE_OFF || startMode == START_USB) {

@@ -126,12 +126,7 @@ void MainWindow::on_connectPushButton_clicked()
         connectLabel->setText("Connected: " + version);
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
-        if (ui->tabWidget->currentIndex() == 0) {
-            channelsTimer->start(100);
-        }
-        if (ui->tabWidget->currentIndex() == 4) {
-            sensorTimer->start(100);
-        }
+        on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
     } else {
         connectLabel->setText("Not connected");
         ui->loadPushButton->setEnabled(false);
@@ -249,9 +244,9 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     channelsTimer->stop();
     sensorTimer->stop();
-    if (index == 0) {
+    if (ui->tabWidget->tabText(index) == "Receiver") {
         channelsTimer->start(100);
-    } else if (index == 4) {
+    } else if (ui->tabWidget->tabText(index) == "Sensors") {
         sensorTimer->start(100);
     }
 }
