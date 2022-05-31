@@ -262,8 +262,11 @@ void MainWindow::onSensorTimout()
     usb.SendReport(buffer);
     usb.GetReport(buffer);
     int16_t *data = (int16_t *)buffer;
-    ui->xAccel->setText(QString().setNum(data[0]));
-    ui->yAccel->setText(QString().setNum(data[1]));
-    ui->zAccel->setText(QString().setNum(data[2]));
+    ui->xAccel->setText(QString().setNum(data[3]));
+    ui->yAccel->setText(QString().setNum(data[4]));
+    ui->zAccel->setText(QString().setNum(data[5]));
+    ui->xGyro->setText(QString().setNum(data[0]));
+    ui->yGyro->setText(QString().setNum(data[1]));
+    ui->zGyro->setText(QString().setNum(data[2]));
 }
 

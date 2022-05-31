@@ -210,7 +210,7 @@ void USBAppTasks(void *pvParameters) {
                             break;
                         case GET_SENSORS:
                             while (!hidDataTransmitted);
-                            memcpy(transmitDataBuffer, (void *) xlData, sizeof (uint16_t) * 3);
+                            memcpy(transmitDataBuffer, (void *) imuData, sizeof (uint16_t) * 6);
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
