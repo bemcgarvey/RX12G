@@ -12,12 +12,12 @@
 #define	OUTPUT_H
 
 #include "timers.h"
+#include "settings.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-#define MAX_CHANNELS    20
+    
 #define NUM_OUTPUTS     12
 #define OFFSET          (2097 * US_COUNT)
 #define PULSE           (903 * US_COUNT)
@@ -25,10 +25,6 @@ extern "C" {
     enum {
         THROTTLE = 0, AILERON = 1, ELEVATOR = 2, RUDDER = 3, GEAR = 4, AUX1 = 5,
         AUX2 = 6, AUX3 = 7, AUX4 = 8, AUX5 = 9, AUX6 = 10, AUX7 = 11
-    };
-
-    enum {
-        NORMAL_FAILSAFE = 0, PRESET_FAILSAFE = 1
     };
     
     extern volatile uint16_t outputServos[MAX_CHANNELS];

@@ -60,24 +60,38 @@ void statusLedTask(void *pvParameters) {
         }
         
         //Set status LEDs
-        switch (currentGyroMode) {
-            case GYRO_MODE_OFF:
+        switch (currentFlightMode) {
+            case OFF_MODE:
                 LED_A_State = LED_OFF;
                 LED_B_State = LED_OFF;
                 break;
-            case GYRO_MODE_NORMAL:
+            case NORMAL_MODE:
                 LED_A_State = LED_OFF;
                 LED_B_State = LED_ON;
                 break;
-            case GYRO_MODE_LEVEL:
+            case AUTO_LEVEL_MODE:
                 LED_A_State = LED_ON;
                 LED_B_State = LED_OFF;
-            case GYRO_MODE_ATTITUDE_LOCK:
+                break;
+            case TRAINER_MODE:
+                LED_A_State = LED_BLINK_FAST;
+                LED_B_State = LED_OFF;
+                break;
+            case ATTITUDE_LOCK_MODE:
                 LED_A_State = LED_ON;
                 LED_B_State = LED_ON;
-            case GYRO_MODE_LAUNCH_ASSIST:
+                break;
+            case LAUNCH_ASSIST_MODE:
                 LED_A_State = LED_OFF;
-                LED_B_State = LED_BLINK_SLOW;
+                LED_B_State = LED_BLINK_FAST;
+                break;
+            case CUSTOM_MODE_1:
+                LED_A_State = LED_ON;
+                LED_B_State = LED_BLINK_FAST;
+                break;
+            case CUSTOM_MODE_2:
+                LED_A_State = LED_BLINK_FAST;
+                LED_B_State = LED_ON;
                 break;
             default:
                 LED_A_State = LED_OFF;

@@ -9,6 +9,8 @@
 #include "settings.h"
 #include "gyroTask.h"
 #include "imu.h"
+#include "output.h"
+
 
 typedef enum {
     APP_STATE_INIT,
@@ -157,32 +159,79 @@ void USBAppTasks(void *pvParameters) {
                 } else if (hidDataReceived) {
                     switch (receiveDataBuffer[0]) {
                         case GET_VERSION:
-                            while (!hidDataTransmitted);
+                            while (!hidDataTransmitted)
+                                taskYIELD();
                             *(uint16_t *) transmitDataBuffer = firmwareVersion;
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
                             break;
                         case GET_SETTINGS:
-                            while (!hidDataTransmitted);
-                            memcpy(transmitDataBuffer, &settings, sizeof (settings));
+                        {
+                            int bytesRemaining = sizeof (Settings);
+                            uint8_t *p = (uint8_t *) & settings;
+                            do {
+                                while (!hidDataTransmitted)
+                                    taskYIELD();
+                                if (bytesRemaining >= 64) {
+                                    memcpy(transmitDataBuffer, p, 64);
+                                    p += 64;
+                                    bytesRemaining -= 64;
+                                } else {
+                                    memcpy(transmitDataBuffer, p, bytesRemaining);
+                                    bytesRemaining = 0;
+                                }
+                                hidDataTransmitted = false;
+                                USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                        &txTransferHandle, transmitDataBuffer, 64);
+                            } while (bytesRemaining > 0);
+                            while (!hidDataTransmitted)
+                                taskYIELD();
                             crc = calculateCRC(&settings, sizeof (settings));
-                            memcpy(&transmitDataBuffer[sizeof (settings)], &crc, sizeof (uint32_t));
+                            memcpy(transmitDataBuffer, &crc, sizeof (uint32_t));
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
+                        }
                             break;
                         case GET_CHANNELS:
-                            while (!hidDataTransmitted);
+                            while (!hidDataTransmitted)
+                                taskYIELD();
                             memcpy(transmitDataBuffer, (void *) outputServos, sizeof (uint16_t) * MAX_CHANNELS);
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
                             break;
                         case SAVE_SETTINGS:
-                            crc = calculateCRC(&receiveDataBuffer[1], sizeof (Settings));
-                            if (memcmp(&crc, &receiveDataBuffer[sizeof (Settings) + 1], sizeof (uint32_t)) == 0) {
-                                memcpy(&settings, &receiveDataBuffer[1], sizeof (Settings));
+                        {
+                            int bytesRemaining = sizeof (Settings);
+                            Settings temp;
+                            uint8_t *p = (uint8_t *) &temp;
+                            do {
+                                hidDataReceived = false;
+                                USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
+                                        &rxTransferHandle, receiveDataBuffer, 64);
+                                while (!hidDataReceived)
+                                    taskYIELD();
+                                if (bytesRemaining >= 64) {
+                                    memcpy(p, receiveDataBuffer, 64);
+                                    bytesRemaining -= 64;
+                                    p += 64;
+                                } else {
+                                    memcpy(p, receiveDataBuffer, bytesRemaining);
+                                    bytesRemaining = 0;
+                                }
+                            } while (bytesRemaining > 0);
+                            hidDataReceived = false;
+                            USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
+                                    &rxTransferHandle, receiveDataBuffer, 64);
+                            while (!hidDataReceived)
+                                taskYIELD();
+                            crc = calculateCRC(&temp, sizeof (Settings));
+                            if (crc == *(uint32_t *)receiveDataBuffer) {
+                                memcpy(&settings, &temp, sizeof (Settings));
+                                while (!hidDataTransmitted)
+                                    taskYIELD();
                                 if (saveSettings()) {
                                     transmitDataBuffer[0] = CMD_ACK;
                                 } else {
@@ -194,11 +243,14 @@ void USBAppTasks(void *pvParameters) {
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
+                        }
                             break;
                         case SET_PRESETS:
                             for (int i = 0; i < MAX_CHANNELS; ++i) {
                                 channelPresets[i] = outputServos[i];
                             }
+                            while (!hidDataTransmitted)
+                                taskYIELD();
                             if (savePresets()) {
                                 transmitDataBuffer[0] = CMD_ACK;
                             } else {
@@ -209,7 +261,8 @@ void USBAppTasks(void *pvParameters) {
                                     &txTransferHandle, transmitDataBuffer, 64);
                             break;
                         case GET_SENSORS:
-                            while (!hidDataTransmitted);
+                            while (!hidDataTransmitted)
+                                taskYIELD();
                             memcpy(transmitDataBuffer, (void *) imuData, sizeof (uint16_t) * 6);
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,

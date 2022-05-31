@@ -7,6 +7,7 @@
 #include <QProgressBar>
 #include "QHidWatcher.h"
 #include "HidUSBLink.h"
+#include "RX12G.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,11 +27,10 @@ private:
     HidUSBLink usb;
     Ui::MainWindow *ui;
     uint8_t buffer[64];
-    uint32_t calculateChecksum(uint32_t *data, int len);
     QTimer *channelsTimer;
     QProgressBar *channelBars[12];
     QTimer *sensorTimer;
-
+    Settings settings;
 private slots:
     void onUsbConnected();
     void onUsbRemoved();

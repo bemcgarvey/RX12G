@@ -32,7 +32,13 @@ bool loadSettings(void) {
     uint32_t savedCrc;
     uint32_t *pData = (uint32_t *) &settings;
     uint32_t address = SETTINGS_ADDRESS;
-    for (int i = 0; i < (sizeof (settings) / sizeof (uint32_t)); ++i) {
+    int len = sizeof(Settings) / sizeof(uint32_t);
+    int s = sizeof(Settings);
+    (void)s;
+    if (sizeof(Settings) % sizeof(uint32_t) != 0) {
+        len += 1;
+    }
+    for (int i = 0; i < len; ++i) {
         if (!EEPROM_WordRead(address, pData)) {
             return false;
         };
@@ -43,7 +49,6 @@ bool loadSettings(void) {
         return false;
     };
     uint32_t crc = calculateCRC(&settings, sizeof(settings));
-    
     if ((savedCrc ^ crc) != 0) {
         return false;
     }
@@ -53,7 +58,11 @@ bool loadSettings(void) {
 bool saveSettings(void) {
     uint32_t *pData = (uint32_t *) &settings;
     uint32_t address = SETTINGS_ADDRESS;
-    for (int i = 0; i < (sizeof (settings) / sizeof (uint32_t)); ++i) {
+    int len = sizeof(Settings) / sizeof(uint32_t);
+    if (sizeof(Settings) % sizeof(uint32_t) != 0) {
+        len += 1;
+    }
+    for (int i = 0; i < len; ++i) {
         if (!EEPROM_WordWrite(address, *pData)) {
             return false;
         };
@@ -68,6 +77,7 @@ bool saveSettings(void) {
 }
 
 void loadDefaultSettings(void) {
+    memset(&settings, 0, sizeof(settings));
     settings.outputHz = 50;
     settings.sBusPeriodMs = 7;
     settings.numSBusOutputs = 0;

@@ -29,22 +29,12 @@ MainWindow::MainWindow(QWidget *parent)
     channelBars[9] = ui->ch10ProgressBar;
     channelBars[10] = ui->ch11ProgressBar;
     channelBars[11] = ui->ch12ProgressBar;
+    memset(&settings, 0, sizeof(Settings));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-uint32_t MainWindow::calculateChecksum(uint32_t *data, int len)
-{
-    uint32_t crc = 0x12345678;
-    while (len > 0) {
-        crc ^= *data;
-        ++data;
-        --len;
-    }
-    return crc;
 }
 
 void MainWindow::onUsbConnected()
@@ -71,16 +61,27 @@ void MainWindow::on_loadPushButton_clicked()
 {
     buffer[0] = GET_SETTINGS;
     usb.SendReport(buffer);
-    usb.GetReport(buffer);
-    uint32_t crc = calculateCRC(buffer, sizeof(Settings));
+    int bytesRemaining = sizeof(Settings);
+    uint8_t *p = (uint8_t *) &settings;
+    do {
+        usb.GetReport(buffer);
+        if (bytesRemaining >= 64) {
+            memcpy(p, buffer, 64);
+            p += 64;
+            bytesRemaining -= 64;
+        } else {
+            memcpy(p, buffer, bytesRemaining);
+            bytesRemaining = 0;
+        }
+    } while (bytesRemaining > 0);
+    uint32_t crc = calculateCRC(&settings, sizeof(Settings));
     uint32_t sentCRC;
-    memcpy(&sentCRC, &buffer[sizeof(Settings)], sizeof(uint32_t));
+    usb.GetReport(buffer);
+    sentCRC = *(uint32_t *)buffer;
     if (crc != sentCRC) {
         QMessageBox::critical(this, QApplication::applicationName(), "Error loading settings");
         return;
     }
-    Settings settings;
-    memcpy(&settings, buffer, sizeof(Settings));
     if (settings.numSBusOutputs > 0) {
         ui->sbusEnableCheckBox->setChecked(true);
     } else {
@@ -108,6 +109,7 @@ void MainWindow::on_loadPushButton_clicked()
         ui->presetFailsafeRadioButton->setChecked(true);
         ui->savePresetsPushButton->setEnabled(true);
     }
+    ui->takeoffPitchSpinBox->setValue(settings.takeoffPitch);
     ui->statusbar->showMessage("Settings loaded.", 2000);
 }
 
@@ -143,7 +145,6 @@ void MainWindow::on_connectPushButton_clicked()
 
 void MainWindow::on_savePushButton_clicked()
 {
-    Settings settings;
     if (ui->sbusEnableCheckBox->isChecked()) {
         settings.numSBusOutputs = ui->sbusOutputsSpinBox->value();
         settings.sBusPeriodMs = ui->sbusPeriodSpinBox->value();
@@ -166,10 +167,24 @@ void MainWindow::on_savePushButton_clicked()
     } else {
         settings.failsafeType = PRESET_FAILSAFE;
     }
+    settings.takeoffPitch = ui->takeoffPitchSpinBox->value();
     buffer[0] = SAVE_SETTINGS;
-    memcpy(&buffer[1], &settings, sizeof(settings));
+    usb.SendReport(buffer);
+    int bytesRemaining = sizeof(Settings);
+    uint8_t *p = (uint8_t *) &settings;
+    do {
+        if (bytesRemaining >= 64) {
+            memcpy(buffer, p, 64);
+            p += 64;
+            bytesRemaining -= 64;
+        } else {
+            memcpy(buffer, p, bytesRemaining);
+            bytesRemaining = 0;
+        }
+        usb.SendReport(buffer);
+    } while (bytesRemaining > 0);
     uint32_t crc = calculateCRC(&settings, sizeof(Settings));
-    memcpy(&buffer[sizeof(Settings) + 1], &crc, sizeof(uint32_t));
+    *(uint32_t *)buffer = crc;
     usb.SendReport(buffer);
     usb.GetReport(buffer);
     if (buffer[0] == CMD_ACK) {
