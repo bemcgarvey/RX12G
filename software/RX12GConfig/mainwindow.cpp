@@ -5,6 +5,7 @@
 
 ///TODO add some sanity checks when saving settings
 ///Make sure channels are unique and assigned when needed
+///TODO add something to icon to distinguish from RX12
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), usb(64, false)
@@ -14,7 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
     usb.SetWaitTimesInMs(500, 500);
     connectLabel = new QLabel("Not connected");
     ui->statusbar->addPermanentWidget(connectLabel);
-    hidWatcher = new QHidWatcher(PID, VID, this);
+    hidWatcher = new QHidWatcher(PID, VID);
+    hidWatcher->setParent(this);
     connect(hidWatcher, &QHidWatcher::connected, this, &MainWindow::onUsbConnected);
     connect(hidWatcher, &QHidWatcher::removed, this, &MainWindow::onUsbRemoved);
     channelsTimer = new QTimer(this);
