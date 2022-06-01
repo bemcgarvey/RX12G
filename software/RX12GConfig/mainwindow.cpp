@@ -3,6 +3,9 @@
 #include "RX12G.h"
 #include <QMessageBox>
 
+///TODO add some sanity checks when saving settings
+///Make sure channels are unique and assigned when needed
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), usb(64, false)
     , ui(new Ui::MainWindow)
@@ -55,6 +58,7 @@ void MainWindow::onUsbRemoved()
         channelBars[i]->setValue(0);
         channelBars[i]->setEnabled(false);
     }
+    ui->connectPushButton->setEnabled(true);
 }
 
 void MainWindow::on_loadPushButton_clicked()
@@ -85,7 +89,7 @@ void MainWindow::on_loadPushButton_clicked()
     setRxTabControls();
     setPlaneTabControls();
     setGyroTabControls();
-    ui->takeoffPitchSpinBox->setValue(settings.takeoffPitch);
+    setLimitsTabControls();
     ui->statusbar->showMessage("Settings loaded.", 2000);
 }
 
@@ -105,6 +109,7 @@ void MainWindow::on_connectPushButton_clicked()
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
+        ui->connectPushButton->setEnabled(false);
     } else {
         connectLabel->setText("Not connected");
         ui->loadPushButton->setEnabled(false);
@@ -124,7 +129,7 @@ void MainWindow::on_savePushButton_clicked()
     getRxTabControls();
     getPlaneTabControls();
     getGyroTabControls();
-    settings.takeoffPitch = ui->takeoffPitchSpinBox->value();
+    getLimitsTabControls();
     buffer[0] = SAVE_SETTINGS;
     usb.SendReport(buffer);
     int bytesRemaining = sizeof(Settings);
@@ -183,18 +188,27 @@ void MainWindow::on_presetFailsafeRadioButton_clicked()
 
 void MainWindow::onChannelTimout()
 {
+    if (!usb.Connected()) {
+        return;
+    }
     buffer[0] = GET_CHANNELS;
     usb.SendReport(buffer);
     usb.GetReport(buffer);
     uint16_t *channels = (uint16_t *)buffer;
-    for (int i = 0; i < 12; ++i) {
-        if (channels[i] == 0xffff) {
-            channelBars[i]->setEnabled(false);
-            channelBars[i]->setValue(0);
-        } else {
-            channelBars[i]->setEnabled(true);
-            channelBars[i]->setValue(channels[i]);
+    if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()) == "Receiver") {
+        for (int i = 0; i < 12; ++i) {
+            if (channels[i] == 0xffff) {
+                channelBars[i]->setEnabled(false);
+                channelBars[i]->setValue(0);
+            } else {
+                channelBars[i]->setEnabled(true);
+                channelBars[i]->setValue(channels[i]);
+            }
         }
+    } else if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()) == "Limits") {
+        ui->aileronMinMaxBar->setValue(channels[1]);
+        ui->elevatorMinMaxBar->setValue(channels[2]);
+        ui->rudderMinMaxBar->setValue(channels[3]);
     }
 }
 
@@ -216,7 +230,8 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     channelsTimer->stop();
     sensorTimer->stop();
-    if (ui->tabWidget->tabText(index) == "Receiver") {
+    if (ui->tabWidget->tabText(index) == "Receiver"
+            || ui->tabWidget->tabText(index) == "Limits") {
         channelsTimer->start(100);
     } else if (ui->tabWidget->tabText(index) == "Sensors") {
         sensorTimer->start(100);
@@ -225,6 +240,9 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
 void MainWindow::onSensorTimout()
 {
+    if (!usb.Connected()) {
+        return;
+    }
     buffer[0] = GET_SENSORS;
     usb.SendReport(buffer);
     usb.GetReport(buffer);
@@ -275,5 +293,65 @@ void MainWindow::on_sixModeRadioButton_clicked(bool checked)
         ui->mode6ComboBox->setEnabled(true);
         ui->modeChannelComboBox->setEnabled(true);
     }
+}
+
+
+void MainWindow::on_clearMinMaxPushButton_clicked()
+{
+    ui->aileronMinMaxBar->reset();
+    ui->elevatorMinMaxBar->reset();
+    ui->rudderMinMaxBar->reset();
+    ui->aileron2MinMaxBar->reset();
+    ui->elevator2MinMaxBar->reset();
+}
+
+
+void MainWindow::on_aileronLimitsSetPushButton_clicked()
+{
+    int min = ui->aileronMinMaxBar->getMinValue();
+    int max = ui->aileronMinMaxBar->getMaxValue();
+    ui->aileronMinMaxBar->setInitialMinMax(min, max);
+    settings.minTravelLimits[AILERON_INDEX] = min;
+    settings.maxTravelLimits[AILERON_INDEX] = max;
+}
+
+
+void MainWindow::on_elevatorLimitsSetPushButton_clicked()
+{
+    int min = ui->elevatorMinMaxBar->getMinValue();
+    int max = ui->elevatorMinMaxBar->getMaxValue();
+    ui->elevatorMinMaxBar->setInitialMinMax(min, max);
+    settings.minTravelLimits[ELEVATOR_INDEX] = min;
+    settings.maxTravelLimits[ELEVATOR_INDEX] = max;
+}
+
+
+void MainWindow::on_rudderLimitsSetPushButton_clicked()
+{
+    int min = ui->rudderMinMaxBar->getMinValue();
+    int max = ui->rudderMinMaxBar->getMaxValue();
+    ui->rudderMinMaxBar->setInitialMinMax(min, max);
+    settings.minTravelLimits[RUDDER_INDEX] = min;
+    settings.maxTravelLimits[RUDDER_INDEX] = max;
+}
+
+
+void MainWindow::on_aileron2LimitsSetPushButton_clicked()
+{
+    int min = ui->aileron2MinMaxBar->getMinValue();
+    int max = ui->aileron2MinMaxBar->getMaxValue();
+    ui->aileron2MinMaxBar->setInitialMinMax(min, max);
+    settings.minTravelLimits[AILERON2_INDEX] = min;
+    settings.maxTravelLimits[AILERON2_INDEX] = max;
+}
+
+
+void MainWindow::on_elevator2LimitsSetPushButton_clicked()
+{
+    int min = ui->elevator2MinMaxBar->getMinValue();
+    int max = ui->elevator2MinMaxBar->getMaxValue();
+    ui->elevator2MinMaxBar->setInitialMinMax(min, max);
+    settings.minTravelLimits[ELEVATOR2_INDEX] = min;
+    settings.maxTravelLimits[ELEVATOR2_INDEX] = max;
 }
 

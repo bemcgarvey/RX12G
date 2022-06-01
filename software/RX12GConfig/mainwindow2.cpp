@@ -166,7 +166,7 @@ void MainWindow::getGyroTabControls() {
     }
     int index = ui->modeChannelComboBox->currentIndex();
     if (index > 0) {
-        index += 4;
+        index += 3;
     }
     settings.flightModeChannel = index;
     settings.flightModes[0] = ui->mode1ComboBox->currentIndex();
@@ -189,19 +189,30 @@ void MainWindow::getGyroTabControls() {
     settings.gainCurves[RUDDER_INDEX] = ui->rudderGainCurveComboBox->currentIndex();
     index = ui->aileronGainChannelComboBox->currentIndex();
     if (index > 0) {
-        index += 4;
+        index += 3;
     }
     settings.gainChannels[AILERON_INDEX] = index;
     index = ui->elevatorGainChannelComboBox->currentIndex();
     if (index > 0) {
-        index += 4;
+        index += 3;
     }
     settings.gainChannels[ELEVATOR_INDEX] = index;
     index = ui->rudderGainChannelComboBox->currentIndex();
     if (index > 0) {
-        index += 4;
+        index += 3;
     }
     settings.gainChannels[RUDDER_INDEX] = index;
+    index = ui->aileron2ChannelComboBox->currentIndex();
+    if (index > 0) {
+        index += 3;
+    }
+    settings.aileron2Channel = index;
+    index = ui->elevator2ChannelComboBox->currentIndex();
+    if (index > 0) {
+        index += 3;
+    }
+    settings.elevator2Channel = index;
+
 }
 
 void MainWindow::setGyroTabControls() {
@@ -234,7 +245,7 @@ void MainWindow::setGyroTabControls() {
     }
     int index = settings.flightModeChannel;
     if (index > 0) {
-        index -= 4;
+        index -= 3;
     }
     ui->modeChannelComboBox->setCurrentIndex(index);
     ui->mode1ComboBox->setCurrentIndex(settings.flightModes[0]);
@@ -257,17 +268,44 @@ void MainWindow::setGyroTabControls() {
     ui->rudderGainCurveComboBox->setCurrentIndex(settings.gainCurves[RUDDER_INDEX]);
     index = settings.gainChannels[AILERON_INDEX];
     if (index > 0) {
-        index -= 4;
+        index -= 3;
     }
     ui->aileronGainChannelComboBox->setCurrentIndex(index);
     index = settings.gainChannels[ELEVATOR_INDEX];
     if (index > 0) {
-        index -= 4;
+        index -= 3;
     }
     ui->elevatorGainChannelComboBox->setCurrentIndex(index);
     index = settings.gainChannels[RUDDER_INDEX];
     if (index > 0) {
-        index -= 4;
+        index -= 3;
     }
     ui->rudderGainChannelComboBox->setCurrentIndex(index);
+    index = settings.aileron2Channel;
+    if (index > 0) {
+        index -= 3;
+    }
+    ui->aileron2ChannelComboBox->setCurrentIndex(index);
+    index = settings.elevator2Channel;
+    if (index > 0) {
+        index -= 3;
+    }
+    ui->elevator2ChannelComboBox->setCurrentIndex(index);
+}
+
+void MainWindow::getLimitsTabControls() {
+    settings.takeoffPitch = ui->takeoffPitchSpinBox->value();
+    settings.rollLimit = ui->rollLimitSpinBox->value();
+    settings.pitchLimit = ui->pitchLimitSpinBox->value();
+}
+
+void MainWindow::setLimitsTabControls() {
+    ui->aileronMinMaxBar->setInitialMinMax(settings.minTravelLimits[AILERON_INDEX], settings.maxTravelLimits[AILERON_INDEX]);
+    ui->elevatorMinMaxBar->setInitialMinMax(settings.minTravelLimits[ELEVATOR_INDEX], settings.maxTravelLimits[ELEVATOR_INDEX]);
+    ui->rudderMinMaxBar->setInitialMinMax(settings.minTravelLimits[RUDDER_INDEX], settings.maxTravelLimits[RUDDER_INDEX]);
+    ui->aileron2MinMaxBar->setInitialMinMax(settings.minTravelLimits[AILERON2_INDEX], settings.maxTravelLimits[AILERON2_INDEX]);
+    ui->elevator2MinMaxBar->setInitialMinMax(settings.minTravelLimits[ELEVATOR2_INDEX], settings.maxTravelLimits[ELEVATOR2_INDEX]);
+    ui->takeoffPitchSpinBox->setValue(settings.takeoffPitch);
+    ui->rollLimitSpinBox->setValue(settings.rollLimit);
+    ui->pitchLimitSpinBox->setValue(settings.pitchLimit);
 }

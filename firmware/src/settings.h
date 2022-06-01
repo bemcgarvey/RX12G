@@ -92,6 +92,8 @@ extern "C" {
         uint8_t pitchLimit;
         uint8_t takeoffPitch;
         uint8_t levelOffsets[3];
+        uint8_t aileron2Channel;
+        uint8_t elevator2Channel;
         uint16_t minTravelLimits[5];
         uint16_t maxTravelLimits[5];
         PID aileronPID;

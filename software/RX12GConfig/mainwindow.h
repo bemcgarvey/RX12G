@@ -37,7 +37,8 @@ private:
     void setPlaneTabControls();
     void getGyroTabControls();
     void setGyroTabControls();
-
+    void getLimitsTabControls();
+    void setLimitsTabControls();
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
@@ -55,6 +56,12 @@ private slots:
     void on_oneModeRadioButton_clicked(bool checked);
     void on_threeModeRadioButton_clicked(bool checked);
     void on_sixModeRadioButton_clicked(bool checked);
+    void on_clearMinMaxPushButton_clicked();
+    void on_aileronLimitsSetPushButton_clicked();
+    void on_elevatorLimitsSetPushButton_clicked();
+    void on_rudderLimitsSetPushButton_clicked();
+    void on_aileron2LimitsSetPushButton_clicked();
+    void on_elevator2LimitsSetPushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

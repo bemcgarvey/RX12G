@@ -26,6 +26,8 @@ int main(void) {
     if (!loadSettings()) {
         loadDefaultSettings();
         saveSettings();
+        SAT2_LED_Set();
+        while (1);
     }
     loadPresets();
     CORETIMER_DelayMs(30);
@@ -41,7 +43,7 @@ int main(void) {
     if (!initIMU()) {
         //TODO if IMU can't be started we should force off mode and indicate with an led code
         SAT2_LED_Set();
-        while(1); 
+        while (1);
     }
     //TODO lock PPS here since all pins should be assigned.
     initTasks(); //Starts rtos tasks - Does not return

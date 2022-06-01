@@ -82,6 +82,10 @@ void loadDefaultSettings(void) {
     settings.sBusPeriodMs = 7;
     settings.numSBusOutputs = 0;
     settings.failsafeType = NORMAL_FAILSAFE;
+    for (int i = 0; i < 5; ++i) {
+        settings.minTravelLimits[i] = 0;
+        settings.maxTravelLimits[i] = 2047;
+    }
 }
 
 bool loadPresets(void) {

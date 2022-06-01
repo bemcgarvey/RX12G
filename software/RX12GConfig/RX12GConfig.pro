@@ -14,13 +14,15 @@ SOURCES += \
     RX12G.cpp \
     main.cpp \
     mainwindow.cpp \
-    mainwindow2.cpp
+    mainwindow2.cpp \
+    minmaxbar.cpp
 
 HEADERS += \
     HidUSBLink.h \
     QHidWatcher.h \
     RX12G.h \
-    mainwindow.h
+    mainwindow.h \
+    minmaxbar.h
 
 FORMS += \
     mainwindow.ui
