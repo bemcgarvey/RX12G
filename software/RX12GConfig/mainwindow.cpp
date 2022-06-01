@@ -82,33 +82,8 @@ void MainWindow::on_loadPushButton_clicked()
         QMessageBox::critical(this, QApplication::applicationName(), "Error loading settings");
         return;
     }
-    if (settings.numSBusOutputs > 0) {
-        ui->sbusEnableCheckBox->setChecked(true);
-    } else {
-        ui->sbusEnableCheckBox->setChecked(false);
-    }
-    ui->sbusOutputsSpinBox->setValue(settings.numSBusOutputs);
-    ui->sbusPeriodSpinBox->setValue(settings.sBusPeriodMs);
-    switch(settings.outputHz) {
-    case 50:
-        ui->servoRateComboBox->setCurrentIndex(0);
-        break;
-    case 100:
-        ui->servoRateComboBox->setCurrentIndex(1);
-        break;
-    case 200:
-        ui->servoRateComboBox->setCurrentIndex(2);
-        break;
-    }
-    if (settings.failsafeType == NORMAL_FAILSAFE) {
-        ui->normalFailsafeRadioButton->setChecked(true);
-        ui->presetFailsafeRadioButton->setChecked(false);
-        ui->savePresetsPushButton->setEnabled(false);
-    } else {
-        ui->normalFailsafeRadioButton->setChecked(false);
-        ui->presetFailsafeRadioButton->setChecked(true);
-        ui->savePresetsPushButton->setEnabled(true);
-    }
+    setRxTabControls();
+    setPlaneTabControls();
     ui->takeoffPitchSpinBox->setValue(settings.takeoffPitch);
     ui->statusbar->showMessage("Settings loaded.", 2000);
 }
@@ -145,28 +120,8 @@ void MainWindow::on_connectPushButton_clicked()
 
 void MainWindow::on_savePushButton_clicked()
 {
-    if (ui->sbusEnableCheckBox->isChecked()) {
-        settings.numSBusOutputs = ui->sbusOutputsSpinBox->value();
-        settings.sBusPeriodMs = ui->sbusPeriodSpinBox->value();
-    } else {
-        settings.numSBusOutputs = 0;
-        settings.sBusPeriodMs = 7;
-    }
-    switch (ui->servoRateComboBox->currentIndex()) {
-        case 0: settings.outputHz = 50;
-        break;
-    case 1: settings.outputHz = 100;
-        break;
-    case 2: settings.outputHz = 200;
-        break;
-    default: settings.outputHz = 50;
-        break;
-    }
-    if (ui->normalFailsafeRadioButton->isChecked()) {
-        settings.failsafeType = NORMAL_FAILSAFE;
-    } else {
-        settings.failsafeType = PRESET_FAILSAFE;
-    }
+    getRxTabControls();
+    getPlaneTabControls();
     settings.takeoffPitch = ui->takeoffPitchSpinBox->value();
     buffer[0] = SAVE_SETTINGS;
     usb.SendReport(buffer);

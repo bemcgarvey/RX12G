@@ -13,7 +13,8 @@ SOURCES += \
     QHidWatcher.cpp \
     RX12G.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    mainwindow2.cpp
 
 HEADERS += \
     HidUSBLink.h \

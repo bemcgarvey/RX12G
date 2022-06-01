@@ -31,6 +31,13 @@ private:
     QProgressBar *channelBars[12];
     QTimer *sensorTimer;
     Settings settings;
+    void getRxTabControls();
+    void setRxTabControls();
+    void getPlaneTabControls();
+    void setPlaneTabControls();
+    void getGyroTabControls();
+    void setGyroTabControls();
+
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
