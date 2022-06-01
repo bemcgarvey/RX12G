@@ -52,6 +52,9 @@ private slots:
     void on_savePresetsPushButton_clicked();
     void on_tabWidget_currentChanged(int index);
     void onSensorTimout(void);
+    void on_oneModeRadioButton_clicked(bool checked);
+    void on_threeModeRadioButton_clicked(bool checked);
+    void on_sixModeRadioButton_clicked(bool checked);
 };
 
 #endif // MAINWINDOW_H

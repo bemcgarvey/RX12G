@@ -84,6 +84,7 @@ void MainWindow::on_loadPushButton_clicked()
     }
     setRxTabControls();
     setPlaneTabControls();
+    setGyroTabControls();
     ui->takeoffPitchSpinBox->setValue(settings.takeoffPitch);
     ui->statusbar->showMessage("Settings loaded.", 2000);
 }
@@ -122,6 +123,7 @@ void MainWindow::on_savePushButton_clicked()
 {
     getRxTabControls();
     getPlaneTabControls();
+    getGyroTabControls();
     settings.takeoffPitch = ui->takeoffPitchSpinBox->value();
     buffer[0] = SAVE_SETTINGS;
     usb.SendReport(buffer);
@@ -233,5 +235,45 @@ void MainWindow::onSensorTimout()
     ui->xGyro->setText(QString().setNum(data[0]));
     ui->yGyro->setText(QString().setNum(data[1]));
     ui->zGyro->setText(QString().setNum(data[2]));
+}
+
+
+void MainWindow::on_oneModeRadioButton_clicked(bool checked)
+{
+    if (checked) {
+        ui->mode2ComboBox->setEnabled(false);
+        ui->mode3ComboBox->setEnabled(false);
+        ui->mode4ComboBox->setEnabled(false);
+        ui->mode5ComboBox->setEnabled(false);
+        ui->mode6ComboBox->setEnabled(false);
+        ui->modeChannelComboBox->setCurrentIndex(0);
+        ui->modeChannelComboBox->setEnabled(false);
+    }
+}
+
+
+void MainWindow::on_threeModeRadioButton_clicked(bool checked)
+{
+    if (checked) {
+        ui->mode2ComboBox->setEnabled(true);
+        ui->mode3ComboBox->setEnabled(true);
+        ui->mode4ComboBox->setEnabled(false);
+        ui->mode5ComboBox->setEnabled(false);
+        ui->mode6ComboBox->setEnabled(false);
+        ui->modeChannelComboBox->setEnabled(true);
+    }
+}
+
+
+void MainWindow::on_sixModeRadioButton_clicked(bool checked)
+{
+    if (checked) {
+        ui->mode2ComboBox->setEnabled(true);
+        ui->mode3ComboBox->setEnabled(true);
+        ui->mode4ComboBox->setEnabled(true);
+        ui->mode5ComboBox->setEnabled(true);
+        ui->mode6ComboBox->setEnabled(true);
+        ui->modeChannelComboBox->setEnabled(true);
+    }
 }
 

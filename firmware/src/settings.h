@@ -24,7 +24,7 @@ extern "C" {
 
     enum {
         AILERON_MASK = 0x01, ELEVATOR_MASK = 0x02, RUDDER_MASK = 0x04,
-        AILERON2_MASK = 0x08, ELEVATO2_MASK = 0x10
+        AILERON2_MASK = 0x08, ELEVATOR2_MASK = 0x10
     };
     
     typedef enum {
@@ -91,6 +91,7 @@ extern "C" {
         uint8_t rollLimit;
         uint8_t pitchLimit;
         uint8_t takeoffPitch;
+        uint8_t levelOffsets[3];
         uint16_t minTravelLimits[5];
         uint16_t maxTravelLimits[5];
         PID aileronPID;
