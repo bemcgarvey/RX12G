@@ -15,6 +15,7 @@ HidUSBLink::HidUSBLink(size_t reportSize, bool includeReportNum)  {
         this->reportSize = 64;
     }
     this->includeReportNum = includeReportNum;
+    rxWaitMs = txWaitMs = 100;
 }
 
 HidUSBLink::~HidUSBLink() {
@@ -86,7 +87,7 @@ bool HidUSBLink::SendReport(BYTE *buffer, int reportNum) {
     HIDOverlapped.Offset = 0;
     HIDOverlapped.OffsetHigh = 0;
     WriteFile(handle, temp, reportSize + 1, &len, &HIDOverlapped);
-    status = WaitForSingleObject(hEventObject, 100);
+    status = WaitForSingleObject(hEventObject, txWaitMs);
     if (status == WAIT_OBJECT_0) {
         return true;
     } else {
@@ -111,7 +112,7 @@ bool HidUSBLink::GetReport(BYTE *buffer) {
         ReadFile(handle, buffer, reportSize + 1, &len, &HIDOverlapped);
     else
         ReadFile(handle, temp, reportSize + 1, &len, &HIDOverlapped);
-    status = WaitForSingleObject(hEventObject, 100);
+    status = WaitForSingleObject(hEventObject, rxWaitMs);
     if (status == WAIT_OBJECT_0) {
         if (!includeReportNum) {
             memcpy(buffer, &temp[1], reportSize);
@@ -130,4 +131,10 @@ void HidUSBLink::Close(void) {
         CloseHandle(handle);
         handle = INVALID_HANDLE_VALUE;
     }
+}
+
+void HidUSBLink::SetWaitTimesInMs(int rxWait, int txWait)
+{
+    rxWaitMs = rxWait;
+    txWaitMs = txWait;
 }

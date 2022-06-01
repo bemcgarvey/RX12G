@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    usb.SetWaitTimesInMs(500, 500);
     connectLabel = new QLabel("Not connected");
     ui->statusbar->addPermanentWidget(connectLabel);
     hidWatcher = new QHidWatcher(PID, VID, this);

@@ -17,10 +17,13 @@ public:
     bool GetReport(uint8_t *buffer);
 	bool Connected(void);
 	void Close(void);
+    void SetWaitTimesInMs(int rxWait, int txWait);
 private:
     size_t reportSize;
     bool includeReportNum;
     void *handle;
+    int rxWaitMs;
+    int txWaitMs;
 };
 
 #endif
