@@ -8,7 +8,7 @@ extern "C" {
 }
 #include <Dbt.h>
 
-QHidWatcher::QHidWatcher(uint16_t pid, uint16_t vid, QWidget *parent) : QWidget(parent) {
+QHidWatcher::QHidWatcher(uint16_t pid, uint16_t vid) : QWidget(nullptr) {
     this->vid = QString::asprintf("vid_%04x", vid);
     this->pid = QString::asprintf("pid_%04x", pid);
     HWND hwnd = (HWND)winId();

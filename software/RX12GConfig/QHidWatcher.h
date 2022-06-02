@@ -13,7 +13,7 @@ class QHidWatcher : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QHidWatcher(uint16_t pid, uint16_t vid = MY_VID, QWidget *parent = nullptr);
+    explicit QHidWatcher(uint16_t pid, uint16_t vid = MY_VID);
     ~QHidWatcher(void);
 signals:
     void connected(void);
