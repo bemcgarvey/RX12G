@@ -26,9 +26,6 @@ int main(void) {
     if (!loadSettings()) {
         loadDefaultSettings();
         saveSettings();
-        //TODO remove below after testing
-        SAT2_LED_Set();
-        while (1);
     }
     loadPresets();
     CORETIMER_DelayMs(30);

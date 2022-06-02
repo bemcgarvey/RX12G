@@ -183,6 +183,9 @@
               <itemPath>../src/config/default/system/int/sys_int.h</itemPath>
               <itemPath>../src/config/default/system/int/sys_int_mapping.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="f3" displayName="reset" projectFiles="true">
+              <itemPath>../src/config/default/system/reset/sys_reset.h</itemPath>
+            </logicalFolder>
             <itemPath>../src/config/default/system/system.h</itemPath>
             <itemPath>../src/config/default/system/system_common.h</itemPath>
             <itemPath>../src/config/default/system/system_module.h</itemPath>
@@ -325,6 +328,9 @@
           <logicalFolder name="f5" displayName="system" projectFiles="true">
             <logicalFolder name="f1" displayName="int" projectFiles="true">
               <itemPath>../src/config/default/system/int/src/sys_int.c</itemPath>
+            </logicalFolder>
+            <logicalFolder name="f2" displayName="reset" projectFiles="true">
+              <itemPath>../src/config/default/system/reset/sys_reset.c</itemPath>
             </logicalFolder>
           </logicalFolder>
           <logicalFolder name="f3" displayName="usb" projectFiles="true">

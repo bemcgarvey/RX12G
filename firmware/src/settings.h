@@ -96,9 +96,9 @@ extern "C" {
         uint8_t elevator2Channel;
         uint16_t minTravelLimits[5];
         uint16_t maxTravelLimits[5];
-        PID aileronPID;
-        PID elevatorPID;
-        PID rudderPID;
+        PID rollPID;
+        PID pitchPID;
+        PID yawPID;
     } Settings;
 
     extern uint16_t channelPresets[MAX_CHANNELS];

@@ -71,6 +71,7 @@ private slots:
     void on_elevator2LimitsSetPushButton_clicked();
     void on_actionOpen_Configuration_triggered();
     void on_actionSave_Configuration_triggered();
+    void on_rebootPushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

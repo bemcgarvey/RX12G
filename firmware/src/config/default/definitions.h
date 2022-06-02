@@ -69,6 +69,7 @@
 #include "peripheral/tmr/plib_tmr8.h"
 #include "peripheral/tmr/plib_tmr9.h"
 #include "system/int/sys_int.h"
+#include "system/reset/sys_reset.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
 

@@ -230,6 +230,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: C95CE0ABB86E6B11CF77E8891D294510
+- generatedChecksum: 47B584985982B2FF32628D4CB874CB4D
+  logicalPath: config/default/system/reset
+  name: sys_reset.c
+  physicalPath: system/reset
+  security: NON_SECURE
+  type: SOURCE
+  userChecksum: 47B584985982B2FF32628D4CB874CB4D
 - generatedChecksum: 8D7722ACC309893E199D836ABE6A8E42
   logicalPath: config/default
   name: tasks.c
@@ -300,13 +307,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 48B661D8C967C6BC397001F10FB43D1D
-- generatedChecksum: A95944C393C3625EC6BC7F0BCD6BCD01
+- generatedChecksum: DB5CF9CF40FCD1CDC02CA6ED9EAA789A
   logicalPath: config/default
   name: definitions.h
   physicalPath: ''
   security: NON_SECURE
   type: HEADER
-  userChecksum: A95944C393C3625EC6BC7F0BCD6BCD01
+  userChecksum: DB5CF9CF40FCD1CDC02CA6ED9EAA789A
 - generatedChecksum: 1EA4EDD5EA90F43EC407DE32441159A9
   logicalPath: FreeRTOS/Source/include
   name: deprecated_definitions.h
@@ -615,6 +622,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: FC7B55936A09E0CA1395AE4DFB1A188F
+- generatedChecksum: 8E43BD17134E69982826F202D0AB42C5
+  logicalPath: config/default/system/reset
+  name: sys_reset.h
+  physicalPath: system/reset
+  security: NON_SECURE
+  type: HEADER
+  userChecksum: 8E43BD17134E69982826F202D0AB42C5
 - generatedChecksum: BE95B4F134C5C929787B9DA6FDBF3501
   logicalPath: config/default/system
   name: system.h

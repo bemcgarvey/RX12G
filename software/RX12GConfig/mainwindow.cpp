@@ -60,6 +60,7 @@ void MainWindow::onUsbRemoved()
     connectLabel->setText("Not connected");
     ui->loadPushButton->setEnabled(false);
     ui->savePushButton->setEnabled(false);
+    ui->rebootPushButton->setEnabled(false);
     channelsTimer->stop();
     for (int i = 0; i < 12; ++i) {
         channelBars[i]->setValue(0);
@@ -113,6 +114,7 @@ void MainWindow::on_connectPushButton_clicked()
         connectLabel->setText("Connected: Firmware version " + Version::firmwareVersionString());
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
+        ui->rebootPushButton->setEnabled(true);
         on_loadPushButton_clicked();
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
         ui->connectPushButton->setEnabled(false);
@@ -120,6 +122,7 @@ void MainWindow::on_connectPushButton_clicked()
         connectLabel->setText("Not connected");
         ui->loadPushButton->setEnabled(false);
         ui->savePushButton->setEnabled(false);
+        ui->rebootPushButton->setEnabled(false);
         channelsTimer->stop();
         sensorTimer->stop();
         for (int i = 0; i < 12; ++i) {
@@ -218,6 +221,9 @@ void MainWindow::onChannelTimout()
 
 void MainWindow::on_savePresetsPushButton_clicked()
 {
+    if (!usb.Connected()) {
+        return;
+    }
     buffer[0] = SET_PRESETS;
     usb.SendReport(buffer);
     usb.GetReport(buffer);
@@ -393,5 +399,12 @@ void MainWindow::on_actionSave_Configuration_triggered()
         QFileInfo info(fileName);
         settings.setValue("last folder", info.path());
     }
+}
+
+
+void MainWindow::on_rebootPushButton_clicked()
+{
+    buffer[0] = REBOOT;
+    usb.SendReport(buffer);
 }
 

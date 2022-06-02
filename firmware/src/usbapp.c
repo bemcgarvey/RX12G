@@ -268,7 +268,9 @@ void USBAppTasks(void *pvParameters) {
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
                             break;
-
+                        case REBOOT:
+                            SYS_RESET_SoftwareReset();
+                            break;
                     }
                     hidDataReceived = false;
                     USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
