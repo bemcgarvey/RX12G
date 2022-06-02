@@ -39,11 +39,13 @@ private:
     void setGyroTabControls();
     void getLimitsTabControls();
     void setLimitsTabControls();
+    void getTuningTabControls();
+    void setTuningTabControls();
     void getControls();
     void setControls();
     bool openFile(QString fileName);
     bool saveFile(QString fileName);
-
+    void initSettings();
 private slots:
     void onUsbConnected();
     void onUsbRemoved();

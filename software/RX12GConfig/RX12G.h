@@ -100,9 +100,9 @@ enum {
         uint8_t elevator2Channel;
         uint16_t minTravelLimits[5];
         uint16_t maxTravelLimits[5];
-        _PID aileronPID;
-        _PID elevatorPID;
-        _PID rudderPID;
+        _PID rollPID;
+        _PID pitchPID;
+        _PID yawPID;
     } Settings;
 
 uint32_t calculateCRC(void *data, int len);

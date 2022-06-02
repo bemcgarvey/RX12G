@@ -2800,68 +2800,69 @@
        <attribute name="title">
         <string>Tuning</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_30">
+       <layout class="QVBoxLayout" name="verticalLayout_37">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <layout class="QHBoxLayout" name="horizontalLayout_17">
           <item>
-           <widget class="QGroupBox" name="groupBox_19">
+           <widget class="QGroupBox" name="rollPIDGroupBox">
             <property name="title">
-             <string>Aileron</string>
+             <string>Roll</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_18">
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
-              <layout class="QFormLayout" name="formLayout_11">
-               <item row="0" column="0">
+              <layout class="QVBoxLayout" name="verticalLayout_18">
+               <item>
                 <widget class="QLabel" name="label_71">
                  <property name="text">
                   <string>P</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_12">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_72">
                  <property name="text">
                   <string>I</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_2"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_13">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_73">
                  <property name="text">
                   <string>D</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_3"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_14">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_74">
                  <property name="text">
                   <string>Max I</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_4"/>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_30">
+               <item>
+                <widget class="QLineEdit" name="rollPLineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="rollILineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="rollDLineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="rollMaxILineEdit"/>
                </item>
               </layout>
              </item>
@@ -2869,64 +2870,65 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_20">
+           <widget class="QGroupBox" name="pitchPIDGroupBox">
             <property name="title">
-             <string>Elevator</string>
+             <string>Pitch</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_19">
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
              <item>
-              <layout class="QFormLayout" name="formLayout_15">
-               <item row="0" column="0">
+              <layout class="QVBoxLayout" name="verticalLayout_19">
+               <item>
                 <widget class="QLabel" name="label_75">
                  <property name="text">
                   <string>P</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_5"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_16">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_76">
                  <property name="text">
                   <string>I</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_6"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_17">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_77">
                  <property name="text">
                   <string>D</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_7"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_18">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_78">
                  <property name="text">
                   <string>Max I</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_8"/>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_35">
+               <item>
+                <widget class="QLineEdit" name="pitchPLineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="pitchILineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="pitchDLineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="pitchMaxILineEdit"/>
                </item>
               </layout>
              </item>
@@ -2934,64 +2936,65 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_21">
+           <widget class="QGroupBox" name="yawPIDGroupBox">
             <property name="title">
-             <string>Rudder</string>
+             <string>Yaw</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_20">
+            <layout class="QHBoxLayout" name="horizontalLayout_16">
              <item>
-              <layout class="QFormLayout" name="formLayout_19">
-               <item row="0" column="0">
+              <layout class="QVBoxLayout" name="verticalLayout_20">
+               <item>
                 <widget class="QLabel" name="label_79">
                  <property name="text">
                   <string>P</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_9"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_20">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_80">
                  <property name="text">
                   <string>I</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_10"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_21">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_81">
                  <property name="text">
                   <string>D</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_11"/>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QFormLayout" name="formLayout_22">
-               <item row="0" column="0">
+               <item>
                 <widget class="QLabel" name="label_82">
                  <property name="text">
                   <string>Max I</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_12"/>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_36">
+               <item>
+                <widget class="QLineEdit" name="yawPLineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="yawILineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="yawDLineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="yawMaxILineEdit"/>
                </item>
               </layout>
              </item>
@@ -3058,7 +3061,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Load</string>
+         <string>Reload</string>
         </property>
        </widget>
       </item>
@@ -3069,6 +3072,16 @@
         </property>
         <property name="text">
          <string>Save</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="rebootPushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Reboot</string>
         </property>
        </widget>
       </item>

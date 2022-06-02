@@ -3,6 +3,7 @@
 #include "RX12G.h"
 #include <QFile>
 #include "version.h"
+#include <QMessageBox>
 
 void MainWindow::getRxTabControls() {
     if (ui->sbusEnableCheckBox->isChecked()) {
@@ -312,12 +313,63 @@ void MainWindow::setLimitsTabControls() {
     ui->pitchLimitSpinBox->setValue(settings.pitchLimit);
 }
 
+void MainWindow::getTuningTabControls()
+{
+    bool allValid = true;
+    bool ok;
+    settings.rollPID._P = ui->rollPLineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.rollPID._I = ui->rollILineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.rollPID._D = ui->rollDLineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.rollPID._maxI = ui->rollMaxILineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.pitchPID._P = ui->pitchPLineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.pitchPID._I = ui->pitchILineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.pitchPID._D = ui->pitchDLineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.pitchPID._maxI = ui->pitchMaxILineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.yawPID._P = ui->yawPLineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.yawPID._I = ui->yawILineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.yawPID._D = ui->yawDLineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    settings.yawPID._maxI = ui->yawMaxILineEdit->text().toFloat(&ok);
+    allValid = allValid && ok;
+    if (!allValid) {
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->tuningTab));
+        QMessageBox::warning(this, QApplication::applicationName(), "Invalid number in a PID value.  Settings may not be valid.");
+    }
+}
+
+void MainWindow::setTuningTabControls()
+{
+    ui->rollPLineEdit->setText(QString().setNum(settings.rollPID._P));
+    ui->rollILineEdit->setText(QString().setNum(settings.rollPID._I));
+    ui->rollDLineEdit->setText(QString().setNum(settings.rollPID._D));
+    ui->rollMaxILineEdit->setText(QString().setNum(settings.rollPID._maxI));
+    ui->pitchPLineEdit->setText(QString().setNum(settings.pitchPID._P));
+    ui->pitchILineEdit->setText(QString().setNum(settings.pitchPID._I));
+    ui->pitchDLineEdit->setText(QString().setNum(settings.pitchPID._D));
+    ui->pitchMaxILineEdit->setText(QString().setNum(settings.pitchPID._maxI));
+    ui->yawPLineEdit->setText(QString().setNum(settings.yawPID._P));
+    ui->yawILineEdit->setText(QString().setNum(settings.yawPID._I));
+    ui->yawDLineEdit->setText(QString().setNum(settings.yawPID._D));
+    ui->yawMaxILineEdit->setText(QString().setNum(settings.yawPID._maxI));
+}
+
 void MainWindow::getControls()
 {
     getRxTabControls();
     getPlaneTabControls();
     getGyroTabControls();
     getLimitsTabControls();
+    getTuningTabControls();
 }
 
 void MainWindow::setControls()
@@ -326,6 +378,7 @@ void MainWindow::setControls()
     setPlaneTabControls();
     setGyroTabControls();
     setLimitsTabControls();
+    setTuningTabControls();
 }
 
 bool MainWindow::openFile(QString fileName)
@@ -361,4 +414,9 @@ bool MainWindow::saveFile(QString fileName)
     } else {
         return false;
     }
+}
+
+void MainWindow::initSettings()
+{
+    memset(&settings, 0, sizeof(Settings));
 }

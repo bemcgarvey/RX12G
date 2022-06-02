@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
     connectLabel = new QLabel("Not connected");
     ui->statusbar->addPermanentWidget(connectLabel);
     hidWatcher = new QHidWatcher(PID, VID);
-    hidWatcher->setParent(this);
     connect(hidWatcher, &QHidWatcher::connected, this, &MainWindow::onUsbConnected);
     connect(hidWatcher, &QHidWatcher::removed, this, &MainWindow::onUsbRemoved);
     channelsTimer = new QTimer(this);
@@ -38,12 +37,14 @@ MainWindow::MainWindow(QWidget *parent)
     channelBars[9] = ui->ch10ProgressBar;
     channelBars[10] = ui->ch11ProgressBar;
     channelBars[11] = ui->ch12ProgressBar;
-    memset(&settings, 0, sizeof(Settings));
+    initSettings();
+    setControls();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete hidWatcher;
 }
 
 void MainWindow::onUsbConnected()
@@ -112,6 +113,7 @@ void MainWindow::on_connectPushButton_clicked()
         connectLabel->setText("Connected: Firmware version " + Version::firmwareVersionString());
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
+        on_loadPushButton_clicked();
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
         ui->connectPushButton->setEnabled(false);
     } else {
