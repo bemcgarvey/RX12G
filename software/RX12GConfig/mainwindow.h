@@ -39,6 +39,11 @@ private:
     void setGyroTabControls();
     void getLimitsTabControls();
     void setLimitsTabControls();
+    void getControls();
+    void setControls();
+    bool openFile(QString fileName);
+    bool saveFile(QString fileName);
+
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
@@ -62,6 +67,8 @@ private slots:
     void on_rudderLimitsSetPushButton_clicked();
     void on_aileron2LimitsSetPushButton_clicked();
     void on_elevator2LimitsSetPushButton_clicked();
+    void on_actionOpen_Configuration_triggered();
+    void on_actionSave_Configuration_triggered();
 };
 
 #endif // MAINWINDOW_H

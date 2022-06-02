@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include "RX12G.h"
 #include <QMessageBox>
+#include "version.h"
+#include <QFileDialog>
+#include <QSettings>
 
 ///TODO add some sanity checks when saving settings
 ///Make sure channels are unique and assigned when needed
@@ -89,10 +92,7 @@ void MainWindow::on_loadPushButton_clicked()
         QMessageBox::critical(this, QApplication::applicationName(), "Error loading settings");
         return;
     }
-    setRxTabControls();
-    setPlaneTabControls();
-    setGyroTabControls();
-    setLimitsTabControls();
+    setControls();
     ui->statusbar->showMessage("Settings loaded.", 2000);
 }
 
@@ -107,8 +107,9 @@ void MainWindow::on_connectPushButton_clicked()
         buffer[0] = GET_VERSION;
         usb.SendReport(buffer);
         usb.GetReport(buffer);
-        QString version = QString("Firmware Version %1.%2").arg(buffer[1]).arg(buffer[0]);
-        connectLabel->setText("Connected: " + version);
+        Version::firmwareMajorVersion = buffer[1];
+        Version::firmwareMinorVersion = buffer[0];
+        connectLabel->setText("Connected: Firmware version " + Version::firmwareVersionString());
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
@@ -129,10 +130,7 @@ void MainWindow::on_connectPushButton_clicked()
 
 void MainWindow::on_savePushButton_clicked()
 {
-    getRxTabControls();
-    getPlaneTabControls();
-    getGyroTabControls();
-    getLimitsTabControls();
+    getControls();
     buffer[0] = SAVE_SETTINGS;
     usb.SendReport(buffer);
     int bytesRemaining = sizeof(Settings);
@@ -356,5 +354,42 @@ void MainWindow::on_elevator2LimitsSetPushButton_clicked()
     ui->elevator2MinMaxBar->setInitialMinMax(min, max);
     settings.minTravelLimits[ELEVATOR2_INDEX] = min;
     settings.maxTravelLimits[ELEVATOR2_INDEX] = max;
+}
+
+
+void MainWindow::on_actionOpen_Configuration_triggered()
+{
+    QString fileName;
+    QSettings settings;
+    QString dir = settings.value("last folder", "").toString();
+    fileName = QFileDialog::getOpenFileName(this, "Open Configuration", dir, "RX12G Files (*.RX12G)");
+    if (fileName != "") {
+        if (openFile(fileName)) {
+            setWindowTitle(windowTitle() + " - " + fileName);
+            setControls();
+        } else {
+            QMessageBox::critical(this, QApplication::applicationName(), "Unable to open file.");
+        }
+        QFileInfo info(fileName);
+        settings.setValue("last folder", info.path());
+    }
+}
+
+
+void MainWindow::on_actionSave_Configuration_triggered()
+{
+    QString fileName;
+    QSettings settings;
+    fileName = QFileDialog::getSaveFileName(this, "Save Configuration", "", "RX12G Files (*.RX12G)");
+    if (fileName != "") {
+        getControls();
+        if (saveFile(fileName)) {
+            setWindowTitle(windowTitle() + " - " + fileName);
+        } else {
+            QMessageBox::critical(this, QApplication::applicationName(), "Unable to save file.");
+        }
+        QFileInfo info(fileName);
+        settings.setValue("last folder", info.path());
+    }
 }
 

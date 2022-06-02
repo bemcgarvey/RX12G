@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>RX12G Config</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -3129,10 +3129,16 @@
    <property name="text">
     <string>Open Configuration</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSave_Configuration">
    <property name="text">
     <string>Save Configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionExit">

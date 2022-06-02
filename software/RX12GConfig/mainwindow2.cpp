@@ -1,6 +1,8 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "RX12G.h"
+#include <QFile>
+#include "version.h"
 
 void MainWindow::getRxTabControls() {
     if (ui->sbusEnableCheckBox->isChecked()) {
@@ -308,4 +310,55 @@ void MainWindow::setLimitsTabControls() {
     ui->takeoffPitchSpinBox->setValue(settings.takeoffPitch);
     ui->rollLimitSpinBox->setValue(settings.rollLimit);
     ui->pitchLimitSpinBox->setValue(settings.pitchLimit);
+}
+
+void MainWindow::getControls()
+{
+    getRxTabControls();
+    getPlaneTabControls();
+    getGyroTabControls();
+    getLimitsTabControls();
+}
+
+void MainWindow::setControls()
+{
+    setRxTabControls();
+    setPlaneTabControls();
+    setGyroTabControls();
+    setLimitsTabControls();
+}
+
+bool MainWindow::openFile(QString fileName)
+{
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadOnly)) {
+        unsigned int magic;
+        file.read(reinterpret_cast<char *>(&magic), sizeof(magic));
+        if (magic != Version::fileMagicNumber) {
+            return false;
+        }
+        unsigned int version;
+        file.read(reinterpret_cast<char *>(&version), sizeof(version));
+        file.read(reinterpret_cast<char *>(&settings), sizeof(Settings));
+        file.close();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool MainWindow::saveFile(QString fileName)
+{
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly)) {
+        unsigned int magic = Version::fileMagicNumber;
+        unsigned int fileVersion = Version::fileVersion;
+        file.write(reinterpret_cast<const char *>(&magic), sizeof(magic));
+        file.write(reinterpret_cast<const char *>(&fileVersion), sizeof(fileVersion));
+        file.write(reinterpret_cast<const char *>(&settings), sizeof(Settings));
+        file.close();
+        return true;
+    } else {
+        return false;
+    }
 }
