@@ -598,6 +598,9 @@
              </item>
              <item>
               <widget class="QRadioButton" name="vtailRadioButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>V-Tail</string>
                </property>
@@ -733,6 +736,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_24">
                <item>
                 <widget class="QCheckBox" name="enableAileron2CheckBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Aileron2</string>
                  </property>
@@ -740,6 +746,9 @@
                </item>
                <item>
                 <widget class="QCheckBox" name="reverseAileron2CheckBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Reverse</string>
                  </property>
@@ -764,6 +773,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_25">
                <item>
                 <widget class="QCheckBox" name="enableElevator2CheckBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Elevator2</string>
                  </property>
@@ -771,6 +783,9 @@
                </item>
                <item>
                 <widget class="QCheckBox" name="reverseElevator2CheckBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Reverse</string>
                  </property>
@@ -824,6 +839,9 @@
                 <layout class="QVBoxLayout" name="verticalLayout_15">
                  <item>
                   <widget class="QComboBox" name="aileron2ChannelComboBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <item>
                     <property name="text">
                      <string>None</string>
@@ -913,6 +931,9 @@
                  </item>
                  <item>
                   <widget class="QComboBox" name="elevator2ChannelComboBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <item>
                     <property name="text">
                      <string>None</string>
@@ -2472,10 +2493,18 @@
                 <widget class="MinMaxBar" name="rudderMinMaxBar" native="true"/>
                </item>
                <item>
-                <widget class="MinMaxBar" name="aileron2MinMaxBar" native="true"/>
+                <widget class="MinMaxBar" name="aileron2MinMaxBar" native="true">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
                <item>
-                <widget class="MinMaxBar" name="elevator2MinMaxBar" native="true"/>
+                <widget class="MinMaxBar" name="elevator2MinMaxBar" native="true">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -2504,6 +2533,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="aileron2LimitsSetPushButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Set</string>
                  </property>
@@ -2511,6 +2543,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="elevator2LimitsSetPushButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Set</string>
                  </property>
@@ -2786,6 +2821,9 @@
         </layout>
        </widget>
        <widget class="QPushButton" name="levelCalibratePushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>260</x>

@@ -375,10 +375,10 @@ void MainWindow::getControls()
 void MainWindow::setControls()
 {
     setRxTabControls();
-    setPlaneTabControls();
     setGyroTabControls();
     setLimitsTabControls();
     setTuningTabControls();
+    setPlaneTabControls();
 }
 
 bool MainWindow::openFile(QString fileName)
@@ -419,4 +419,52 @@ bool MainWindow::saveFile(QString fileName)
 void MainWindow::initSettings()
 {
     memset(&settings, 0, sizeof(Settings));
+}
+
+bool MainWindow::controlsValid()
+{
+    if (ui->twoAileronsRadioButton->isChecked()) {
+        if (ui->aileron2ChannelComboBox->currentIndex() == 0) {
+            ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gyroTab));
+            QMessageBox::critical(this, QApplication::applicationName(), "You must select a channel for Aileron2.");
+            return false;
+        }ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gyroTab));
+    }
+    if (ui->twoElevatorRadioButton->isChecked()) {
+        if (ui->elevator2ChannelComboBox->currentIndex() == 0) {
+            ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gyroTab));
+            QMessageBox::critical(this, QApplication::applicationName(), "You must select a channel for Elevator2.");
+            return false;
+        }
+    }
+    if (!ui->oneModeRadioButton->isChecked()) {
+        if (ui->modeChannelComboBox->currentIndex() == 0) {
+            ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gyroTab));
+            QMessageBox::critical(this, QApplication::applicationName(), "You have selected multiple flight modes. You must select a flight mode channel.");
+            return false;
+        }
+    }
+    int assignedChannels[6];
+    assignedChannels[0] = ui->aileron2ChannelComboBox->currentIndex();
+    assignedChannels[1] = ui->elevator2ChannelComboBox->currentIndex();
+    assignedChannels[2] = ui->modeChannelComboBox->currentIndex();
+    assignedChannels[3] = ui->aileronGainChannelComboBox->currentIndex();
+    assignedChannels[4] = ui->elevatorGainChannelComboBox->currentIndex();
+    assignedChannels[5] = ui->rudderGainChannelComboBox->currentIndex();
+    for (int i = 0; i < 5; ++i) {
+        for (int j = i + 1; j < 6; ++j) {
+            if (assignedChannels[i] == 0) {
+                continue;
+            }
+            if (assignedChannels[i] == assignedChannels[j]) {
+                ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gyroTab));
+                if (QMessageBox::warning(this, QApplication::applicationName(),
+                    "You have multiple functions assigned to the same channel. Are you sure this is what you want?",
+                    QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
+                        return false;
+                }
+            }
+        }
+    }
+    return true;
 }

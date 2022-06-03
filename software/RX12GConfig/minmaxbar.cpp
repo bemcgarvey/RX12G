@@ -62,6 +62,13 @@ void MinMaxBar::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     QBrush brush(Qt::white);
     QPen pen(Qt::black);
+    if (!isEnabled()) {
+        pen.setColor(Qt::lightGray);
+        painter.setBrush(brush);
+        painter.setPen(pen);
+        painter.drawRect(0, 0, width() - 1, height() - 1);
+        return;
+    }
     QFontMetrics fm = painter.fontMetrics();
     QRect bound = fm.boundingRect(QString().number(limit));
     int textWidth = bound.width();

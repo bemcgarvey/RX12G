@@ -6,9 +6,7 @@
 #include <QFileDialog>
 #include <QSettings>
 
-///TODO add some sanity checks when saving settings
-///Make sure channels are unique and assigned when needed
-///TODO add something to icon to distinguish from RX12
+//TODO add something to icon to distinguish from RX12
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), usb(64, false)
@@ -61,6 +59,7 @@ void MainWindow::onUsbRemoved()
     ui->loadPushButton->setEnabled(false);
     ui->savePushButton->setEnabled(false);
     ui->rebootPushButton->setEnabled(false);
+    ui->levelCalibratePushButton->setEnabled(false);
     channelsTimer->stop();
     for (int i = 0; i < 12; ++i) {
         channelBars[i]->setValue(0);
@@ -115,6 +114,7 @@ void MainWindow::on_connectPushButton_clicked()
         ui->loadPushButton->setEnabled(true);
         ui->savePushButton->setEnabled(true);
         ui->rebootPushButton->setEnabled(true);
+        ui->levelCalibratePushButton->setEnabled(true);
         on_loadPushButton_clicked();
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
         ui->connectPushButton->setEnabled(false);
@@ -123,6 +123,7 @@ void MainWindow::on_connectPushButton_clicked()
         ui->loadPushButton->setEnabled(false);
         ui->savePushButton->setEnabled(false);
         ui->rebootPushButton->setEnabled(false);
+        ui->levelCalibratePushButton->setEnabled(false);
         channelsTimer->stop();
         sensorTimer->stop();
         for (int i = 0; i < 12; ++i) {
@@ -135,30 +136,32 @@ void MainWindow::on_connectPushButton_clicked()
 
 void MainWindow::on_savePushButton_clicked()
 {
-    getControls();
-    buffer[0] = SAVE_SETTINGS;
-    usb.SendReport(buffer);
-    int bytesRemaining = sizeof(Settings);
-    uint8_t *p = (uint8_t *) &settings;
-    do {
-        if (bytesRemaining >= 64) {
-            memcpy(buffer, p, 64);
-            p += 64;
-            bytesRemaining -= 64;
-        } else {
-            memcpy(buffer, p, bytesRemaining);
-            bytesRemaining = 0;
-        }
+    if (controlsValid()) {
+        getControls();
+        buffer[0] = SAVE_SETTINGS;
         usb.SendReport(buffer);
-    } while (bytesRemaining > 0);
-    uint32_t crc = calculateCRC(&settings, sizeof(Settings));
-    *(uint32_t *)buffer = crc;
-    usb.SendReport(buffer);
-    usb.GetReport(buffer);
-    if (buffer[0] == CMD_ACK) {
-        ui->statusbar->showMessage("Settings saved", 2000);
-    } else {
-        QMessageBox::critical(this, QApplication::applicationName(), "Unable to save settings");
+        int bytesRemaining = sizeof(Settings);
+        uint8_t *p = (uint8_t *) &settings;
+        do {
+            if (bytesRemaining >= 64) {
+                memcpy(buffer, p, 64);
+                p += 64;
+                bytesRemaining -= 64;
+            } else {
+                memcpy(buffer, p, bytesRemaining);
+                bytesRemaining = 0;
+            }
+            usb.SendReport(buffer);
+        } while (bytesRemaining > 0);
+        uint32_t crc = calculateCRC(&settings, sizeof(Settings));
+        *(uint32_t *)buffer = crc;
+        usb.SendReport(buffer);
+        usb.GetReport(buffer);
+        if (buffer[0] == CMD_ACK) {
+            ui->statusbar->showMessage("Settings saved", 2000);
+        } else {
+            QMessageBox::critical(this, QApplication::applicationName(), "Unable to save settings");
+        }
     }
 }
 
@@ -388,7 +391,8 @@ void MainWindow::on_actionSave_Configuration_triggered()
 {
     QString fileName;
     QSettings settings;
-    fileName = QFileDialog::getSaveFileName(this, "Save Configuration", "", "RX12G Files (*.RX12G)");
+    QString dir = settings.value("last folder", "").toString();
+    fileName = QFileDialog::getSaveFileName(this, "Save Configuration", dir, "RX12G Files (*.RX12G)");
     if (fileName != "") {
         getControls();
         if (saveFile(fileName)) {
@@ -406,5 +410,74 @@ void MainWindow::on_rebootPushButton_clicked()
 {
     buffer[0] = REBOOT;
     usb.SendReport(buffer);
+}
+
+
+void MainWindow::on_oneAileronRadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->aileron2LimitsSetPushButton->setEnabled(false);
+        ui->aileron2MinMaxBar->setEnabled(false);
+        ui->enableAileron2CheckBox->setEnabled(false);
+        ui->enableAileron2CheckBox->setChecked(false);
+        ui->reverseAileron2CheckBox->setChecked(false);
+        ui->reverseAileron2CheckBox->setEnabled(false);
+        ui->aileron2ChannelComboBox->setEnabled(false);
+        ui->aileron2ChannelComboBox->setCurrentIndex(0);
+    }
+}
+
+
+void MainWindow::on_twoAileronsRadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->aileron2LimitsSetPushButton->setEnabled(true);
+        ui->aileron2MinMaxBar->setEnabled(true);
+        ui->enableAileron2CheckBox->setEnabled(true);
+        ui->reverseAileron2CheckBox->setEnabled(true);
+        ui->aileron2ChannelComboBox->setEnabled(true);
+    }
+}
+
+
+void MainWindow::on_elevonsRadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->aileron2LimitsSetPushButton->setEnabled(false);
+        ui->aileron2MinMaxBar->setEnabled(false);
+        ui->enableAileron2CheckBox->setChecked(false);
+        ui->reverseAileron2CheckBox->setChecked(false);
+        ui->enableAileron2CheckBox->setEnabled(false);
+        ui->reverseAileron2CheckBox->setEnabled(false);
+        ui->aileron2ChannelComboBox->setEnabled(false);
+        ui->aileron2ChannelComboBox->setCurrentIndex(0);
+    }
+}
+
+
+void MainWindow::on_oneElevatorRadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->elevator2ChannelComboBox->setEnabled(false);
+        ui->elevator2LimitsSetPushButton->setEnabled(false);
+        ui->enableElevator2CheckBox->setEnabled(false);
+        ui->enableElevator2CheckBox->setChecked(false);
+        ui->reverseElevator2CheckBox->setEnabled(false);
+        ui->reverseElevator2CheckBox->setChecked(false);
+        ui->elevator2MinMaxBar->setEnabled(false);
+        ui->elevator2ChannelComboBox->setCurrentIndex(0);
+    }
+}
+
+
+void MainWindow::on_twoElevatorRadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->elevator2ChannelComboBox->setEnabled(true);
+        ui->elevator2LimitsSetPushButton->setEnabled(true);
+        ui->enableElevator2CheckBox->setEnabled(true);
+        ui->reverseElevator2CheckBox->setEnabled(true);
+        ui->elevator2MinMaxBar->setEnabled(true);
+    }
 }
 

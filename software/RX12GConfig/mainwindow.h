@@ -46,6 +46,7 @@ private:
     bool openFile(QString fileName);
     bool saveFile(QString fileName);
     void initSettings();
+    bool controlsValid();
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
@@ -72,6 +73,11 @@ private slots:
     void on_actionOpen_Configuration_triggered();
     void on_actionSave_Configuration_triggered();
     void on_rebootPushButton_clicked();
+    void on_oneAileronRadioButton_toggled(bool checked);
+    void on_twoAileronsRadioButton_toggled(bool checked);
+    void on_elevonsRadioButton_toggled(bool checked);
+    void on_oneElevatorRadioButton_toggled(bool checked);
+    void on_twoElevatorRadioButton_toggled(bool checked);
 };
 
 #endif // MAINWINDOW_H
