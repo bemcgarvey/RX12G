@@ -10,11 +10,12 @@ public:
     explicit MinMaxBar(QWidget *parent = nullptr);
     int getMinValue() {return minValue;}
     int getMaxValue() {return maxValue;}
-    void reset();
-    void setValue(int value);
     void setLimit(int newLimit);
     int getLimit() {return limit;}
     void setInitialMinMax(int min, int max);
+public slots:
+    void reset();
+    void setValue(int value);
 private:
     int minValue;
     int maxValue;
@@ -22,7 +23,6 @@ private:
     int oldMin;
     int oldMax;
 signals:
-
 
 // QWidget interface
 protected:

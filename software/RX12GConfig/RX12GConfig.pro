@@ -12,18 +12,22 @@ SOURCES += \
     HidUSBLink.cpp \
     QHidWatcher.cpp \
     RX12G.cpp \
+    gyrodisplay.cpp \
     main.cpp \
     mainwindow.cpp \
     mainwindow2.cpp \
     minmaxbar.cpp \
+    qhorizonwidget.cpp \
     version.cpp
 
 HEADERS += \
     HidUSBLink.h \
     QHidWatcher.h \
     RX12G.h \
+    gyrodisplay.h \
     mainwindow.h \
     minmaxbar.h \
+    qhorizonwidget.h \
     version.h
 
 FORMS += \

@@ -5,6 +5,7 @@
 #include "version.h"
 #include <QFileDialog>
 #include <QSettings>
+#include <math.h>
 
 //TODO add something to icon to distinguish from RX12
 
@@ -36,6 +37,11 @@ MainWindow::MainWindow(QWidget *parent)
     channelBars[10] = ui->ch11ProgressBar;
     channelBars[11] = ui->ch12ProgressBar;
     initSettings();
+    ui->xGyroDisplay->setRange(10000);
+    ui->yGyroDisplay->setRange(10000);
+    ui->zGyroDisplay->setRange(10000);
+    ui->yGyroDisplay->setOrientation(GyroDisplay::VERTICAL);
+    ui->zGyroDisplay->setOrientation(GyroDisplay::VERTICAL);
     setControls();
 }
 
@@ -242,11 +248,21 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     channelsTimer->stop();
     sensorTimer->stop();
-    if (ui->tabWidget->tabText(index) == "Receiver"
-            || ui->tabWidget->tabText(index) == "Limits") {
-        channelsTimer->start(100);
-    } else if (ui->tabWidget->tabText(index) == "Sensors") {
-        sensorTimer->start(100);
+    if (usb.Connected()) {
+        if (ui->tabWidget->tabText(index) == "Receiver"
+                || ui->tabWidget->tabText(index) == "Limits") {
+            ui->horizonWidget->setEnabled(false);
+            ui->xGyroDisplay->setEnabled(false);
+            ui->yGyroDisplay->setEnabled(false);
+            ui->zGyroDisplay->setEnabled(false);
+            channelsTimer->start(100);
+        } else if (ui->tabWidget->tabText(index) == "Sensors") {
+            ui->horizonWidget->setEnabled(true);
+            ui->xGyroDisplay->setEnabled(true);
+            ui->yGyroDisplay->setEnabled(true);
+            ui->zGyroDisplay->setEnabled(true);
+            sensorTimer->start(100);
+        }
     }
 }
 
@@ -265,6 +281,13 @@ void MainWindow::onSensorTimout()
     ui->xGyro->setText(QString().setNum(data[0]));
     ui->yGyro->setText(QString().setNum(data[1]));
     ui->zGyro->setText(QString().setNum(data[2]));
+    int pitch = atan2(data[3], data[5]) * 180 / 3.1415;
+    int roll = atan2(data[4], data[5]) * 180 / 3.1415;
+    ui->horizonWidget->updatePitch(pitch);
+    ui->horizonWidget->updateRoll(roll);
+    ui->xGyroDisplay->setValue(data[0]);
+    ui->yGyroDisplay->setValue(data[1]);
+    ui->zGyroDisplay->setValue(data[2]);
 }
 
 

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>images/radio.ico</file>
+        <file>images/Gauge.png</file>
     </qresource>
 </RCC>
