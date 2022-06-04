@@ -26,7 +26,11 @@ extern "C" {
         AILERON_MASK = 0x01, ELEVATOR_MASK = 0x02, RUDDER_MASK = 0x04,
         AILERON2_MASK = 0x08, ELEVATOR2_MASK = 0x10
     };
-    
+
+    enum {
+        ROLL_INDEX = 0, PITCH_INDEX = 1, YAW_INDEX = 2
+    };
+
     typedef enum {
         NORMAL_FAILSAFE = 0, PRESET_FAILSAFE = 1
     } FailsafeType;
