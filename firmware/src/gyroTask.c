@@ -36,6 +36,8 @@ FlightModeType decodeFlightMode(void);
 void calculateGains();
 
 void gyroTask(void *pvParameters) {
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = 5;
     portTASK_USES_FLOATING_POINT();
     aileron2Value = 0xffff;
     elevator2Value = 0xffff;
@@ -49,6 +51,7 @@ void gyroTask(void *pvParameters) {
     rollBaseGain = settings.gains[ROLL_INDEX] / 100.0;
     pitchBaseGain = settings.gains[PITCH_INDEX] / 100.0;
     yawBaseGain = settings.gains[YAW_INDEX] / 100.0;
+    xLastWakeTime = xTaskGetTickCount();
     while (1) {
         currentFlightMode = decodeFlightMode();
         calculateGains();
@@ -70,7 +73,8 @@ void gyroTask(void *pvParameters) {
                 outputServos[i] = rawServoPositions[i];
             }
         }
-        vTaskDelay(5); //TODO should this be replaced by a notification from a timer?
+        vTaskDelayUntil( &xLastWakeTime, xFrequency );
+        // TODO should this be replaced by a notification from a timer?
         // Does it need to be that accurate?
         //TODO check stack level - remove when done
         int stack = uxTaskGetStackHighWaterMark(NULL);

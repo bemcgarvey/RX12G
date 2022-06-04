@@ -13,6 +13,7 @@ extern "C" {
 #endif
 
     extern int16_t imuData[6];
+    extern bool imuReady;
     
     bool initIMU(void);
     void imuTask(void *pvParameters);

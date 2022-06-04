@@ -16,6 +16,7 @@
 #include "buttonTask.h"
 #include "satellites.h"
 #include "uart.h"
+#include "imu.h"
 
 TaskHandle_t statusLedTaskHandle;
 
@@ -97,7 +98,7 @@ void statusLedTask(void *pvParameters) {
                 LED_A_State = LED_OFF;
                 LED_B_State = LED_OFF;
         }
-        if (isBinding) {
+        if (isBinding || !imuReady) {
             LED_A_State = LED_BLINK_FAST;
             LED_B_State = LED_BLINK_FAST;
         }

@@ -45,12 +45,18 @@
 TaskHandle_t imuTaskHandle;
 
 int16_t imuData[6];
+bool imuReady = false;
+
+int16_t xGyroOffset;
+int16_t yGyroOffset;
+int16_t zGyroOffset;
 
 void imuIntHandler(EXTERNAL_INT_PIN pin, uintptr_t context);
 
 bool initIMU(void) {
     uint8_t wValue[2];
     uint8_t rValue;
+    imuReady = false;
     CORETIMER_DelayMs(70);
     wValue[0] = WHO_AM_I;
     I2C2_WriteRead(IMU_DEVICE_ADDRESS, wValue, 1, &rValue, 1);
@@ -70,26 +76,26 @@ bool initIMU(void) {
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL9_XL;
-    wValue[1] = 0b00000010;  //No DEN stamping, I3C disabled
+    wValue[1] = 0b00000010; //No DEN stamping, I3C disabled
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL3_C;
-    wValue[1] = 0b01000100;  //BDU, IF_INC  //TODO is this needed? look for bogus values in data
+    wValue[1] = 0b01000100; //BDU, IF_INC  //TODO is this needed? look for bogus values in data
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL4_C;
-    wValue[1] = 0b00001000;  //DRDY_MASK
+    wValue[1] = 0b00001000; //DRDY_MASK
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     //Configure accelerometer
     //TODO determine best ODR and filter values
     //TODO use offset values for level adjust, values should be stored in settings.
     wValue[0] = CTRL1_XL;
-    wValue[1] = 0b01010010;  //208Hz, 4g range, LPF2_XL_EN
+    wValue[1] = 0b01010010; //208Hz, 4g range, LPF2_XL_EN
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL8_XL;
-    wValue[1] = 0b00100000;  //LPF2 at ODR/10
+    wValue[1] = 0b00100000; //LPF2 at ODR/10
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     //Configure gyroscope
@@ -99,21 +105,48 @@ bool initIMU(void) {
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     //Configure IMU_INT1 interrupt
-    INTCONbits.INT2EP = 1;  //Rising edge
+    INTCONbits.INT2EP = 1; //Rising edge
     EVIC_ExternalInterruptCallbackRegister(EXTERNAL_INT_2, imuIntHandler, 0);
     EVIC_ExternalInterruptEnable(EXTERNAL_INT_2);
     return true;
 }
 
-
 void imuTask(void *pvParameters) {
-    static uint8_t reg = OUTX_L_G;
+    const uint8_t reg = OUTX_L_G;
+    int xSum = 0;
+    int ySum = 0;
+    int zSum = 0;
+    int samples = 600;
+    xGyroOffset = 0;
+    yGyroOffset = 0;
+    zGyroOffset = 0;
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         //TODO can we enable rounding and just do a read here
         // We would need to do a write at end of init function to set register.
-        I2C2_WriteRead(IMU_DEVICE_ADDRESS, &reg, 1, (uint8_t *)imuData, 12);
+        I2C2_WriteRead(IMU_DEVICE_ADDRESS, (uint8_t *)&reg, 1, (uint8_t *) imuData, 12);
         while (I2C2_IsBusy());
+        if (samples != 0) {
+            if (samples <= 50) {
+                xSum += imuData[0];
+                ySum += imuData[1];
+                zSum += imuData[2];
+            }
+            --samples;
+            if (samples == 0) {
+                xGyroOffset = xSum / -50;
+                yGyroOffset = ySum / -50;
+                zGyroOffset = zSum / -50;
+                imuData[0] += xGyroOffset;
+                imuData[1] += yGyroOffset;
+                imuData[2] += zGyroOffset;
+                imuReady = true;
+            }
+        } else {
+            imuData[0] += xGyroOffset;
+            imuData[1] += yGyroOffset;
+            imuData[2] += zGyroOffset;
+        }
     }
 }
 
