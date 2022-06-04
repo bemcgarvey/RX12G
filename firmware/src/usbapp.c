@@ -271,6 +271,17 @@ void USBAppTasks(void *pvParameters) {
                         case REBOOT:
                             SYS_RESET_SoftwareReset();
                             break;
+                        case GET_GAINS:
+                            while (!hidDataTransmitted)
+                                taskYIELD();
+                            float *fp = (float *)transmitDataBuffer;
+                            fp[0] = rollGain;
+                            fp[1] = pitchGain;
+                            fp[2] = yawGain;
+                            hidDataTransmitted = false;
+                            USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                    &txTransferHandle, transmitDataBuffer, 64);
+                            break;
                     }
                     hidDataReceived = false;
                     USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,

@@ -30,6 +30,7 @@ private:
     QTimer *channelsTimer;
     QProgressBar *channelBars[12];
     QTimer *sensorTimer;
+    QTimer *gainsTimer;
     Settings settings;
     void getRxTabControls();
     void setRxTabControls();
@@ -57,10 +58,11 @@ private slots:
     void on_sbusEnableCheckBox_stateChanged(int arg1);
     void on_normalFailsafeRadioButton_clicked();
     void on_presetFailsafeRadioButton_clicked();
-    void onChannelTimout(void);
+    void onChannelTimout();
     void on_savePresetsPushButton_clicked();
     void on_tabWidget_currentChanged(int index);
-    void onSensorTimout(void);
+    void onSensorTimout();
+    void onGainsTimout();
     void on_oneModeRadioButton_clicked(bool checked);
     void on_threeModeRadioButton_clicked(bool checked);
     void on_sixModeRadioButton_clicked(bool checked);

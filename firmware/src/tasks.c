@@ -40,7 +40,7 @@ void initQueues(void) {
 void initTasks(void) {
     xTaskCreate(buttonTask, "button", 128, NULL, 5, &buttonTaskHandle);
     xTaskCreate(rxTask, "rxtask", 128, NULL, 4, &rxTaskHandle);
-    xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 3, &gyroTaskHandle);
+    xTaskCreate(gyroTask, "gyroTask", 2048, NULL, 3, &gyroTaskHandle);
     xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, 1, &statusLedTaskHandle);
     xTaskCreate(imuTask, "imuTask", 128, NULL, 5, &imuTaskHandle);
     if (startMode == START_USB) {

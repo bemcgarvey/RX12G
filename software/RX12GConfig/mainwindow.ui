@@ -1937,7 +1937,7 @@
                     </size>
                    </property>
                    <property name="text">
-                    <string>Aileron</string>
+                    <string>Roll</string>
                    </property>
                   </widget>
                  </item>
@@ -1956,7 +1956,7 @@
                     </size>
                    </property>
                    <property name="text">
-                    <string>Elevator</string>
+                    <string>Pitch</string>
                    </property>
                   </widget>
                  </item>
@@ -1975,7 +1975,7 @@
                     </size>
                    </property>
                    <property name="text">
-                    <string>Rudder</string>
+                    <string>Yaw</string>
                    </property>
                   </widget>
                  </item>
@@ -2401,6 +2401,19 @@
                 </layout>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="actualGainLabel">
+               <property name="minimumSize">
+                <size>
+                 <width>246</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Actual: Roll = 100%, Pitch = 100%, Yaw = 100%</string>
+               </property>
+              </widget>
              </item>
              <item>
               <spacer name="verticalSpacer_15">

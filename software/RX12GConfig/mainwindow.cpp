@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(channelsTimer, &QTimer::timeout, this, &MainWindow::onChannelTimout);
     sensorTimer = new QTimer(this);
     connect(sensorTimer, &QTimer::timeout, this, &MainWindow::onSensorTimout);
+    gainsTimer = new QTimer(this);
+    connect(gainsTimer, &QTimer::timeout, this, &MainWindow::onGainsTimout);
     channelBars[0] = ui->ch1ProgressBar;
     channelBars[1] = ui->ch2ProgressBar;
     channelBars[2] = ui->ch3ProgressBar;
@@ -248,6 +250,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     channelsTimer->stop();
     sensorTimer->stop();
+    gainsTimer->stop();
     if (usb.Connected()) {
         if (ui->tabWidget->tabText(index) == "Receiver"
                 || ui->tabWidget->tabText(index) == "Limits") {
@@ -262,6 +265,8 @@ void MainWindow::on_tabWidget_currentChanged(int index)
             ui->yGyroDisplay->setEnabled(true);
             ui->zGyroDisplay->setEnabled(true);
             sensorTimer->start(100);
+        } else if (ui->tabWidget->tabText(index) == "Gyro Settings") {
+            gainsTimer->start(100);
         }
     }
 }
@@ -288,6 +293,21 @@ void MainWindow::onSensorTimout()
     ui->xGyroDisplay->setValue(data[0]);
     ui->yGyroDisplay->setValue(data[1]);
     ui->zGyroDisplay->setValue(data[2]);
+}
+
+void MainWindow::onGainsTimout()
+{
+    if (!usb.Connected()) {
+        return;
+    }
+    buffer[0] = GET_GAINS;
+    usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    float *fp = reinterpret_cast<float *>(buffer);
+    int rollGain = round(fp[0] * 100);
+    int pitchGain = round(fp[1] * 100);
+    int yawGain = round(fp[2] * 100);
+    ui->actualGainLabel->setText(QString("Actual: Roll = %1%, Pitch = %2%, Yaw = %3%").arg(rollGain).arg(pitchGain).arg(yawGain));
 }
 
 

@@ -19,6 +19,9 @@ extern "C" {
     
     extern FlightModeType currentFlightMode;
     extern volatile uint16_t rawServoPositions[MAX_CHANNELS];
+    extern float rollGain;
+    extern float pitchGain;
+    extern float yawGain;
     
     void gyroTask(void *pvParameters);
 
