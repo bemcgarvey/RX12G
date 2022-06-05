@@ -2778,6 +2778,26 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="defaultLevelPushButton">
+              <property name="text">
+               <string>Remove offsets</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_21">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBox_10">
               <property name="title">
                <string>Gyro</string>
@@ -2858,8 +2878,8 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>13</width>
+              <height>429</height>
              </size>
             </property>
            </spacer>

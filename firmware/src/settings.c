@@ -33,8 +33,6 @@ bool loadSettings(void) {
     uint32_t *pData = (uint32_t *) &settings;
     uint32_t address = SETTINGS_ADDRESS;
     int len = sizeof(Settings) / sizeof(uint32_t);
-    int s = sizeof(Settings);
-    (void)s;
     if (sizeof(Settings) % sizeof(uint32_t) != 0) {
         len += 1;
     }

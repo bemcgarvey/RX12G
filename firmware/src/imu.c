@@ -1,6 +1,7 @@
 
 #include "definitions.h"
 #include "imu.h"
+#include "settings.h"
 
 #define IMU_DEVICE_ADDRESS  0x6a
 
@@ -54,7 +55,7 @@ int16_t zGyroOffset;
 void imuIntHandler(EXTERNAL_INT_PIN pin, uintptr_t context);
 
 bool initIMU(void) {
-    uint8_t wValue[2];
+    uint8_t wValue[4];
     uint8_t rValue;
     imuReady = false;
     CORETIMER_DelayMs(70);
@@ -79,17 +80,12 @@ bool initIMU(void) {
     wValue[1] = 0b00000010; //No DEN stamping, I3C disabled
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    wValue[0] = CTRL3_C;
-    wValue[1] = 0b01000100; //BDU, IF_INC  //TODO is this needed? look for bogus values in data
-    I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
-    while (I2C2_IsBusy());
     wValue[0] = CTRL4_C;
     wValue[1] = 0b00001000; //DRDY_MASK
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     //Configure accelerometer
     //TODO determine best ODR and filter values
-    //TODO use offset values for level adjust, values should be stored in settings.
     wValue[0] = CTRL1_XL;
     wValue[1] = 0b01010010; //208Hz, 4g range, LPF2_XL_EN
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
@@ -97,6 +93,16 @@ bool initIMU(void) {
     wValue[0] = CTRL8_XL;
     wValue[1] = 0b00100000; //LPF2 at ODR/10
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
+    while (I2C2_IsBusy());
+    wValue[0] = CTRL7_G;
+    wValue[1] = 0b00000010; //USER_OFF_ON_OUT enable user offsets for accel.
+    I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
+    while (I2C2_IsBusy());
+    wValue[0] = X_OFS_USR;  //Write user offsets
+    wValue[1] = settings.levelOffsets[0];
+    wValue[2] = settings.levelOffsets[1];
+    wValue[3] = settings.levelOffsets[2];
+    I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 4);
     while (I2C2_IsBusy());
     //Configure gyroscope
     //TODO determine best ODR and filter values
@@ -122,8 +128,6 @@ void imuTask(void *pvParameters) {
     zGyroOffset = 0;
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        //TODO can we enable rounding and just do a read here
-        // We would need to do a write at end of init function to set register.
         I2C2_WriteRead(IMU_DEVICE_ADDRESS, (uint8_t *)&reg, 1, (uint8_t *) imuData, 12);
         while (I2C2_IsBusy());
         if (samples != 0) {
@@ -154,4 +158,20 @@ void imuIntHandler(EXTERNAL_INT_PIN pin, uintptr_t context) {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     vTaskNotifyGiveFromISR(imuTaskHandle, &xHigherPriorityTaskWoken);
     portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+}
+
+void disableAccelOffsets(void) {
+    uint8_t wValue[2];
+    wValue[0] = CTRL7_G;
+    wValue[1] = 0b00000000; //disable user offsets for accel.
+    I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
+    while (I2C2_IsBusy());
+}
+
+void enableAccelOffsets(void) {
+    uint8_t wValue[2];
+    wValue[0] = CTRL7_G;
+    wValue[1] = 0b00000010; //USER_OFF_ON_OUT enable user offsets for accel.
+    I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
+    while (I2C2_IsBusy());
 }

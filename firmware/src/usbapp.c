@@ -11,7 +11,6 @@
 #include "imu.h"
 #include "output.h"
 
-
 typedef enum {
     APP_STATE_INIT,
     APP_STATE_WAIT_FOR_CONFIGURATION,
@@ -206,7 +205,7 @@ void USBAppTasks(void *pvParameters) {
                         {
                             int bytesRemaining = sizeof (Settings);
                             Settings temp;
-                            uint8_t *p = (uint8_t *) &temp;
+                            uint8_t *p = (uint8_t *) & temp;
                             do {
                                 hidDataReceived = false;
                                 USB_DEVICE_HID_ReportReceive(USB_DEVICE_HID_INDEX_0,
@@ -228,7 +227,7 @@ void USBAppTasks(void *pvParameters) {
                             while (!hidDataReceived)
                                 taskYIELD();
                             crc = calculateCRC(&temp, sizeof (Settings));
-                            if (crc == *(uint32_t *)receiveDataBuffer) {
+                            if (crc == *(uint32_t *) receiveDataBuffer) {
                                 memcpy(&settings, &temp, sizeof (Settings));
                                 while (!hidDataTransmitted)
                                     taskYIELD();
@@ -274,13 +273,19 @@ void USBAppTasks(void *pvParameters) {
                         case GET_GAINS:
                             while (!hidDataTransmitted)
                                 taskYIELD();
-                            float *fp = (float *)transmitDataBuffer;
+                            float *fp = (float *) transmitDataBuffer;
                             fp[0] = rollGain;
                             fp[1] = pitchGain;
                             fp[2] = yawGain;
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
+                            break;
+                        case ENABLE_OFFSETS:
+                            enableAccelOffsets();
+                            break;
+                        case DISABLE_OFFSETS:
+                            disableAccelOffsets();
                             break;
                     }
                     hidDataReceived = false;

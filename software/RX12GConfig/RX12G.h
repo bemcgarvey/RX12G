@@ -14,6 +14,8 @@ enum {
     SET_PRESETS = 0x04,
     GET_SENSORS = 0x05,
     GET_GAINS = 0x06,
+    ENABLE_OFFSETS = 0x07,
+    DISABLE_OFFSETS = 0x08,
     CMD_ACK = 0x80,
     CMD_NACK = 0x7f,
     REBOOT = 0x88
@@ -105,6 +107,10 @@ enum {
         _PID pitchPID;
         _PID yawPID;
     } Settings;
+
+//Sensor scaling
+#define mg_PER_LSB      0.122
+#define mdps_PER_LSB    70
 
 uint32_t calculateCRC(void *data, int len);
 

@@ -17,6 +17,8 @@ extern "C" {
     
     bool initIMU(void);
     void imuTask(void *pvParameters);
+    void disableAccelOffsets(void);
+    void enableAccelOffsets(void);
 
 #ifdef	__cplusplus
 }

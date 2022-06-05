@@ -11,7 +11,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), usb(64, false)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::MainWindow), isLeveling(false)
 {
     ui->setupUi(this);
     usb.SetWaitTimesInMs(500, 500);
@@ -44,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->zGyroDisplay->setRange(10000);
     ui->yGyroDisplay->setOrientation(GyroDisplay::VERTICAL);
     ui->zGyroDisplay->setOrientation(GyroDisplay::VERTICAL);
+    levelingProgressBar = new QProgressBar();
+    levelingProgressBar->setRange(0, 30);
     setControls();
 }
 
@@ -280,6 +282,23 @@ void MainWindow::onSensorTimout()
     usb.SendReport(buffer);
     usb.GetReport(buffer);
     int16_t *data = (int16_t *)buffer;
+    if (isLeveling) {
+        ++levelSampleCount;
+        levelingProgressBar->setValue(levelSampleCount);
+        for (int i = 0; i < 3; ++i) {
+            levelSampleSums[i] += data[i + 3];
+        }
+        if (levelSampleCount == 30) {
+            ui->statusbar->removeWidget(levelingProgressBar);
+            if (calculateLevelOffsets()) {
+                isLeveling = false;
+                QMessageBox::information(this, QApplication::applicationName(), "Level calibration complete.  Save settings and reboot to apply.");
+            } else {
+                QMessageBox::warning(this, QApplication::applicationName(), "Level offsets are out of range.  Check the orientation of the receiver.  Offsets have not been updated");
+            }
+            ui->levelCalibratePushButton->setEnabled(true);
+        }
+    }
     ui->xAccel->setText(QString().setNum(data[3]));
     ui->yAccel->setText(QString().setNum(data[4]));
     ui->zAccel->setText(QString().setNum(data[5]));
@@ -522,5 +541,34 @@ void MainWindow::on_twoElevatorRadioButton_toggled(bool checked)
         ui->reverseElevator2CheckBox->setEnabled(true);
         ui->elevator2MinMaxBar->setEnabled(true);
     }
+}
+
+
+void MainWindow::on_levelCalibratePushButton_clicked()
+{
+    if (!usb.Connected()) {
+        return;
+    }
+    ui->levelCalibratePushButton->setEnabled(false);
+    buffer[0] = DISABLE_OFFSETS;
+    usb.SendReport(buffer);
+    levelSampleCount = 0;
+    for (int i = 0; i < 3; ++i) {
+        levelSampleSums[i] = 0;
+    }
+    isLeveling = true;
+    levelingProgressBar->setValue(0);
+    levelingProgressBar->setVisible(true);
+    ui->statusbar->addWidget(levelingProgressBar);
+}
+
+
+void MainWindow::on_defaultLevelPushButton_clicked()
+{
+    for (int i = 0; i < 3; ++i) {
+        settings.levelOffsets[i] = 0;
+    }
+    QMessageBox::information(this, QApplication::applicationName(),
+            "Level offsets have been zeroed. Save settings and reboot to apply");
 }
 

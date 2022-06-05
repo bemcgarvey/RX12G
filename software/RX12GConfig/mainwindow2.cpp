@@ -468,3 +468,25 @@ bool MainWindow::controlsValid()
     }
     return true;
 }
+
+bool MainWindow::calculateLevelOffsets()
+{
+    double newOffsets[3];
+    double counts = levelSampleCount;
+    newOffsets[0] = ((levelSampleSums[0] / counts) * mg_PER_LSB);
+    newOffsets[0] *= 512.0 / 1000.0;
+    newOffsets[1] = ((levelSampleSums[1] / counts) * mg_PER_LSB);
+    newOffsets[1] *= 512.0 / 1000.0;
+    newOffsets[2] = ((levelSampleSums[2] / counts) * mg_PER_LSB);
+    newOffsets[2] = 1000 - newOffsets[2];
+    newOffsets[2] *= -512.0 / 1000.0;
+    for (int i = 0; i < 3; ++i) {
+        if (round(newOffsets[i]) > 127 || round(newOffsets[i]) < -127) {
+            return false;
+        }
+    }
+    for (int i = 0; i < 3; ++i) {
+        settings.levelOffsets[i] = (uint8_t)round(newOffsets[i]);
+    }
+    return true;
+}

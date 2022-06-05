@@ -32,6 +32,10 @@ private:
     QTimer *sensorTimer;
     QTimer *gainsTimer;
     Settings settings;
+    bool isLeveling;
+    int levelSampleCount;
+    int levelSampleSums[3];
+    QProgressBar *levelingProgressBar;
     void getRxTabControls();
     void setRxTabControls();
     void getPlaneTabControls();
@@ -48,6 +52,7 @@ private:
     bool saveFile(QString fileName);
     void initSettings();
     bool controlsValid();
+    bool calculateLevelOffsets();
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
@@ -80,6 +85,8 @@ private slots:
     void on_elevonsRadioButton_toggled(bool checked);
     void on_oneElevatorRadioButton_toggled(bool checked);
     void on_twoElevatorRadioButton_toggled(bool checked);
+    void on_levelCalibratePushButton_clicked();
+    void on_defaultLevelPushButton_clicked();
 };
 
 #endif // MAINWINDOW_H
