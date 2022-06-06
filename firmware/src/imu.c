@@ -48,6 +48,8 @@ TaskHandle_t imuTaskHandle;
 int16_t imuData[6];
 bool imuReady = false;
 
+QueueHandle_t imuQueue;
+
 int16_t xGyroOffset;
 int16_t yGyroOffset;
 int16_t zGyroOffset;
@@ -151,6 +153,19 @@ void imuTask(void *pvParameters) {
             imuData[1] += yGyroOffset;
             imuData[2] += zGyroOffset;
         }
+        switch(settings.gyroOrientation) {
+            case FLAT_ORIENTATION:
+                break;
+            case INVERTED_ORIENTATION:
+                imuData[5] = -imuData[5];
+                break;
+            case LEFT_DOWN_ORIENTATION:
+                //TODO remap axis
+                break;
+            case RIGHT_DOWN_ORIENTATION:
+                break;
+        }
+        xQueueOverwrite(imuQueue, imuData);
     }
 }
 

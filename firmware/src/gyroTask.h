@@ -22,6 +22,8 @@ extern "C" {
     extern float rollGain;
     extern float pitchGain;
     extern float yawGain;
+    extern uint16_t rpyCorrections[3];
+    extern float scaledImuValues[6];
     
     void gyroTask(void *pvParameters);
 

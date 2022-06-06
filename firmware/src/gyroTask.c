@@ -13,34 +13,44 @@
 #include "rtosHandles.h"
 #include "output.h"
 #include "tasks.h"
+#include "attitude.h"
+#include "autoLevel.h"
 
-FlightModeType currentFlightMode = OFF_MODE;
 TaskHandle_t gyroTaskHandle;
-
-volatile uint16_t rawServoPositions[MAX_CHANNELS];
-
-static uint16_t aileron2Value;
-static uint16_t elevator2Value;
-static float rollBaseGain;
-static float pitchBaseGain;
-static float yawBaseGain;
+FlightModeType currentFlightMode = OFF_MODE;
 float rollGain;
 float pitchGain;
 float yawGain;
-int modeChannel;
-int rollGainChannel;
-int pitchGainChannel;
-int yawGainChannel;
+volatile uint16_t rawServoPositions[MAX_CHANNELS];
+
+static uint16_t imuValues[6];
+float scaledImuValues[6];
+
+static float rollBaseGain;
+static float pitchBaseGain;
+static float yawBaseGain;
+
+static int modeChannel;
+static int rollGainChannel;
+static int pitchGainChannel;
+static int yawGainChannel;
+
+uint16_t rpyCorrections[3];
+static int16_t newServoPositions[5];
+
+static int servoUpdateCount;
+
+static const TickType_t xFrequency = 5;
+#define SERVO_UPDATE_FREQ   4  //20ms
 
 FlightModeType decodeFlightMode(void);
 void calculateGains();
+void scaleImuData(void);
+void verifyAndSetOutputs(void);
 
 void gyroTask(void *pvParameters) {
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = 5;
     portTASK_USES_FLOATING_POINT();
-    aileron2Value = 0xffff;
-    elevator2Value = 0xffff;
     modeChannel = settings.flightModeChannel;
     if (settings.numFlightModes == 1) {
         modeChannel = 0;
@@ -52,30 +62,40 @@ void gyroTask(void *pvParameters) {
     pitchBaseGain = settings.gains[PITCH_INDEX] / 100.0;
     yawBaseGain = settings.gains[YAW_INDEX] / 100.0;
     xLastWakeTime = xTaskGetTickCount();
+    servoUpdateCount = SERVO_UPDATE_FREQ;
     while (1) {
-        currentFlightMode = decodeFlightMode();
-        calculateGains();
-        if (currentFlightMode == OFF_MODE || startMode == START_USB) {
-            for (int i = 0; i < MAX_CHANNELS; ++i) {
-                outputServos[i] = rawServoPositions[i];
-            }
-        } else if (currentFlightMode == NORMAL_MODE) {
-
-        } else if (currentFlightMode == AUTO_LEVEL_MODE) {
-
-        } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
-
-        } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
-
+        if (xQueueReceive(imuQueue, imuValues, 1)) {
+            scaleImuData();
+            calulateAttitude();
         } else {
-            //Mode is unrecognized so same as off
-            for (int i = 0; i < MAX_CHANNELS; ++i) {
-                outputServos[i] = rawServoPositions[i];
+            //TODO No imu data available. How do we handle this?  
+        }
+        --servoUpdateCount;
+        if (servoUpdateCount == 0) {
+            servoUpdateCount = SERVO_UPDATE_FREQ;
+            currentFlightMode = decodeFlightMode();
+            calculateGains();
+            if (currentFlightMode == OFF_MODE || startMode == START_USB) {
+                for (int i = 0; i < MAX_CHANNELS; ++i) {
+                    outputServos[i] = rawServoPositions[i];
+                }
+            } else if (currentFlightMode == NORMAL_MODE) {
+
+            } else if (currentFlightMode == AUTO_LEVEL_MODE) {
+                autoLevelCalculate();
+                verifyAndSetOutputs();
+            } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
+
+            } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
+
+            } else {
+                //Mode is unrecognized so same as off
+                for (int i = 0; i < MAX_CHANNELS; ++i) {
+                    outputServos[i] = rawServoPositions[i];
+                }
             }
         }
-        vTaskDelayUntil( &xLastWakeTime, xFrequency );
-        // TODO should this be replaced by a notification from a timer?
-        // Does it need to be that accurate?
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
         //TODO check stack level - remove when done
         int stack = uxTaskGetStackHighWaterMark(NULL);
         if (stack < 1) {
@@ -135,5 +155,101 @@ void calculateGains() {
         yawGain = yawBaseGain * rawServoPositions[yawGainChannel] / 2047.0;
     } else {
         yawGain = yawBaseGain;
+    }
+}
+
+void scaleImuData(void) {
+    for (int i = 0; i < 3; ++i) {
+        scaledImuValues[i] = imuValues[i] * (70.0 / 1000.0);  //in dps
+    }
+    for (int i = 3; i < 5; ++i) {
+        scaledImuValues[i] = imuValues[i] * (0.122 / 1000.0);  //in g's
+    }
+}
+
+
+void verifyAndSetOutputs(void) {
+    if (settings.gyroEnabledFlags & AILERON_MASK) {
+        if (settings.gyroReverseFlags & AILERON_MASK) {
+            newServoPositions[AILERON_INDEX] = rawServoPositions[AILERON] - rpyCorrections[AILERON_INDEX];
+        } else {
+            newServoPositions[AILERON_INDEX] = rawServoPositions[AILERON] + rpyCorrections[AILERON_INDEX];
+        }
+    } else {
+        newServoPositions[AILERON_INDEX] = rawServoPositions[AILERON];
+    }
+    if (newServoPositions[AILERON_INDEX] < 0) {
+        newServoPositions[AILERON_INDEX] = 0;
+    } else if (newServoPositions[AILERON_INDEX] > 2047) {
+        newServoPositions[AILERON_INDEX] = 2047;
+    }
+    if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
+        if (settings.gyroReverseFlags & ELEVATOR_MASK) {
+            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR] - rpyCorrections[ELEVATOR_INDEX];
+        } else {
+            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR] + rpyCorrections[ELEVATOR_INDEX];
+        }
+    } else {
+        newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR];
+    }
+    if (newServoPositions[ELEVATOR_INDEX] < 0) {
+        newServoPositions[ELEVATOR_INDEX] = 0;
+    } else if (newServoPositions[ELEVATOR_INDEX] > 2047) {
+        newServoPositions[ELEVATOR_INDEX] = 2047;
+    }
+    if (settings.gyroEnabledFlags & RUDDER_MASK) {
+        if (settings.gyroReverseFlags & RUDDER_MASK) {
+            newServoPositions[RUDDER_INDEX] = rawServoPositions[RUDDER] - rpyCorrections[RUDDER_INDEX];
+        } else {
+            newServoPositions[RUDDER_INDEX] = rawServoPositions[RUDDER] + rpyCorrections[RUDDER_INDEX];
+        }
+    } else {
+        newServoPositions[RUDDER_INDEX] = rawServoPositions[RUDDER];
+    }
+    if (newServoPositions[RUDDER_INDEX] < 0) {
+        newServoPositions[RUDDER_INDEX] = 0;
+    } else if (newServoPositions[RUDDER_INDEX] > 2047) {
+        newServoPositions[RUDDER_INDEX] = 2047;
+    }
+    if (settings.gyroEnabledFlags & AILERON2_MASK) {
+        if (settings.gyroReverseFlags & AILERON2_MASK) {
+            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] - rpyCorrections[AILERON_INDEX];
+        } else {
+            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] + rpyCorrections[RUDDER_INDEX];
+        }
+    } else {
+        newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel];
+    }
+    if (newServoPositions[AILERON2_INDEX] < 0) {
+        newServoPositions[AILERON2_INDEX] = 0;
+    } else if (newServoPositions[AILERON2_INDEX] > 2047) {
+        newServoPositions[AILERON2_INDEX] = 2047;
+    }
+    if (settings.gyroEnabledFlags & ELEVATOR2_MASK) {
+        if (settings.gyroReverseFlags & ELEVATOR2_MASK) {
+            newServoPositions[ELEVATOR2_INDEX] = rawServoPositions[settings.elevator2Channel] - rpyCorrections[ELEVATOR2_INDEX];
+        } else {
+            newServoPositions[ELEVATOR2_INDEX] = rawServoPositions[settings.elevator2Channel] + rpyCorrections[ELEVATOR2_INDEX];
+        }
+    } else {
+        newServoPositions[ELEVATOR2_INDEX] = rawServoPositions[settings.elevator2Channel];
+    }
+    if (newServoPositions[ELEVATOR2_INDEX] < 0) {
+        newServoPositions[ELEVATOR2_INDEX] = 0;
+    } else if (newServoPositions[ELEVATOR2_INDEX] > 2047) {
+        newServoPositions[ELEVATOR2_INDEX] = 2047;
+    }
+    outputServos[THROTTLE] = rawServoPositions[THROTTLE];
+    outputServos[AILERON] = newServoPositions[AILERON_INDEX];
+    outputServos[ELEVATOR] = newServoPositions[ELEVATOR_INDEX];
+    outputServos[RUDDER] = newServoPositions[RUDDER_INDEX];
+    for (int i = GEAR; i < MAX_CHANNELS; ++i) {
+        if (i == settings.aileron2Channel) {
+            outputServos[i] = newServoPositions[AILERON2_INDEX];
+        } else if (i == settings.elevator2Channel) {
+            outputServos[i] = newServoPositions[ELEVATOR2_INDEX];
+        } else {
+            outputServos[i] = rawServoPositions[i];
+        }
     }
 }

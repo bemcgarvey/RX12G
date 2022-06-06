@@ -263,6 +263,8 @@
       <itemPath>../src/usbapp.h</itemPath>
       <itemPath>../src/usbcommands.h</itemPath>
       <itemPath>../src/imu.h</itemPath>
+      <itemPath>../src/attitude.h</itemPath>
+      <itemPath>../src/autoLevel.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -384,6 +386,8 @@
       <itemPath>../src/version.c</itemPath>
       <itemPath>../src/usbapp.c</itemPath>
       <itemPath>../src/imu.c</itemPath>
+      <itemPath>../src/attitude.c</itemPath>
+      <itemPath>../src/autolevel.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

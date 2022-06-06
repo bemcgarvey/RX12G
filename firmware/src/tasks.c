@@ -35,14 +35,16 @@ void _USB_DEVICE_Tasks(void *pvParameters) {
 
 void initQueues(void) {
     rxQueue = xQueueCreate(6, 16); //TODO find best length for this
+    imuQueue = xQueueCreate(1, 12);
 }
 
 void initTasks(void) {
-    xTaskCreate(buttonTask, "button", 128, NULL, 5, &buttonTaskHandle);
-    xTaskCreate(rxTask, "rxtask", 128, NULL, 4, &rxTaskHandle);
-    xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 3, &gyroTaskHandle);
+    //TODO verify new task priorities
+    xTaskCreate(buttonTask, "button", 128, NULL, 4, &buttonTaskHandle);
+    xTaskCreate(rxTask, "rxtask", 128, NULL, 3, &rxTaskHandle);
+    xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 2, &gyroTaskHandle);
     xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, 1, &statusLedTaskHandle);
-    xTaskCreate(imuTask, "imuTask", 128, NULL, 5, &imuTaskHandle);
+    xTaskCreate(imuTask, "imuTask", 128, NULL, 4, &imuTaskHandle);
     if (startMode == START_USB) {
         xTaskCreate(_USB_DEVICE_Tasks, "USB_DEVICE_TASKS", 1024, NULL, 1, NULL);
         xTaskCreate(USBAppTasks, "USBAppTasks", 1024, NULL, 1, &usbAppTaskHandle);

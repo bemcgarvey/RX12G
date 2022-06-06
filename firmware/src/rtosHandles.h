@@ -17,6 +17,7 @@ extern "C" {
 
     //Queues
     extern QueueHandle_t rxQueue;
+    extern QueueHandle_t imuQueue;
 
     //Tasks
     extern TaskHandle_t buttonTaskHandle;
