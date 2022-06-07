@@ -10,6 +10,7 @@
 #include "gyroTask.h"
 #include "imu.h"
 #include "output.h"
+#include "attitude.h"
 
 typedef enum {
     APP_STATE_INIT,
@@ -286,6 +287,14 @@ void USBAppTasks(void *pvParameters) {
                             break;
                         case DISABLE_OFFSETS:
                             disableAccelOffsets();
+                            break;
+                        case GET_ATTITUDE:
+                            while (!hidDataTransmitted)
+                                taskYIELD();
+                            memcpy(transmitDataBuffer, (void *) &attitude, sizeof(attitude));
+                            hidDataTransmitted = false;
+                            USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
+                                    &txTransferHandle, transmitDataBuffer, 64);
                             break;
                     }
                     hidDataReceived = false;

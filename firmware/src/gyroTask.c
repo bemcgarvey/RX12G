@@ -22,9 +22,7 @@ float rollGain;
 float pitchGain;
 float yawGain;
 volatile uint16_t rawServoPositions[MAX_CHANNELS];
-
-static uint16_t imuValues[6];
-float scaledImuValues[6];
+uint16_t imuData[6];
 
 static float rollBaseGain;
 static float pitchBaseGain;
@@ -39,18 +37,20 @@ uint16_t rpyCorrections[3];
 static int16_t newServoPositions[5];
 
 static int servoUpdateCount;
+static bool attitudeInitialized;
 
-static const TickType_t xFrequency = 5;
+//static const TickType_t xFrequency = 5;
 #define SERVO_UPDATE_FREQ   4  //20ms
 
 FlightModeType decodeFlightMode(void);
 void calculateGains();
-void scaleImuData(void);
 void verifyAndSetOutputs(void);
 
 void gyroTask(void *pvParameters) {
-    TickType_t xLastWakeTime;
+    //TickType_t xLastWakeTime;
+    uint32_t startCount, elapsed;
     portTASK_USES_FLOATING_POINT();
+    attitudeInitialized = false;
     modeChannel = settings.flightModeChannel;
     if (settings.numFlightModes == 1) {
         modeChannel = 0;
@@ -61,12 +61,28 @@ void gyroTask(void *pvParameters) {
     rollBaseGain = settings.gains[ROLL_INDEX] / 100.0;
     pitchBaseGain = settings.gains[PITCH_INDEX] / 100.0;
     yawBaseGain = settings.gains[YAW_INDEX] / 100.0;
-    xLastWakeTime = xTaskGetTickCount();
     servoUpdateCount = SERVO_UPDATE_FREQ;
+    //xLastWakeTime = xTaskGetTickCount();  //TODO take this stuff out if not needed
     while (1) {
-        if (xQueueReceive(imuQueue, imuValues, 1)) {
-            scaleImuData();
-            calulateAttitude();
+        if (xQueueReceive(imuQueue, imuData, 5) == pdTRUE) {
+            startCount = CORETIMER_CounterGet();
+            //Remap axis based on orientation
+            switch (settings.gyroOrientation) {
+                case FLAT_ORIENTATION:
+                    break;
+                case INVERTED_ORIENTATION:
+                    //imuData[IMU_ACCEL_Z] = -imuData[IMU_ACCEL_Z];
+                    break;
+                case LEFT_DOWN_ORIENTATION:
+                    //TODO remap axis
+                    break;
+                case RIGHT_DOWN_ORIENTATION:
+                    break;
+            }
+            if (!attitudeInitialized) {
+                initAttitude();
+            }
+            updateAttitude();
         } else {
             //TODO No imu data available. How do we handle this?  
         }
@@ -75,7 +91,7 @@ void gyroTask(void *pvParameters) {
             servoUpdateCount = SERVO_UPDATE_FREQ;
             currentFlightMode = decodeFlightMode();
             calculateGains();
-            if (currentFlightMode == OFF_MODE || startMode == START_USB) {
+            if (currentFlightMode == OFF_MODE || startMode == START_USB || !attitudeInitialized) {
                 for (int i = 0; i < MAX_CHANNELS; ++i) {
                     outputServos[i] = rawServoPositions[i];
                 }
@@ -94,14 +110,17 @@ void gyroTask(void *pvParameters) {
                     outputServos[i] = rawServoPositions[i];
                 }
             }
+            //TODO remove timing stuff after confirming timing
+            elapsed = CORETIMER_CounterGet() - startCount;
+            (void) elapsed;
         }
-        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+        //vTaskDelayUntil(&xLastWakeTime, xFrequency);
         //TODO check stack level - remove when done
-        int stack = uxTaskGetStackHighWaterMark(NULL);
-        if (stack < 1) {
-            SAT2_LED_Set();
-            while (1);
-        }
+        //int stack = uxTaskGetStackHighWaterMark(NULL);
+        //if (stack < 1) {
+        //    SAT2_LED_Set();
+        //    while (1);
+        //}
     }
 }
 
@@ -110,6 +129,9 @@ FlightModeType decodeFlightMode(void) {
         return settings.flightModes[0];
     } else {
         uint16_t value = rawServoPositions[modeChannel];
+        if (value == 0xffff) {
+            return OFF_MODE;  //TODO what should the failsafe flight mode be? Off or auto level?
+        }
         if (settings.numFlightModes == 3) {
             if (value < 682) {
                 return settings.flightModes[0];
@@ -158,16 +180,6 @@ void calculateGains() {
     }
 }
 
-void scaleImuData(void) {
-    for (int i = 0; i < 3; ++i) {
-        scaledImuValues[i] = imuValues[i] * (70.0 / 1000.0);  //in dps
-    }
-    for (int i = 3; i < 5; ++i) {
-        scaledImuValues[i] = imuValues[i] * (0.122 / 1000.0);  //in g's
-    }
-}
-
-
 void verifyAndSetOutputs(void) {
     if (settings.gyroEnabledFlags & AILERON_MASK) {
         if (settings.gyroReverseFlags & AILERON_MASK) {
@@ -178,11 +190,12 @@ void verifyAndSetOutputs(void) {
     } else {
         newServoPositions[AILERON_INDEX] = rawServoPositions[AILERON];
     }
-    if (newServoPositions[AILERON_INDEX] < 0) {
-        newServoPositions[AILERON_INDEX] = 0;
-    } else if (newServoPositions[AILERON_INDEX] > 2047) {
-        newServoPositions[AILERON_INDEX] = 2047;
+    if (newServoPositions[AILERON_INDEX] < settings.minTravelLimits[AILERON_INDEX]) {
+        newServoPositions[AILERON_INDEX] = settings.minTravelLimits[AILERON_INDEX];
+    } else if (newServoPositions[AILERON_INDEX] > settings.maxTravelLimits[AILERON_INDEX]) {
+        newServoPositions[AILERON_INDEX] = settings.maxTravelLimits[AILERON_INDEX];
     }
+    //FIXME Use min and max limits for below
     if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
         if (settings.gyroReverseFlags & ELEVATOR_MASK) {
             newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR] - rpyCorrections[ELEVATOR_INDEX];

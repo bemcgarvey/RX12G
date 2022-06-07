@@ -16,6 +16,7 @@ enum {
     GET_GAINS = 0x06,
     ENABLE_OFFSETS = 0x07,
     DISABLE_OFFSETS = 0x08,
+    GET_ATTITUDE = 0x09,
     CMD_ACK = 0x80,
     CMD_NACK = 0x7f,
     REBOOT = 0x88

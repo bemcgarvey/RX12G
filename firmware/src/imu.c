@@ -2,6 +2,7 @@
 #include "definitions.h"
 #include "imu.h"
 #include "settings.h"
+#include "attitude.h"
 
 #define IMU_DEVICE_ADDRESS  0x6a
 
@@ -44,12 +45,11 @@
 #define SW_RESET            0x01             
 
 TaskHandle_t imuTaskHandle;
-
-int16_t imuData[6];
-bool imuReady = false;
-
 QueueHandle_t imuQueue;
 
+bool imuReady = false;
+
+int16_t rawImuData[6];
 int16_t xGyroOffset;
 int16_t yGyroOffset;
 int16_t zGyroOffset;
@@ -124,48 +124,38 @@ void imuTask(void *pvParameters) {
     int xSum = 0;
     int ySum = 0;
     int zSum = 0;
-    int samples = 600;
+    int samples = CALIBRATION_SAMPLE_COUNT;
     xGyroOffset = 0;
     yGyroOffset = 0;
     zGyroOffset = 0;
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        I2C2_WriteRead(IMU_DEVICE_ADDRESS, (uint8_t *)&reg, 1, (uint8_t *) imuData, 12);
+        I2C2_WriteRead(IMU_DEVICE_ADDRESS, (uint8_t *)&reg, 1, (uint8_t *) rawImuData, 12);
         while (I2C2_IsBusy());
+        //TODO don't calibrate until not moving and upright
         if (samples != 0) {
-            if (samples <= 50) {
-                xSum += imuData[0];
-                ySum += imuData[1];
-                zSum += imuData[2];
+            if (samples <= 50) {  //use last 50 samples
+                xSum += rawImuData[0];
+                ySum += rawImuData[1];
+                zSum += rawImuData[2];
             }
             --samples;
             if (samples == 0) {
                 xGyroOffset = xSum / -50;
                 yGyroOffset = ySum / -50;
                 zGyroOffset = zSum / -50;
-                imuData[0] += xGyroOffset;
-                imuData[1] += yGyroOffset;
-                imuData[2] += zGyroOffset;
+                rawImuData[0] += xGyroOffset;
+                rawImuData[1] += yGyroOffset;
+                rawImuData[2] += zGyroOffset;
                 imuReady = true;
+                xQueueOverwrite(imuQueue, rawImuData);
             }
         } else {
-            imuData[0] += xGyroOffset;
-            imuData[1] += yGyroOffset;
-            imuData[2] += zGyroOffset;
+            rawImuData[0] += xGyroOffset;
+            rawImuData[1] += yGyroOffset;
+            rawImuData[2] += zGyroOffset;
+            xQueueOverwrite(imuQueue, rawImuData);
         }
-        switch(settings.gyroOrientation) {
-            case FLAT_ORIENTATION:
-                break;
-            case INVERTED_ORIENTATION:
-                imuData[5] = -imuData[5];
-                break;
-            case LEFT_DOWN_ORIENTATION:
-                //TODO remap axis
-                break;
-            case RIGHT_DOWN_ORIENTATION:
-                break;
-        }
-        xQueueOverwrite(imuQueue, imuData);
     }
 }
 

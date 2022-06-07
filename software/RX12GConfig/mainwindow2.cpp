@@ -471,6 +471,7 @@ bool MainWindow::controlsValid()
 
 bool MainWindow::calculateLevelOffsets()
 {
+    //FIXME need to handle mapping based on orientation
     double newOffsets[3];
     double counts = levelSampleCount;
     newOffsets[0] = ((levelSampleSums[0] / counts) * mg_PER_LSB);

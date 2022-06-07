@@ -39,7 +39,6 @@ void initQueues(void) {
 }
 
 void initTasks(void) {
-    //TODO verify new task priorities
     xTaskCreate(buttonTask, "button", 128, NULL, 4, &buttonTaskHandle);
     xTaskCreate(rxTask, "rxtask", 128, NULL, 3, &rxTaskHandle);
     xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 2, &gyroTaskHandle);

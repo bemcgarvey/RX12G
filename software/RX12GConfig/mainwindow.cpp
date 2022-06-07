@@ -316,6 +316,12 @@ void MainWindow::onSensorTimout()
     ui->xGyroDisplay->setValue(data[0]);
     ui->yGyroDisplay->setValue(data[1]);
     ui->zGyroDisplay->setValue(data[2]);
+
+    buffer[0] = GET_ATTITUDE;
+    usb.SendReport(buffer);
+    usb.GetReport(buffer);
+    float *pf = (float *)buffer;
+    qDebug() << pf[4] << ":" << pf[5] << ":" << pf[6];
 }
 
 void MainWindow::onGainsTimout()

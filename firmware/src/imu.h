@@ -12,9 +12,11 @@
 extern "C" {
 #endif
 
-    extern int16_t imuData[6];
-    extern bool imuReady;
+#define GYRO_ODR                    208     //Ouput rate in Hz
+#define CALIBRATION_SAMPLE_COUNT    (3 * GYRO_ODR)     //about 3 seconds at current ODR
+#define GYRO_SAMPLE_PERIOD          (1.0 / GYRO_ODR)   //Period in sec.
     
+    extern bool imuReady;
     bool initIMU(void);
     void imuTask(void *pvParameters);
     void disableAccelOffsets(void);
