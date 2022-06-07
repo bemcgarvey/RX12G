@@ -54,9 +54,9 @@ void GyroDisplay::paintEvent(QPaintEvent *event)
         mid = height() / 2;
         len = (mid * value) / range;
         if (len >= 0) {
-            painter.fillRect(1, mid, width() - 2, len, Qt::red);
-        } else {
             painter.fillRect(1, mid, width() - 2, len, Qt::darkGreen);
+        } else {
+            painter.fillRect(1, mid, width() - 2, len, Qt::red);
         }
     }
 }

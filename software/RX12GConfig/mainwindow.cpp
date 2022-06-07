@@ -305,9 +305,13 @@ void MainWindow::onSensorTimout()
     ui->xGyro->setText(QString().setNum(data[0]));
     ui->yGyro->setText(QString().setNum(data[1]));
     ui->zGyro->setText(QString().setNum(data[2]));
-    int pitch = atan2(data[3], data[5]) * 180 / 3.1415;
-    int roll = atan2(data[4], data[5]) * 180 / 3.1415;
-    ui->horizonWidget->updatePitch(pitch);
+    float pitch = atan2(-data[3], sqrt(data[4]
+               * data[4] + data[5] * data[5]));
+    float roll = atan2(data[4], data[5]);
+    pitch *= 180 / 3.1415;
+    roll *= 180 / 3.1415;
+    //qDebug() << pitch << ":" << roll;
+    ui->horizonWidget->updatePitch(-pitch);
     ui->horizonWidget->updateRoll(roll);
     ui->xGyroDisplay->setValue(data[0]);
     ui->yGyroDisplay->setValue(data[1]);
