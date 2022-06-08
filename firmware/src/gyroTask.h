@@ -31,7 +31,7 @@ extern "C" {
 #define IMU_ACCEL_X      3
 #define IMU_ACCEL_Y      4
 #define IMU_ACCEL_Z      5
-    extern uint16_t imuData[6];
+    extern int16_t imuData[6];
 
     void gyroTask(void *pvParameters);
 

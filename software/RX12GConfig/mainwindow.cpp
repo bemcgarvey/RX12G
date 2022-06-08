@@ -39,9 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
     channelBars[10] = ui->ch11ProgressBar;
     channelBars[11] = ui->ch12ProgressBar;
     initSettings();
-    ui->xGyroDisplay->setRange(10000);
-    ui->yGyroDisplay->setRange(10000);
-    ui->zGyroDisplay->setRange(10000);
+    ui->xGyroDisplay->setRange(2000);
+    ui->yGyroDisplay->setRange(2000);
+    ui->zGyroDisplay->setRange(2000);
     ui->yGyroDisplay->setOrientation(GyroDisplay::VERTICAL);
     ui->zGyroDisplay->setOrientation(GyroDisplay::VERTICAL);
     levelingProgressBar = new QProgressBar();
@@ -305,23 +305,15 @@ void MainWindow::onSensorTimout()
     ui->xGyro->setText(QString().setNum(data[0]));
     ui->yGyro->setText(QString().setNum(data[1]));
     ui->zGyro->setText(QString().setNum(data[2]));
-    float pitch = atan2(-data[3], sqrt(data[4]
-               * data[4] + data[5] * data[5]));
-    float roll = atan2(data[4], data[5]);
-    pitch *= 180 / 3.1415;
-    roll *= 180 / 3.1415;
-    //qDebug() << pitch << ":" << roll;
-    ui->horizonWidget->updatePitch(-pitch);
-    ui->horizonWidget->updateRoll(roll);
-    ui->xGyroDisplay->setValue(data[0]);
-    ui->yGyroDisplay->setValue(data[1]);
-    ui->zGyroDisplay->setValue(data[2]);
-
     buffer[0] = GET_ATTITUDE;
     usb.SendReport(buffer);
     usb.GetReport(buffer);
-    float *pf = (float *)buffer;
-    qDebug() << pf[4] << ":" << pf[5] << ":" << pf[6];
+    AttitudeData *pa = (AttitudeData *)buffer;
+    ui->horizonWidget->updatePitch(pa->ypr.pitch);
+    ui->horizonWidget->updateRoll(pa->ypr.roll);
+    ui->xGyroDisplay->setValue(pa->gyroRatesDeg.x);
+    ui->yGyroDisplay->setValue(pa->gyroRatesDeg.y);
+    ui->zGyroDisplay->setValue(pa->gyroRatesDeg.z);
 }
 
 void MainWindow::onGainsTimout()

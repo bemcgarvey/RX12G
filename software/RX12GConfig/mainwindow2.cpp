@@ -475,7 +475,7 @@ bool MainWindow::calculateLevelOffsets()
     double newOffsets[3];
     double counts = levelSampleCount;
     newOffsets[0] = ((levelSampleSums[0] / counts) * mg_PER_LSB);
-    newOffsets[0] *= 512.0 / 1000.0;
+    newOffsets[0] *= -512.0 / 1000.0;
     newOffsets[1] = ((levelSampleSums[1] / counts) * mg_PER_LSB);
     newOffsets[1] *= 512.0 / 1000.0;
     newOffsets[2] = ((levelSampleSums[2] / counts) * mg_PER_LSB);

@@ -112,6 +112,39 @@ enum {
 //Sensor scaling
 #define mg_PER_LSB      0.122
 #define mdps_PER_LSB    70
+//Attitude structures
+    typedef union {
+        struct {
+            float x;
+            float y;
+            float z;
+        };
+        struct {
+            float roll;
+            float pitch;
+            float yaw;
+        };
+        struct {
+            float rollRate;
+            float pitchRate;
+            float yawRate;
+        };
+    } Vector;
+
+    typedef struct {
+        float w;
+        float x;
+        float y;
+        float z;
+    } Quaternion;
+
+    typedef struct {
+        Quaternion qAttitude;
+        Vector ypr;
+        Vector gyroRatesRads;
+        Vector gyroRatesDeg;
+        int zSign; //sign of z axis acceleration: 1 = upright, -1 = inverted
+    } AttitudeData;
 
 uint32_t calculateCRC(void *data, int len);
 

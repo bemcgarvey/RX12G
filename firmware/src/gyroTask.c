@@ -22,7 +22,7 @@ float rollGain;
 float pitchGain;
 float yawGain;
 volatile uint16_t rawServoPositions[MAX_CHANNELS];
-uint16_t imuData[6];
+int16_t imuData[6];
 
 static float rollBaseGain;
 static float pitchBaseGain;
@@ -39,7 +39,6 @@ static int16_t newServoPositions[5];
 static int servoUpdateCount;
 static bool attitudeInitialized;
 
-//static const TickType_t xFrequency = 5;
 #define SERVO_UPDATE_FREQ   4  //20ms
 
 FlightModeType decodeFlightMode(void);
@@ -47,8 +46,6 @@ void calculateGains();
 void verifyAndSetOutputs(void);
 
 void gyroTask(void *pvParameters) {
-    //TickType_t xLastWakeTime;
-    uint32_t startCount, elapsed;
     portTASK_USES_FLOATING_POINT();
     attitudeInitialized = false;
     modeChannel = settings.flightModeChannel;
@@ -62,13 +59,13 @@ void gyroTask(void *pvParameters) {
     pitchBaseGain = settings.gains[PITCH_INDEX] / 100.0;
     yawBaseGain = settings.gains[YAW_INDEX] / 100.0;
     servoUpdateCount = SERVO_UPDATE_FREQ;
-    //xLastWakeTime = xTaskGetTickCount();  //TODO take this stuff out if not needed
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 5) == pdTRUE) {
-            startCount = CORETIMER_CounterGet();
             //Remap axis based on orientation
             switch (settings.gyroOrientation) {
                 case FLAT_ORIENTATION:
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_Y] = -imuData[IMU_GYRO_Y];
                     break;
                 case INVERTED_ORIENTATION:
                     //imuData[IMU_ACCEL_Z] = -imuData[IMU_ACCEL_Z];
@@ -110,11 +107,7 @@ void gyroTask(void *pvParameters) {
                     outputServos[i] = rawServoPositions[i];
                 }
             }
-            //TODO remove timing stuff after confirming timing
-            elapsed = CORETIMER_CounterGet() - startCount;
-            (void) elapsed;
         }
-        //vTaskDelayUntil(&xLastWakeTime, xFrequency);
         //TODO check stack level - remove when done
         //int stack = uxTaskGetStackHighWaterMark(NULL);
         //if (stack < 1) {
@@ -130,7 +123,7 @@ FlightModeType decodeFlightMode(void) {
     } else {
         uint16_t value = rawServoPositions[modeChannel];
         if (value == 0xffff) {
-            return OFF_MODE;  //TODO what should the failsafe flight mode be? Off or auto level?
+            return OFF_MODE; //TODO what should the failsafe flight mode be? Off or auto level?
         }
         if (settings.numFlightModes == 3) {
             if (value < 682) {
