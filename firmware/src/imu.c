@@ -89,11 +89,11 @@ bool initIMU(void) {
     //Configure accelerometer
     //TODO determine best ODR and filter values
     wValue[0] = CTRL1_XL;
-    wValue[1] = 0b01010010; //208Hz, 4g range, LPF2_XL_EN
+    wValue[1] = 0b01100010; //416Hz, 4g range, LPF2_XL_EN
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL8_XL;
-    wValue[1] = 0b00100000; //LPF2 at ODR/10
+    wValue[1] = 0b00000000; //LPF2 at ODR/4 = 100Hz
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL7_G;
@@ -109,7 +109,7 @@ bool initIMU(void) {
     //Configure gyroscope
     //TODO determine best ODR and filter values
     wValue[0] = CTRL2_G;
-    wValue[1] = 0b01011100; //208Hz, 2000dps
+    wValue[1] = 0b01101100; //416Hz, 2000dps
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     //Configure IMU_INT1 interrupt

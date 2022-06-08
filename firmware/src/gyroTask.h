@@ -23,6 +23,7 @@ extern "C" {
     extern float pitchGain;
     extern float yawGain;
     extern uint16_t rpyCorrections[3];
+    extern bool needToUpdateOutputs;
 
     //IMU data indices 
 #define IMU_GYRO_X      0

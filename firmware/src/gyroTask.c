@@ -23,23 +23,18 @@ float pitchGain;
 float yawGain;
 volatile uint16_t rawServoPositions[MAX_CHANNELS];
 int16_t imuData[6];
+bool needToUpdateOutputs;
+uint16_t rpyCorrections[3];
 
 static float rollBaseGain;
 static float pitchBaseGain;
 static float yawBaseGain;
-
 static int modeChannel;
 static int rollGainChannel;
 static int pitchGainChannel;
 static int yawGainChannel;
-
-uint16_t rpyCorrections[3];
 static int16_t newServoPositions[5];
-
-static int servoUpdateCount;
 static bool attitudeInitialized;
-
-#define SERVO_UPDATE_FREQ   4  //20ms
 
 FlightModeType decodeFlightMode(void);
 void calculateGains();
@@ -58,9 +53,9 @@ void gyroTask(void *pvParameters) {
     rollBaseGain = settings.gains[ROLL_INDEX] / 100.0;
     pitchBaseGain = settings.gains[PITCH_INDEX] / 100.0;
     yawBaseGain = settings.gains[YAW_INDEX] / 100.0;
-    servoUpdateCount = SERVO_UPDATE_FREQ;
+    needToUpdateOutputs = false;
     while (1) {
-        if (xQueueReceive(imuQueue, imuData, 5) == pdTRUE) {
+        if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
             //Remap axis based on orientation
             switch (settings.gyroOrientation) {
                 case FLAT_ORIENTATION:
@@ -83,9 +78,8 @@ void gyroTask(void *pvParameters) {
         } else {
             //TODO No imu data available. How do we handle this?  
         }
-        --servoUpdateCount;
-        if (servoUpdateCount == 0) {
-            servoUpdateCount = SERVO_UPDATE_FREQ;
+        if (needToUpdateOutputs) {
+            needToUpdateOutputs = false;
             currentFlightMode = decodeFlightMode();
             calculateGains();
             if (currentFlightMode == OFF_MODE || startMode == START_USB || !attitudeInitialized) {
