@@ -15,6 +15,7 @@
 #include "tasks.h"
 #include "attitude.h"
 #include "autoLevel.h"
+#include "rxTask.h"
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
@@ -25,6 +26,7 @@ volatile uint16_t rawServoPositions[MAX_CHANNELS];
 int16_t imuData[6];
 bool needToUpdateOutputs;
 uint16_t rpyCorrections[3];
+int16_t deadbands[3];
 
 static float rollBaseGain;
 static float pitchBaseGain;
@@ -53,6 +55,10 @@ void gyroTask(void *pvParameters) {
     rollBaseGain = settings.gains[ROLL_INDEX] / 100.0;
     pitchBaseGain = settings.gains[PITCH_INDEX] / 100.0;
     yawBaseGain = settings.gains[YAW_INDEX] / 100.0;
+    deadbands[ROLL_INDEX] = (settings.deadbands[ROLL_INDEX] * 1024) / 100;
+    deadbands[PITCH_INDEX] = (settings.deadbands[PITCH_INDEX] * 1024) / 100;
+    deadbands[YAW_INDEX] = (settings.deadbands[YAW_INDEX] * 1024) / 100;
+    initAutoLevel();
     needToUpdateOutputs = false;
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
@@ -73,6 +79,7 @@ void gyroTask(void *pvParameters) {
             }
             if (!attitudeInitialized) {
                 initAttitude();
+                attitudeInitialized = true;
             }
             updateAttitude();
         } else {
@@ -82,19 +89,21 @@ void gyroTask(void *pvParameters) {
             needToUpdateOutputs = false;
             currentFlightMode = decodeFlightMode();
             calculateGains();
-            if (currentFlightMode == OFF_MODE || startMode == START_USB || !attitudeInitialized) {
+            if (currentFlightMode == OFF_MODE || !attitudeInitialized) {
                 for (int i = 0; i < MAX_CHANNELS; ++i) {
                     outputServos[i] = rawServoPositions[i];
                 }
             } else if (currentFlightMode == NORMAL_MODE) {
 
             } else if (currentFlightMode == AUTO_LEVEL_MODE) {
-                autoLevelCalculate();
+                autoLevelCalculate(ROLL_AXIS | PITCH_AXIS | YAW_AXIS);
                 verifyAndSetOutputs();
             } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
 
             } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
-
+                autoLevelCalculate(ROLL_AXIS);
+                //launchAssistCalculate(PITCH_AXIS);
+                verifyAndSetOutputs();
             } else {
                 //Mode is unrecognized so same as off
                 for (int i = 0; i < MAX_CHANNELS; ++i) {
@@ -252,4 +261,20 @@ void verifyAndSetOutputs(void) {
             outputServos[i] = rawServoPositions[i];
         }
     }
+}
+
+bool sticksCentered(void) {
+    static int centerCount = CENTER_COUNT;
+    if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]
+            && abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]
+            && abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]) {
+        if (centerCount > 0) {
+            --centerCount;
+        } else {
+            return true;
+        }
+    } else {
+        centerCount = CENTER_COUNT;
+    }
+    return false;
 }

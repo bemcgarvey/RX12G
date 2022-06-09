@@ -12,7 +12,8 @@
 extern "C" {
 #endif
 
-void autoLevelCalculate(void);
+    void initAutoLevel(void);
+    void autoLevelCalculate(int axes);
 
 #ifdef	__cplusplus
 }

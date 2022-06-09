@@ -24,6 +24,7 @@ extern "C" {
     extern float yawGain;
     extern uint16_t rpyCorrections[3];
     extern bool needToUpdateOutputs;
+    extern int16_t deadbands[3];
 
     //IMU data indices 
 #define IMU_GYRO_X      0
@@ -36,6 +37,12 @@ extern "C" {
 
     void gyroTask(void *pvParameters);
 
+                           //TODO this needs to be adjusted based on frame rate 
+#define CENTER_COUNT    3  //NUMBER of output frames required to have sticks centered
+    bool sticksCentered(void);
+
+    enum {ROLL_AXIS = 0x01, PITCH_AXIS = 0x02, YAW_AXIS = 0x04};
+    
 #ifdef	__cplusplus
 }
 #endif

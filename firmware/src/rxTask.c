@@ -16,10 +16,13 @@
 #include "gyroTask.h"
 
 TaskHandle_t rxTaskHandle;
+uint16_t channelCenters[MAX_CHANNELS];
+int centeringCount = 9;
 
 void rxTask(void *pvParameters) {
     for (int i = 0; i < MAX_CHANNELS; ++i) {
         rawServoPositions[i] = 0xffff;
+        channelCenters[i] = 0;
     }
     while (1) {
         uint16_t buffer[8];
@@ -40,6 +43,14 @@ void rxTask(void *pvParameters) {
                     rawServoPositions[channel] = (channelData & 0x01ff) << 2;
                 } else { //Normal channel
                     rawServoPositions[channel] = channelData & 0x07ff;
+                }
+            }
+            if (centeringCount != 0) {
+                --centeringCount;
+                if (centeringCount == 0) {
+                    for (int i = 0; i < MAX_CHANNELS; ++i) {
+                        channelCenters[i] = rawServoPositions[i];
+                    }
                 }
             }
         }

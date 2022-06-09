@@ -11,11 +11,14 @@
 #ifndef RXTASK_H
 #define	RXTASK_H
 
+#include "output.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-void rxTask(void *pvParameters);
+    extern uint16_t channelCenters[MAX_CHANNELS];
+    void rxTask(void *pvParameters);
 
 
 #ifdef	__cplusplus

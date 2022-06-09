@@ -34,7 +34,7 @@ void _USB_DEVICE_Tasks(void *pvParameters) {
 }
 
 void initQueues(void) {
-    rxQueue = xQueueCreate(6, 16); //TODO find best length for this
+    rxQueue = xQueueCreate(6, 16);
     imuQueue = xQueueCreate(1, 12);
 }
 

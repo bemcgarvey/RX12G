@@ -68,24 +68,9 @@ void updateAttitude(void) {
     attitude.ypr = toYPR(attitude.qAttitude);
 }
 
-
-//TODO are these needed?
-//float AccelPitch(void) {
-//    return atan2(-imuData[IMU_ACCEL_X], sqrt(imuData[IMU_ACCEL_Y] 
-//            * imuData[IMU_ACCEL_Y] + imuData[IMU_ACCEL_Z] * imuData[IMU_ACCEL_Z]));
-//}
-//
-//float AccelRoll(void) {
-//    return atan2(imuData[IMU_ACCEL_Y], imuData[IMU_ACCEL_Z]);
-//}
-//
-//float AccelYaw(void) {
-//    //Only works while nose up
-//    return atan2(imuData[IMU_ACCEL_Y], -imuData[IMU_ACCEL_X]);
-//}
-
 Vector AccelYPR(void) {
     Vector ypr;
+    //TODO do we need yaw? or should it be 0
     ypr.yaw = atan2(imuData[IMU_ACCEL_Y], -imuData[IMU_ACCEL_X]);
     ypr.pitch = atan2(-imuData[IMU_ACCEL_X], sqrt(imuData[IMU_ACCEL_Y]
             * imuData[IMU_ACCEL_Y] + imuData[IMU_ACCEL_Z] * imuData[IMU_ACCEL_Z]));
