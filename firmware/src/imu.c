@@ -93,7 +93,7 @@ bool initIMU(void) {
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL8_XL;
-    wValue[1] = 0b00000000; //LPF2 at ODR/4 = 100Hz
+    wValue[1] = 0b00000000; //LPF2 at ODR/4 = 104Hz
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL7_G;

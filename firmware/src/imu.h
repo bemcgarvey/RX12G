@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-#define GYRO_ODR                    208     //Ouput rate in Hz
+#define GYRO_ODR                    416     //Ouput rate in Hz
 #define CALIBRATION_SAMPLE_COUNT    (3 * GYRO_ODR)     //about 3 seconds at current ODR
 #define GYRO_SAMPLE_PERIOD          (1.0 / GYRO_ODR)   //Period in sec.
     

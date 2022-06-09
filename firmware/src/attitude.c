@@ -169,7 +169,7 @@ Vector toYPR(Quaternion q) {
     Vector ypr;
     ypr.roll = atan2(q.y * q.z + q.w * q.x, 0.5f - (q.x * q.x + q.y * q.y));
     ypr.roll *= RAD_TO_DEGREES;
-    ypr.pitch = asin(-2.0f * (q.x * q.z - q.w * q.y));
+    ypr.pitch = -asin(-2.0f * (q.x * q.z - q.w * q.y));
     ypr.pitch *= RAD_TO_DEGREES;
     ypr.yaw = 0.0;
     return ypr;
