@@ -21,6 +21,14 @@ void initAttitude(void) {
     attitude.gyroRatesDeg.yawRate = 0;
     attitude.zSign = 1;
     FusionOffsetInitialise(&offset, GYRO_ODR);
+//    const FusionAhrsSettings settings = {
+//            .gain = 0.5f,
+//            .accelerationRejection = 0.0f,
+//            .magneticRejection = 0.0f,
+//            .rejectionTimeout = 5 * GYRO_ODR
+//    };
+//    FusionAhrsSetSettings(&ahrs, &settings);
+//    FusionAhrsReset(&ahrs);
     FusionAhrsInitialise(&ahrs);
 }
 
