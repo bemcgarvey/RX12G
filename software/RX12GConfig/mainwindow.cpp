@@ -314,7 +314,6 @@ void MainWindow::onSensorTimout()
     ui->xGyroDisplay->setValue(pa->gyroRatesDeg.x);
     ui->yGyroDisplay->setValue(pa->gyroRatesDeg.y);
     ui->zGyroDisplay->setValue(pa->gyroRatesDeg.z);
-    qDebug() << pa->ypr.roll << ":" << pa->zSign;
 }
 
 void MainWindow::onGainsTimout()

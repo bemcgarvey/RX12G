@@ -67,8 +67,11 @@ void gyroTask(void *pvParameters) {
                 case FLAT_ORIENTATION:
                     imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
                     imuData[IMU_GYRO_Y] = -imuData[IMU_GYRO_Y];
+                    imuData[IMU_ACCEL_Y] = -imuData[IMU_ACCEL_Y];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
                     break;
                 case INVERTED_ORIENTATION:
+                    imuData[IMU_ACCEL_Z] = -imuData[IMU_ACCEL_Z];
                     break;
                 case LEFT_DOWN_ORIENTATION:
                     //TODO remap axis

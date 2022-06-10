@@ -89,11 +89,11 @@ bool initIMU(void) {
     //Configure accelerometer
     //TODO determine best ODR and filter values
     wValue[0] = CTRL1_XL;
-    wValue[1] = 0b01100010; //416Hz, 4g range, LPF2_XL_EN
+    wValue[1] = 0b01100000; //416Hz, 4g range, LPF2_XL_EN off
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    wValue[0] = CTRL8_XL;
-    wValue[1] = 0b00000000; //LPF2 at ODR/4 = 104Hz
+    wValue[0] = CTRL8_XL;   //TODO may want to remove this - see below
+    wValue[1] = 0b00000000; //LPF2 at ODR/4 = 104Hz Only if LPF2_XL_EN is on
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     wValue[0] = CTRL7_G;
