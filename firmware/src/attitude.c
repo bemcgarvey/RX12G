@@ -2,6 +2,7 @@
 #include "attitude.h"
 #include "gyroTask.h"
 #include "imu.h"
+#include "fusion.h"
 
 
 Quaternion MulQuaternion(Quaternion lhs, Quaternion rhs);
@@ -22,14 +23,15 @@ float AccelYaw(void);
 Vector AccelYPR(void);
 
 AttitudeData attitude;
-static Vector VERTICAL = {
-    {0, 0, 1}};
+FusionAhrs ahrs;
+FusionOffset offset;
+FusionVector gyroscope;
+FusionVector accelerometer;
 
 void initAttitude(void) {
     Vector v = AccelYPR();
     v.yaw = 0;
-    attitude.qAttitude = toQuaternion(v);
-    attitude.ypr = toYPR(attitude.qAttitude);
+    attitude.ypr = v;
     attitude.gyroRatesDeg.rollRate = 0;
     attitude.gyroRatesRads.rollRate = 0;
     attitude.gyroRatesDeg.pitchRate = 0;
@@ -37,35 +39,31 @@ void initAttitude(void) {
     attitude.gyroRatesDeg.yawRate = 0;
     attitude.gyroRatesRads.yawRate = 0;
     attitude.zSign = 1;
+    FusionOffsetInitialise(&offset, GYRO_ODR);
+    FusionAhrsInitialise(&ahrs);
 }
 
 void updateAttitude(void) {
-    Vector correction_Body, correction_World;
-    Vector Accel_Body, Accel_World;
-    Quaternion incrementalRotation;
-    Vector gyroVec;
-
-    attitude.gyroRatesRads.rollRate = imuData[IMU_GYRO_X] * (70.0 / 1000.0 * DEGREES_TO_RAD);
-    attitude.gyroRatesRads.pitchRate = imuData[IMU_GYRO_Y] * (70.0 / 1000.0 * DEGREES_TO_RAD);
-    attitude.gyroRatesRads.yawRate = imuData[IMU_GYRO_Z] * (70.0 / 1000.0 * DEGREES_TO_RAD);
     attitude.gyroRatesDeg.rollRate = imuData[IMU_GYRO_X] * (70.0 / 1000.0);
     attitude.gyroRatesDeg.pitchRate = imuData[IMU_GYRO_Y] * (70.0 / 1000.0);
     attitude.gyroRatesDeg.yawRate = imuData[IMU_GYRO_Z] * (70.0 / 1000.0);
-    Accel_Body.x = imuData[IMU_ACCEL_X] * (0.122 / 1000.0);
-    Accel_Body.y = imuData[IMU_ACCEL_Y] * (0.122 / 1000.0);
-    Accel_Body.z = imuData[IMU_ACCEL_Z] * (0.122 / 1000.0);
+    gyroscope.axis.x = attitude.gyroRatesDeg.rollRate;
+    gyroscope.axis.y = attitude.gyroRatesDeg.pitchRate;
+    gyroscope.axis.z = attitude.gyroRatesDeg.yawRate;
+    accelerometer.axis.x = imuData[IMU_ACCEL_X] * (0.122 / 1000.0);
+    accelerometer.axis.y = imuData[IMU_ACCEL_Y] * (0.122 / 1000.0);
+    accelerometer.axis.z = imuData[IMU_ACCEL_Z] * (0.122 / 1000.0);
     if (imuData[IMU_ACCEL_Z] < 0) {
         attitude.zSign = -1;
     } else {
         attitude.zSign = 1;
     }
-    Accel_World = RotateL(attitude.qAttitude, Accel_Body); // rotate accel from body frame to world frame
-    correction_World = VecCrossProduct(Accel_World, VERTICAL); // cross product to determine error
-    correction_Body = RotateR(correction_World, attitude.qAttitude); // rotate correction vector to body frame
-    gyroVec = VecSum(attitude.gyroRatesRads, correction_Body); // add correction vector to gyro data
-    incrementalRotation = QuaternionInt(gyroVec, GYRO_SAMPLE_PERIOD); // create incremental rotation quaternion
-    attitude.qAttitude = MulQuaternion(incrementalRotation, attitude.qAttitude); // quaternion integration
-    attitude.ypr = toYPR(attitude.qAttitude);
+    gyroscope = FusionOffsetUpdate(&offset, gyroscope);
+    FusionAhrsUpdateNoMagnetometer(&ahrs, gyroscope, accelerometer, GYRO_SAMPLE_PERIOD);
+    FusionEuler euler = FusionQuaternionToEuler(FusionAhrsGetQuaternion(&ahrs));
+    attitude.ypr.roll = euler.angle.roll;
+    attitude.ypr.pitch = euler.angle.pitch;
+    attitude.ypr.yaw = 0;
 }
 
 Vector AccelYPR(void) {
