@@ -50,11 +50,9 @@ QueueHandle_t imuQueue;
 bool imuReady = false;
 
 int16_t rawImuData[6];
-int16_t xGyroOffset;
-int16_t yGyroOffset;
-int16_t zGyroOffset;
 
 void imuIntHandler(EXTERNAL_INT_PIN pin, uintptr_t context);
+bool isUpright(void);
 
 bool initIMU(void) {
     uint8_t wValue[4];
@@ -87,12 +85,11 @@ bool initIMU(void) {
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
     //Configure accelerometer
-    //TODO determine best ODR and filter values
     wValue[0] = CTRL1_XL;
     wValue[1] = 0b01100000; //416Hz, 4g range, LPF2_XL_EN off
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    wValue[0] = CTRL8_XL;   //TODO may want to remove this - see below
+    wValue[0] = CTRL8_XL; //TODO may want to remove this - see below
     wValue[1] = 0b00000000; //LPF2 at ODR/4 = 104Hz Only if LPF2_XL_EN is on
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
@@ -100,14 +97,13 @@ bool initIMU(void) {
     wValue[1] = 0b00000010; //USER_OFF_ON_OUT enable user offsets for accel.
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    wValue[0] = X_OFS_USR;  //Write user offsets
+    wValue[0] = X_OFS_USR; //Write user offsets
     wValue[1] = settings.levelOffsets[0];
     wValue[2] = settings.levelOffsets[1];
     wValue[3] = settings.levelOffsets[2];
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 4);
     while (I2C2_IsBusy());
     //Configure gyroscope
-    //TODO determine best ODR and filter values
     wValue[0] = CTRL2_G;
     wValue[1] = 0b01101100; //416Hz, 2000dps
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
@@ -121,34 +117,55 @@ bool initIMU(void) {
 
 void imuTask(void *pvParameters) {
     const uint8_t reg = OUTX_L_G;
-    int xSum = 0;
-    int ySum = 0;
-    int zSum = 0;
+    int16_t gyroMins[3];
+    int16_t gyroMaxs[3];
+    int gyroSums[3] = {0, 0, 0};
     int samples = CALIBRATION_SAMPLE_COUNT;
-    xGyroOffset = 0;
-    yGyroOffset = 0;
-    zGyroOffset = 0;
+    int16_t xGyroOffset = 0;
+    int16_t yGyroOffset = 0;
+    int16_t zGyroOffset = 0;
+    bool moving;
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        I2C2_WriteRead(IMU_DEVICE_ADDRESS, (uint8_t *)&reg, 1, (uint8_t *) rawImuData, 12);
+        I2C2_WriteRead(IMU_DEVICE_ADDRESS, (uint8_t *) & reg, 1, (uint8_t *) rawImuData, 12);
         while (I2C2_IsBusy());
-        //TODO don't calibrate until not moving and upright
-        if (samples != 0) {
-            if (samples <= 50) {  //use last 50 samples
-                xSum += rawImuData[0];
-                ySum += rawImuData[1];
-                zSum += rawImuData[2];
-            }
-            --samples;
-            if (samples == 0) {
-                xGyroOffset = xSum / -50;
-                yGyroOffset = ySum / -50;
-                zGyroOffset = zSum / -50;
-                rawImuData[0] += xGyroOffset;
-                rawImuData[1] += yGyroOffset;
-                rawImuData[2] += zGyroOffset;
-                imuReady = true;
-                xQueueOverwrite(imuQueue, rawImuData);
+        if (!imuReady) {
+            if (isUpright()) {
+                moving = false;
+                for (int i = 0; i < 3; ++i) {
+                    if (samples == CALIBRATION_SAMPLE_COUNT) { //First sample
+                        gyroMins[i] = gyroMaxs[i] = rawImuData[i];
+                    } else if (rawImuData[i] < gyroMins[i]) {
+                        gyroMins[i] = rawImuData[i];
+                    } else if (rawImuData[i] > gyroMaxs[i]) {
+                        gyroMaxs[i] = rawImuData[i];
+                    }
+                    if (gyroMaxs[i] - gyroMins[i] <= MAX_MOTION_ALLOWED) {
+                        gyroSums[i] += rawImuData[i];
+                    } else { //It's moving so start over
+                        moving = true;
+                    }
+                }
+                if (moving) {
+                    samples = CALIBRATION_SAMPLE_COUNT;
+                    for (int i = 0; i < 3; ++i) {
+                        gyroSums[i] = 0;
+                    }
+                } else {
+                    --samples;
+                    if (samples == 0) {
+                        xGyroOffset = -gyroSums[0] / CALIBRATION_SAMPLE_COUNT;
+                        yGyroOffset = -gyroSums[1] / CALIBRATION_SAMPLE_COUNT;
+                        zGyroOffset = -gyroSums[2] / CALIBRATION_SAMPLE_COUNT;
+                        rawImuData[0] += xGyroOffset;
+                        rawImuData[1] += yGyroOffset;
+                        rawImuData[2] += zGyroOffset;
+                        imuReady = true;
+                        xQueueOverwrite(imuQueue, rawImuData);
+                    }
+                }
+            } else {
+                //Not upright so do nothing
             }
         } else {
             rawImuData[0] += xGyroOffset;
@@ -179,4 +196,30 @@ void enableAccelOffsets(void) {
     wValue[1] = 0b00000010; //USER_OFF_ON_OUT enable user offsets for accel.
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
+}
+
+bool isUpright(void) {
+    switch (settings.gyroOrientation) {
+        case FLAT_ORIENTATION:
+            if (rawImuData[5] > UPRIGHT_MIN_VALUE) {
+                return true;
+            }
+            break;
+        case INVERTED_ORIENTATION:
+            if (rawImuData[5] < -UPRIGHT_MIN_VALUE) {
+                return true;
+            }
+            break;
+        case LEFT_DOWN_ORIENTATION:
+            if (rawImuData[4] < -UPRIGHT_MIN_VALUE) {
+                return true;
+            }
+            break;
+        case RIGHT_DOWN_ORIENTATION:
+            if (rawImuData[4] > UPRIGHT_MIN_VALUE) {
+                return true;
+            }
+            break;
+    }
+    return false;
 }

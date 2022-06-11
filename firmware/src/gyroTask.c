@@ -43,7 +43,7 @@ void calculateGains();
 void verifyAndSetOutputs(void);
 
 void gyroTask(void *pvParameters) {
-    uint16_t temp;
+    int16_t temp;
     portTASK_USES_FLOATING_POINT();
     attitudeInitialized = false;
     modeChannel = settings.flightModeChannel;

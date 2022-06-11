@@ -13,8 +13,10 @@ extern "C" {
 #endif
 
 #define GYRO_ODR                    416     //Ouput rate in Hz
-#define CALIBRATION_SAMPLE_COUNT    (3 * GYRO_ODR)     //about 3 seconds at current ODR
+#define CALIBRATION_SAMPLE_COUNT    (2 * GYRO_ODR)     //about 2 seconds at current ODR
 #define GYRO_SAMPLE_PERIOD          (1.0 / GYRO_ODR)   //Period in sec.
+#define MAX_MOTION_ALLOWED          50  //Maximum gyro count difference to qualify as not moving
+#define UPRIGHT_MIN_VALUE           6000 //minimum raw accelerometer value to qualify as upright
     
     extern bool imuReady;
     bool initIMU(void);
