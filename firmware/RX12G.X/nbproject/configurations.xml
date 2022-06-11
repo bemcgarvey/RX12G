@@ -247,6 +247,14 @@
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="fusion" projectFiles="true">
+        <itemPath>../src/fusion.h</itemPath>
+        <itemPath>../src/fusionAhrs.h</itemPath>
+        <itemPath>../src/fusionCalibration.h</itemPath>
+        <itemPath>../src/fusionOffset.h</itemPath>
+        <itemPath>../src/fusionMath.h</itemPath>
+        <itemPath>../src/fusionAxes.h</itemPath>
+      </logicalFolder>
       <itemPath>../src/timers.h</itemPath>
       <itemPath>../src/satellites.h</itemPath>
       <itemPath>../src/uart.h</itemPath>
@@ -370,6 +378,10 @@
           <itemPath>../src/third_party/rtos/FreeRTOS/Source/event_groups.c</itemPath>
           <itemPath>../src/third_party/rtos/FreeRTOS/Source/stream_buffer.c</itemPath>
         </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="f3" displayName="fusion" projectFiles="true">
+        <itemPath>../src/fusionAhrs.c</itemPath>
+        <itemPath>../src/fusionOffset.c</itemPath>
       </logicalFolder>
       <itemPath>../src/main.c</itemPath>
       <itemPath>../src/timers.c</itemPath>

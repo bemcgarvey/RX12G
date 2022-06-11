@@ -43,6 +43,7 @@ void calculateGains();
 void verifyAndSetOutputs(void);
 
 void gyroTask(void *pvParameters) {
+    int16_t temp;
     portTASK_USES_FLOATING_POINT();
     attitudeInitialized = false;
     modeChannel = settings.flightModeChannel;
@@ -65,13 +66,36 @@ void gyroTask(void *pvParameters) {
             //Remap axis based on orientation
             switch (settings.gyroOrientation) {
                 case FLAT_ORIENTATION:
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_Y] = -imuData[IMU_GYRO_Y];
+                    imuData[IMU_ACCEL_Y] = -imuData[IMU_ACCEL_Y];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
                     break;
                 case INVERTED_ORIENTATION:
+                    imuData[IMU_ACCEL_Z] = -imuData[IMU_ACCEL_Z];
+                    imuData[IMU_GYRO_Z] = -imuData[IMU_GYRO_Z];
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
                     break;
                 case LEFT_DOWN_ORIENTATION:
-                    //TODO remap axis
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
+                    temp = imuData[IMU_ACCEL_Y];
+                    imuData[IMU_ACCEL_Y] = -imuData[IMU_ACCEL_Z];
+                    imuData[IMU_ACCEL_Z] = -temp;
+                    temp = imuData[IMU_GYRO_Z];
+                    imuData[IMU_GYRO_Z] = -imuData[IMU_GYRO_Y];
+                    imuData[IMU_GYRO_Y] = -temp;
                     break;
                 case RIGHT_DOWN_ORIENTATION:
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
+                    temp = imuData[IMU_ACCEL_Y];
+                    imuData[IMU_ACCEL_Y] = imuData[IMU_ACCEL_Z];
+                    imuData[IMU_ACCEL_Z] = temp;
+                    temp = imuData[IMU_GYRO_Z];
+                    imuData[IMU_GYRO_Z] = imuData[IMU_GYRO_Y];
+                    imuData[IMU_GYRO_Y] = temp;
                     break;
             }
             if (!attitudeInitialized) {

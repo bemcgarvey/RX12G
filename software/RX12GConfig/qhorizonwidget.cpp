@@ -47,7 +47,7 @@ void QHorizonWidget::paintEvent(QPaintEvent *) {
     painter.setTransform(transform);
     painter.setClipRegion(clip);
     painter.save();
-    transform.rotate(-currentRoll);
+    transform.rotate(currentRoll);
     painter.setTransform(transform);
     painter.save();
     transform.translate(0, (currentPitch * radius) / 90);

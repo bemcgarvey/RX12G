@@ -30,6 +30,7 @@ void statusLedTask(void *pvParameters) {
     LedState LED_B_State = LED_OFF;
     int blinkCount = 0;
     while (1) {
+        //TODO have alternate blink vs synched blink
         //Check sat activity and set LEDs and failsafe
         activity = false;
         uint32_t time = getSystemTime();

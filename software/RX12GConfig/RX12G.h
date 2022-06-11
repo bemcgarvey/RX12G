@@ -132,16 +132,7 @@ enum {
     } Vector;
 
     typedef struct {
-        float w;
-        float x;
-        float y;
-        float z;
-    } Quaternion;
-
-    typedef struct {
-        Quaternion qAttitude;
         Vector ypr;
-        Vector gyroRatesRads;
         Vector gyroRatesDeg;
         int zSign; //sign of z axis acceleration: 1 = upright, -1 = inverted
     } AttitudeData;
