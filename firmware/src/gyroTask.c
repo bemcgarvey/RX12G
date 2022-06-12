@@ -37,6 +37,8 @@ static int pitchGainChannel;
 static int yawGainChannel;
 static int16_t newServoPositions[5];
 static bool attitudeInitialized;
+static bool doWiggle;
+static int wiggleCount;
 
 FlightModeType decodeFlightMode(void);
 void calculateGains();
@@ -61,6 +63,8 @@ void gyroTask(void *pvParameters) {
     deadbands[YAW_INDEX] = (settings.deadbands[YAW_INDEX] * 1024) / 100;
     initAutoLevel();
     needToUpdateOutputs = false;
+    doWiggle = false;
+    wiggleCount = settings.outputHz;
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
             //Remap axis based on orientation
@@ -101,6 +105,7 @@ void gyroTask(void *pvParameters) {
             if (!attitudeInitialized) {
                 initAttitude();
                 attitudeInitialized = true;
+                doWiggle = true;
             }
             updateAttitude();
         } else {
@@ -110,7 +115,27 @@ void gyroTask(void *pvParameters) {
             needToUpdateOutputs = false;
             currentFlightMode = decodeFlightMode();
             calculateGains();
-            if (currentFlightMode == OFF_MODE || !attitudeInitialized) {
+            if (doWiggle) {
+                if (wiggleCount > 2 * settings.outputHz / 3) {
+                    rpyCorrections[AILERON_INDEX] = 200;
+                    rpyCorrections[ELEVATOR_INDEX] = 200;
+                    rpyCorrections[RUDDER_INDEX] = 0;
+                } else if (wiggleCount > settings.outputHz / 3) {
+                    rpyCorrections[AILERON_INDEX] = -200;
+                    rpyCorrections[ELEVATOR_INDEX] = -200;
+                    rpyCorrections[RUDDER_INDEX] = 0;
+                } else if (wiggleCount > 0) {
+                    rpyCorrections[AILERON_INDEX] = 0;
+                    rpyCorrections[ELEVATOR_INDEX] = 0;
+                    rpyCorrections[RUDDER_INDEX] = 0;
+                } else {
+                    doWiggle = false;
+                }
+                if (wiggleCount != 0) {
+                    --wiggleCount;
+                }
+                verifyAndSetOutputs();                
+            } else if (currentFlightMode == OFF_MODE || !attitudeInitialized) {
                 for (int i = 0; i < MAX_CHANNELS; ++i) {
                     outputServos[i] = rawServoPositions[i];
                 }
@@ -212,7 +237,6 @@ void verifyAndSetOutputs(void) {
     } else if (newServoPositions[AILERON_INDEX] > settings.maxTravelLimits[AILERON_INDEX]) {
         newServoPositions[AILERON_INDEX] = settings.maxTravelLimits[AILERON_INDEX];
     }
-    //FIXME Use min and max limits for below
     if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
         if (settings.gyroReverseFlags & ELEVATOR_MASK) {
             newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR] - rpyCorrections[ELEVATOR_INDEX];
@@ -222,10 +246,10 @@ void verifyAndSetOutputs(void) {
     } else {
         newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR];
     }
-    if (newServoPositions[ELEVATOR_INDEX] < 0) {
-        newServoPositions[ELEVATOR_INDEX] = 0;
-    } else if (newServoPositions[ELEVATOR_INDEX] > 2047) {
-        newServoPositions[ELEVATOR_INDEX] = 2047;
+    if (newServoPositions[ELEVATOR_INDEX] < settings.minTravelLimits[ELEVATOR_INDEX]) {
+        newServoPositions[ELEVATOR_INDEX] = settings.minTravelLimits[ELEVATOR_INDEX];
+    } else if (newServoPositions[ELEVATOR_INDEX] > settings.maxTravelLimits[ELEVATOR_INDEX]) {
+        newServoPositions[ELEVATOR_INDEX] = settings.maxTravelLimits[ELEVATOR_INDEX];
     }
     if (settings.gyroEnabledFlags & RUDDER_MASK) {
         if (settings.gyroReverseFlags & RUDDER_MASK) {
@@ -236,24 +260,24 @@ void verifyAndSetOutputs(void) {
     } else {
         newServoPositions[RUDDER_INDEX] = rawServoPositions[RUDDER];
     }
-    if (newServoPositions[RUDDER_INDEX] < 0) {
-        newServoPositions[RUDDER_INDEX] = 0;
-    } else if (newServoPositions[RUDDER_INDEX] > 2047) {
-        newServoPositions[RUDDER_INDEX] = 2047;
+    if (newServoPositions[RUDDER_INDEX] < settings.minTravelLimits[RUDDER_INDEX]) {
+        newServoPositions[RUDDER_INDEX] = settings.minTravelLimits[RUDDER_INDEX];
+    } else if (newServoPositions[RUDDER_INDEX] > settings.maxTravelLimits[RUDDER_INDEX]) {
+        newServoPositions[RUDDER_INDEX] = settings.maxTravelLimits[RUDDER_INDEX];
     }
     if (settings.gyroEnabledFlags & AILERON2_MASK) {
         if (settings.gyroReverseFlags & AILERON2_MASK) {
-            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] - rpyCorrections[AILERON_INDEX];
+            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] + rpyCorrections[AILERON_INDEX];
         } else {
-            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] + rpyCorrections[RUDDER_INDEX];
+            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] - rpyCorrections[AILERON_INDEX];
         }
     } else {
         newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel];
     }
-    if (newServoPositions[AILERON2_INDEX] < 0) {
-        newServoPositions[AILERON2_INDEX] = 0;
-    } else if (newServoPositions[AILERON2_INDEX] > 2047) {
-        newServoPositions[AILERON2_INDEX] = 2047;
+    if (newServoPositions[AILERON2_INDEX] < settings.minTravelLimits[AILERON2_INDEX]) {
+        newServoPositions[AILERON2_INDEX] = settings.minTravelLimits[AILERON2_INDEX];
+    } else if (newServoPositions[AILERON2_INDEX] > settings.maxTravelLimits[AILERON2_INDEX]) {
+        newServoPositions[AILERON2_INDEX] = settings.maxTravelLimits[AILERON2_INDEX];
     }
     if (settings.gyroEnabledFlags & ELEVATOR2_MASK) {
         if (settings.gyroReverseFlags & ELEVATOR2_MASK) {
@@ -264,10 +288,10 @@ void verifyAndSetOutputs(void) {
     } else {
         newServoPositions[ELEVATOR2_INDEX] = rawServoPositions[settings.elevator2Channel];
     }
-    if (newServoPositions[ELEVATOR2_INDEX] < 0) {
-        newServoPositions[ELEVATOR2_INDEX] = 0;
-    } else if (newServoPositions[ELEVATOR2_INDEX] > 2047) {
-        newServoPositions[ELEVATOR2_INDEX] = 2047;
+    if (newServoPositions[ELEVATOR2_INDEX] < settings.minTravelLimits[ELEVATOR2_INDEX]) {
+        newServoPositions[ELEVATOR2_INDEX] = settings.minTravelLimits[ELEVATOR2_INDEX];
+    } else if (newServoPositions[ELEVATOR2_INDEX] > settings.maxTravelLimits[ELEVATOR2_INDEX]) {
+        newServoPositions[ELEVATOR2_INDEX] = settings.maxTravelLimits[ELEVATOR2_INDEX];
     }
     outputServos[THROTTLE] = rawServoPositions[THROTTLE];
     outputServos[AILERON] = newServoPositions[AILERON_INDEX];
