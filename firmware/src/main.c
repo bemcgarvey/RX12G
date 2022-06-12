@@ -43,7 +43,13 @@ int main(void) {
         SAT2_LED_Set();
         while (1);
     }
-    //TODO lock PPS here since all pins should be assigned.
+    //Lock PPS
+    __builtin_disable_interrupts();
+    SYSKEY = 0x00000000;
+    SYSKEY = 0xAA996655;
+    SYSKEY = 0x556699AA;
+    CFGCONbits.IOLOCK = 1;
+    __builtin_enable_interrupts();
     initTasks(); //Starts rtos tasks - Does not return
     while (true) {
         /* Execution should not come here during normal operation */

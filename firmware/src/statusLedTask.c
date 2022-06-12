@@ -21,7 +21,8 @@
 TaskHandle_t statusLedTaskHandle;
 
 typedef enum {
-    LED_OFF = 0, LED_ON, LED_BLINK_SLOW, LED_BLINK_FAST
+    LED_OFF = 0, LED_ON, LED_BLINK_SLOW_A, LED_BLINK_FAST_A,
+    LED_BLINK_SLOW_B, LED_BLINK_FAST_B
 } LedState;
 
 void statusLedTask(void *pvParameters) {
@@ -30,7 +31,6 @@ void statusLedTask(void *pvParameters) {
     LedState LED_B_State = LED_OFF;
     int blinkCount = 0;
     while (1) {
-        //TODO have alternate blink vs synched blink
         //Check sat activity and set LEDs and failsafe
         activity = false;
         uint32_t time = getSystemTime();
@@ -60,7 +60,6 @@ void statusLedTask(void *pvParameters) {
                 engageFailsafe();
             }
         }
-        
         //Set status LEDs
         switch (currentFlightMode) {
             case OFF_MODE:
@@ -76,7 +75,7 @@ void statusLedTask(void *pvParameters) {
                 LED_B_State = LED_OFF;
                 break;
             case TRAINER_MODE:
-                LED_A_State = LED_BLINK_FAST;
+                LED_A_State = LED_BLINK_FAST_A;
                 LED_B_State = LED_OFF;
                 break;
             case ATTITUDE_LOCK_MODE:
@@ -85,27 +84,29 @@ void statusLedTask(void *pvParameters) {
                 break;
             case LAUNCH_ASSIST_MODE:
                 LED_A_State = LED_OFF;
-                LED_B_State = LED_BLINK_FAST;
+                LED_B_State = LED_BLINK_FAST_A;
                 break;
             case CUSTOM_MODE_1:
                 LED_A_State = LED_ON;
-                LED_B_State = LED_BLINK_FAST;
+                LED_B_State = LED_BLINK_FAST_A;
                 break;
             case CUSTOM_MODE_2:
-                LED_A_State = LED_BLINK_FAST;
+                LED_A_State = LED_BLINK_FAST_A;
                 LED_B_State = LED_ON;
                 break;
             default:
                 LED_A_State = LED_OFF;
                 LED_B_State = LED_OFF;
         }
-        if (isBinding || !imuReady) {
-            LED_A_State = LED_BLINK_FAST;
-            LED_B_State = LED_BLINK_FAST;
-        }
-        else if (failsafeEngaged) {
-            LED_A_State = LED_BLINK_SLOW;
-            LED_B_State = LED_BLINK_SLOW;
+        if (isBinding) {
+            LED_A_State = LED_BLINK_FAST_A;
+            LED_B_State = LED_BLINK_FAST_B;
+        } else if (!imuReady) {
+            LED_A_State = LED_BLINK_FAST_A;
+            LED_B_State = LED_BLINK_FAST_A;
+        } else if (failsafeEngaged) {
+            LED_A_State = LED_BLINK_SLOW_B;
+            LED_B_State = LED_BLINK_SLOW_A;
         }
         switch (LED_A_State) {
             case LED_OFF:
@@ -114,13 +115,33 @@ void statusLedTask(void *pvParameters) {
             case LED_ON:
                 LED_A_Set();
                 break;
-            case LED_BLINK_SLOW:
-                if (blinkCount % 10 == 0) {
-                    LED_A_Toggle();
+            case LED_BLINK_SLOW_A:
+                if (blinkCount % 20 == 0) {
+                    LED_A_Clear();
+                } else if (blinkCount % 10 == 0) {
+                    LED_A_Set();
                 }
                 break;
-            case LED_BLINK_FAST:
-                LED_A_Toggle();
+            case LED_BLINK_SLOW_B:
+                if (blinkCount % 20 == 0) {
+                    LED_A_Set();
+                } else if (blinkCount % 10 == 0) {
+                    LED_A_Clear();
+                }
+                break;
+            case LED_BLINK_FAST_A:
+                if (blinkCount % 2 == 0) {
+                    LED_A_Clear();
+                } else {
+                    LED_A_Set();
+                }
+                break;
+            case LED_BLINK_FAST_B:
+                if (blinkCount % 2 == 0) {
+                    LED_A_Set();
+                } else {
+                    LED_A_Clear();
+                }
                 break;
         }
         switch (LED_B_State) {
@@ -130,13 +151,33 @@ void statusLedTask(void *pvParameters) {
             case LED_ON:
                 LED_B_Set();
                 break;
-            case LED_BLINK_SLOW:
-                if (blinkCount % 10 == 0) {
-                    LED_B_Toggle();
+            case LED_BLINK_SLOW_A:
+                if (blinkCount % 20 == 0) {
+                    LED_B_Clear();
+                } else if (blinkCount % 10 == 0) {
+                    LED_B_Set();
                 }
                 break;
-            case LED_BLINK_FAST:
-                LED_B_Toggle();
+            case LED_BLINK_SLOW_B:
+                if (blinkCount % 20 == 0) {
+                    LED_B_Set();
+                } else if (blinkCount % 10 == 0) {
+                    LED_B_Clear();
+                }
+                break;
+            case LED_BLINK_FAST_A:
+                if (blinkCount % 2 == 0) {
+                    LED_B_Clear();
+                } else {
+                    LED_B_Set();
+                }
+                break;
+            case LED_BLINK_FAST_B:
+                if (blinkCount % 2 == 0) {
+                    LED_B_Set();
+                } else {
+                    LED_B_Clear();
+                }
                 break;
         }
         vTaskDelay(100);
