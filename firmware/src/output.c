@@ -23,9 +23,7 @@ const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
 
 const unsigned int pulseOffsets[NUM_OUTPUTS] = {0 + PULSE, OFFSET + PULSE,
     0 + PULSE, OFFSET + PULSE, 0 + PULSE, OFFSET + PULSE, 0 + PULSE, OFFSET + PULSE,
-    2 * OFFSET + PULSE, 2 * OFFSET + PULSE, 2 * OFFSET + PULSE, 2 * OFFSET + PULSE};
-
-//TODO may need to adjust upper channel offsets for higher servo rates
+    0 + PULSE, OFFSET + PULSE, 0 + PULSE, OFFSET + PULSE};
 
 volatile unsigned int* const pulseRegister[NUM_OUTPUTS] = {&OC11RS, &OC10RS, &OC9RS,
     &OC13RS, &OC2RS, &OC6RS, &OC8RS, &OC5RS, &OC14RS, &OC1RS, &OC7RS, &OC4RS};

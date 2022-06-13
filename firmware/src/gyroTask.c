@@ -116,6 +116,7 @@ void gyroTask(void *pvParameters) {
             } else {
                 ++imuMissingCount;
                 if (imuMissingCount == GYRO_ODR) {
+                    //Gyro data has been missing for a full second so shut it down
                     imuHealthy = false;
                     attitudeInitialized = false;
                     vTaskSuspend(imuTaskHandle);
@@ -185,7 +186,7 @@ FlightModeType decodeFlightMode(void) {
     } else {
         uint16_t value = rawServoPositions[modeChannel];
         if (value == 0xffff) {
-            return OFF_MODE; //TODO what should the failsafe flight mode be? Off or auto level?
+            return OFF_MODE;
         }
         if (settings.numFlightModes == 3) {
             if (value < 682) {
