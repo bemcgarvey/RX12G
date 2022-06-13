@@ -68,6 +68,7 @@
 #pragma config SOSCBOOST =  ON
 #pragma config POSCGAIN =   G3
 #pragma config POSCBOOST =  ON
+#pragma config POSCAGC = Manual
 #pragma config EJTAGBEN =   NORMAL
 
 /*** DEVCFG1 ***/
@@ -77,7 +78,7 @@
 #pragma config IESO =       OFF
 #pragma config POSCMOD =    EC
 #pragma config OSCIOFNC =   OFF
-#pragma config FCKSM =      CSECMD
+#pragma config FCKSM =      CSECME
 #pragma config WDTPS =      PS1048576
 #pragma config WDTSPGM =    STOP
 #pragma config FWDTEN =     OFF
@@ -87,10 +88,10 @@
 #pragma config FDMTEN =     OFF
 
 /*** DEVCFG2 ***/
-#pragma config FPLLIDIV =   DIV_3
-#pragma config FPLLRNG =    RANGE_8_16_MHZ
+#pragma config FPLLIDIV =   DIV_1
+#pragma config FPLLRNG =    RANGE_13_26_MHZ
 #pragma config FPLLICLK =   PLL_POSC
-#pragma config FPLLMULT =   MUL_60
+#pragma config FPLLMULT =   MUL_20
 #pragma config FPLLODIV =   DIV_4
 #pragma config BORSEL =     HIGH
 #pragma config UPLLEN =     ON
@@ -216,12 +217,12 @@ void SYS_Initialize ( void* data )
 
 
 	GPIO_Initialize();
-
+    
     DMAC_Initialize();
 
     CORETIMER_Initialize();
     TMR6_Initialize();
-
+        
     I2C2_Initialize();
 
     TMR7_Initialize();
@@ -229,14 +230,12 @@ void SYS_Initialize ( void* data )
     TMR5_Initialize();
 
     EEPROM_Initialize();
-
+        
     TMR2_Initialize();
 
     TMR8_Initialize();
 
     TMR9_Initialize();
-
-
 
 
 

@@ -962,7 +962,7 @@ children:
     - type: Values
       children:
       - type: User
-        attributes: {value: CSECMD}
+        attributes: {value: CSECME}
   - type: Combo
     attributes: {id: CONFIG_FPLLICLK}
     children:
@@ -976,21 +976,21 @@ children:
     - type: Values
       children:
       - type: User
-        attributes: {value: DIV_3}
+        attributes: {value: DIV_1}
   - type: Combo
     attributes: {id: CONFIG_FPLLMULT}
     children:
     - type: Values
       children:
       - type: User
-        attributes: {value: MUL_60}
+        attributes: {value: MUL_20}
   - type: Combo
     attributes: {id: CONFIG_FPLLRNG}
     children:
     - type: Values
       children:
       - type: User
-        attributes: {value: RANGE_8_16_MHZ}
+        attributes: {value: RANGE_13_26_MHZ}
   - type: Combo
     attributes: {id: CONFIG_FUSBIDIO1}
     children:
@@ -1026,6 +1026,13 @@ children:
       children:
       - type: User
         attributes: {value: 'OFF'}
+  - type: Combo
+    attributes: {id: CONFIG_POSCAGC}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: Manual}
   - type: Combo
     attributes: {id: CONFIG_POSCMOD}
     children:
