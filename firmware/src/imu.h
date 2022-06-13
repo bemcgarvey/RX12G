@@ -18,6 +18,7 @@ extern "C" {
 #define MAX_MOTION_ALLOWED          50  //Maximum gyro count difference to qualify as not moving
 #define UPRIGHT_MIN_VALUE           6000 //minimum raw accelerometer value to qualify as upright
     
+    extern bool imuHealthy;
     extern bool imuReady;
     bool initIMU(void);
     void imuTask(void *pvParameters);
