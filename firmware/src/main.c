@@ -39,9 +39,9 @@ int main(void) {
     initSatellites();
     initOutputs();
     if (!initIMU()) {
-        imuHealthy = false;
-    } else {
-        imuHealthy = true;
+        //TODO if IMU can't be started we should force off mode and indicate with an led code
+        SAT2_LED_Set();
+        while (1);
     }
     //Lock PPS
     __builtin_disable_interrupts();

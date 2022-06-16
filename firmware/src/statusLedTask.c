@@ -101,7 +101,7 @@ void statusLedTask(void *pvParameters) {
         if (isBinding) {
             LED_A_State = LED_BLINK_FAST_A;
             LED_B_State = LED_BLINK_FAST_B;
-        } else if (!imuReady || !imuHealthy) {
+        } else if (!imuReady) {
             LED_A_State = LED_BLINK_FAST_A;
             LED_B_State = LED_BLINK_FAST_A;
         } else if (failsafeEngaged) {

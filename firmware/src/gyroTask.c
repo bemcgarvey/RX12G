@@ -16,7 +16,6 @@
 #include "attitude.h"
 #include "autoLevel.h"
 #include "rxTask.h"
-#include "imu.h"
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
@@ -40,7 +39,6 @@ static int16_t newServoPositions[5];
 static bool attitudeInitialized;
 static bool doWiggle;
 static int wiggleCount;
-static int imuMissingCount;
 
 FlightModeType decodeFlightMode(void);
 void calculateGains();
@@ -67,62 +65,51 @@ void gyroTask(void *pvParameters) {
     needToUpdateOutputs = false;
     doWiggle = false;
     wiggleCount = settings.outputHz;
-    imuMissingCount = 0;
     while (1) {
-        if (imuHealthy && imuReady) {
-            if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
-                imuMissingCount = 0;
-                //Remap axis based on orientation
-                switch (settings.gyroOrientation) {
-                    case FLAT_ORIENTATION:
-                        imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
-                        imuData[IMU_GYRO_Y] = -imuData[IMU_GYRO_Y];
-                        imuData[IMU_ACCEL_Y] = -imuData[IMU_ACCEL_Y];
-                        imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
-                        break;
-                    case INVERTED_ORIENTATION:
-                        imuData[IMU_ACCEL_Z] = -imuData[IMU_ACCEL_Z];
-                        imuData[IMU_GYRO_Z] = -imuData[IMU_GYRO_Z];
-                        imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
-                        imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
-                        break;
-                    case LEFT_DOWN_ORIENTATION:
-                        imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
-                        imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
-                        temp = imuData[IMU_ACCEL_Y];
-                        imuData[IMU_ACCEL_Y] = -imuData[IMU_ACCEL_Z];
-                        imuData[IMU_ACCEL_Z] = -temp;
-                        temp = imuData[IMU_GYRO_Z];
-                        imuData[IMU_GYRO_Z] = -imuData[IMU_GYRO_Y];
-                        imuData[IMU_GYRO_Y] = -temp;
-                        break;
-                    case RIGHT_DOWN_ORIENTATION:
-                        imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
-                        imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
-                        temp = imuData[IMU_ACCEL_Y];
-                        imuData[IMU_ACCEL_Y] = imuData[IMU_ACCEL_Z];
-                        imuData[IMU_ACCEL_Z] = temp;
-                        temp = imuData[IMU_GYRO_Z];
-                        imuData[IMU_GYRO_Z] = imuData[IMU_GYRO_Y];
-                        imuData[IMU_GYRO_Y] = temp;
-                        break;
-                }
-                if (!attitudeInitialized) {
-                    initAttitude();
-                    attitudeInitialized = true;
-                    doWiggle = true;
-                }
-                updateAttitude();
-            } else {
-                ++imuMissingCount;
-                if (imuMissingCount == GYRO_ODR) {
-                    imuHealthy = false;
-                    attitudeInitialized = false;
-                    vTaskSuspend(imuTaskHandle);
-                }
+        if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
+            //Remap axis based on orientation
+            switch (settings.gyroOrientation) {
+                case FLAT_ORIENTATION:
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_Y] = -imuData[IMU_GYRO_Y];
+                    imuData[IMU_ACCEL_Y] = -imuData[IMU_ACCEL_Y];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
+                    break;
+                case INVERTED_ORIENTATION:
+                    imuData[IMU_ACCEL_Z] = -imuData[IMU_ACCEL_Z];
+                    imuData[IMU_GYRO_Z] = -imuData[IMU_GYRO_Z];
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
+                    break;
+                case LEFT_DOWN_ORIENTATION:
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
+                    temp = imuData[IMU_ACCEL_Y];
+                    imuData[IMU_ACCEL_Y] = -imuData[IMU_ACCEL_Z];
+                    imuData[IMU_ACCEL_Z] = -temp;
+                    temp = imuData[IMU_GYRO_Z];
+                    imuData[IMU_GYRO_Z] = -imuData[IMU_GYRO_Y];
+                    imuData[IMU_GYRO_Y] = -temp;
+                    break;
+                case RIGHT_DOWN_ORIENTATION:
+                    imuData[IMU_ACCEL_X] = -imuData[IMU_ACCEL_X];
+                    imuData[IMU_GYRO_X] = -imuData[IMU_GYRO_X];
+                    temp = imuData[IMU_ACCEL_Y];
+                    imuData[IMU_ACCEL_Y] = imuData[IMU_ACCEL_Z];
+                    imuData[IMU_ACCEL_Z] = temp;
+                    temp = imuData[IMU_GYRO_Z];
+                    imuData[IMU_GYRO_Z] = imuData[IMU_GYRO_Y];
+                    imuData[IMU_GYRO_Y] = temp;
+                    break;
             }
+            if (!attitudeInitialized) {
+                initAttitude();
+                attitudeInitialized = true;
+                doWiggle = true;
+            }
+            updateAttitude();
         } else {
-            vTaskDelay(3);  //No imu action so we need to yield
+            //TODO No imu data available. How do we handle this?  
         }
         if (needToUpdateOutputs) {
             needToUpdateOutputs = false;
@@ -147,7 +134,7 @@ void gyroTask(void *pvParameters) {
                 if (wiggleCount != 0) {
                     --wiggleCount;
                 }
-                verifyAndSetOutputs();
+                verifyAndSetOutputs();                
             } else if (currentFlightMode == OFF_MODE || !attitudeInitialized) {
                 for (int i = 0; i < MAX_CHANNELS; ++i) {
                     outputServos[i] = rawServoPositions[i];

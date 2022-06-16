@@ -43,9 +43,7 @@ void initTasks(void) {
     xTaskCreate(rxTask, "rxtask", 128, NULL, 3, &rxTaskHandle);
     xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 2, &gyroTaskHandle);
     xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, 1, &statusLedTaskHandle);
-    if (imuHealthy) {
-        xTaskCreate(imuTask, "imuTask", 256, NULL, 4, &imuTaskHandle);
-    }
+    xTaskCreate(imuTask, "imuTask", 256, NULL, 4, &imuTaskHandle);
     if (startMode == START_USB) {
         xTaskCreate(_USB_DEVICE_Tasks, "USB_DEVICE_TASKS", 1024, NULL, 1, NULL);
         xTaskCreate(USBAppTasks, "USBAppTasks", 1024, NULL, 1, &usbAppTaskHandle);
