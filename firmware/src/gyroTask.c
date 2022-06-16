@@ -16,6 +16,7 @@
 #include "attitude.h"
 #include "autoLevel.h"
 #include "rxTask.h"
+#include "imu.h"
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
@@ -39,6 +40,7 @@ static int16_t newServoPositions[5];
 static bool attitudeInitialized;
 static bool doWiggle;
 static int wiggleCount;
+static int imuMissedCount;
 
 FlightModeType decodeFlightMode(void);
 void calculateGains();
@@ -65,8 +67,10 @@ void gyroTask(void *pvParameters) {
     needToUpdateOutputs = false;
     doWiggle = false;
     wiggleCount = settings.outputHz;
+    imuMissedCount = 0;
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
+            imuMissedCount = 0;
             //Remap axis based on orientation
             switch (settings.gyroOrientation) {
                 case FLAT_ORIENTATION:
@@ -109,7 +113,13 @@ void gyroTask(void *pvParameters) {
             }
             updateAttitude();
         } else {
-            //TODO No imu data available. How do we handle this?  
+            if (attitudeInitialized) {
+                ++imuMissedCount;
+                if (imuMissedCount >= GYRO_ODR) {
+                    attitudeInitialized = false;
+                    vTaskSuspend(imuTaskHandle);
+                }
+            }
         }
         if (needToUpdateOutputs) {
             needToUpdateOutputs = false;

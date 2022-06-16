@@ -48,6 +48,7 @@ TaskHandle_t imuTaskHandle;
 QueueHandle_t imuQueue;
 
 bool imuReady = false;
+bool imuInitialized = false;
 
 int16_t rawImuData[6];
 
