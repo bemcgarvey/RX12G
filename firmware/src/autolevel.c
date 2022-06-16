@@ -38,7 +38,11 @@ void autoLevelCalculate(int axes) {
                     + deltaError * settings.rollPID._D * rollGain;
         }
         if (axes & PITCH_AXIS) {
-            error = -attitude.ypr.pitch;
+            if (attitude.zSign < 0) {
+                error = attitude.ypr.pitch; //upside down so pitch is reversed
+            } else {
+                error = -attitude.ypr.pitch;
+            }
             deltaError = error - lastPitchError;
             if ((error > 0 && lastPitchError < 0) || (error < 0 && lastPitchError > 0)) {
                 pitchITerm = 0;
@@ -55,22 +59,10 @@ void autoLevelCalculate(int axes) {
                     + pitchITerm * settings.pitchPID._I * pitchGain
                     + deltaError * settings.pitchPID._D * pitchGain;
         }
-        if (axes & YAW_AXIS) {
-            rpyCorrections[YAW_INDEX] = 0;
-        }
     } else {
         rollITerm = 0;
         pitchITerm = 0;
         lastRollError = 0;
         lastPitchError = 0;
-        if (axes & ROLL_AXIS) {
-            rpyCorrections[ROLL_INDEX] = 0;
-        }
-        if (axes & PITCH_AXIS) {
-            rpyCorrections[PITCH_INDEX] = 0;
-        }
-        if (axes & YAW_AXIS) {
-            rpyCorrections[YAW_INDEX] = 0;
-        }
     }
 }

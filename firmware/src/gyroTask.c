@@ -113,6 +113,9 @@ void gyroTask(void *pvParameters) {
         }
         if (needToUpdateOutputs) {
             needToUpdateOutputs = false;
+            rpyCorrections[AILERON_INDEX] = 0;
+            rpyCorrections[ELEVATOR_INDEX] = 0;
+            rpyCorrections[RUDDER_INDEX] = 0;
             currentFlightMode = decodeFlightMode();
             calculateGains();
             if (doWiggle) {
@@ -134,7 +137,7 @@ void gyroTask(void *pvParameters) {
                 if (wiggleCount != 0) {
                     --wiggleCount;
                 }
-                verifyAndSetOutputs();                
+                verifyAndSetOutputs();
             } else if (currentFlightMode == OFF_MODE || !attitudeInitialized) {
                 for (int i = 0; i < MAX_CHANNELS; ++i) {
                     outputServos[i] = rawServoPositions[i];
@@ -142,7 +145,7 @@ void gyroTask(void *pvParameters) {
             } else if (currentFlightMode == NORMAL_MODE) {
 
             } else if (currentFlightMode == AUTO_LEVEL_MODE) {
-                autoLevelCalculate(ROLL_AXIS | PITCH_AXIS | YAW_AXIS);
+                autoLevelCalculate(ROLL_AXIS | PITCH_AXIS);
                 verifyAndSetOutputs();
             } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
 

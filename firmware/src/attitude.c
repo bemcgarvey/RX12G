@@ -33,7 +33,6 @@ void initAttitude(void) {
 }
 
 void updateAttitude(void) {
-    CORETIMER_Start();
     attitude.gyroRatesDeg.rollRate = imuData[IMU_GYRO_X] * (70.0 / 1000.0);
     attitude.gyroRatesDeg.pitchRate = imuData[IMU_GYRO_Y] * (70.0 / 1000.0);
     attitude.gyroRatesDeg.yawRate = imuData[IMU_GYRO_Z] * (70.0 / 1000.0);
@@ -54,7 +53,6 @@ void updateAttitude(void) {
     attitude.ypr.roll = euler.angle.roll;
     attitude.ypr.pitch = euler.angle.pitch;
     attitude.ypr.yaw = 0;
-    attitude.zSign = CORETIMER_CounterGet();
 }
 
 Vector AccelYPR(void) {
