@@ -273,6 +273,7 @@
       <itemPath>../src/imu.h</itemPath>
       <itemPath>../src/attitude.h</itemPath>
       <itemPath>../src/autoLevel.h</itemPath>
+      <itemPath>../src/launchAssist.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -403,6 +404,7 @@
       <itemPath>../src/imu.c</itemPath>
       <itemPath>../src/attitude.c</itemPath>
       <itemPath>../src/autolevel.c</itemPath>
+      <itemPath>../src/launchAssist.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

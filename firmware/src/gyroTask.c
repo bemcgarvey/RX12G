@@ -17,6 +17,7 @@
 #include "autoLevel.h"
 #include "rxTask.h"
 #include "imu.h"
+#include "launchAssist.h"
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
@@ -64,6 +65,7 @@ void gyroTask(void *pvParameters) {
     deadbands[PITCH_INDEX] = (settings.deadbands[PITCH_INDEX] * 1024) / 100;
     deadbands[YAW_INDEX] = (settings.deadbands[YAW_INDEX] * 1024) / 100;
     initAutoLevel();
+    initLaunchAssist();
     needToUpdateOutputs = false;
     doWiggle = false;
     wiggleCount = settings.outputHz;
@@ -161,7 +163,7 @@ void gyroTask(void *pvParameters) {
 
             } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
                 autoLevelCalculate(ROLL_AXIS);
-                //launchAssistCalculate(PITCH_AXIS);
+                launchAssistCalculate(PITCH_AXIS);
                 verifyAndSetOutputs();
             } else {
                 //Mode is unrecognized so same as off

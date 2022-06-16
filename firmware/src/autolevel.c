@@ -22,16 +22,16 @@ void autoLevelCalculate(int axes) {
         if (axes & ROLL_AXIS) {
             error = -attitude.ypr.roll;
             deltaError = error - lastRollError;
-            if ((error > 0 && lastRollError < 0) || (error < 0 && lastRollError > 0)) {
-                rollITerm = 0;
-            } else {
+            //if ((error > 0 && lastRollError < 0) || (error < 0 && lastRollError > 0)) {
+                //rollITerm = 0;
+            //} else {
                 rollITerm += error;
                 if (rollITerm > settings.rollPID._maxI) {
                     rollITerm = settings.rollPID._maxI;
                 } else if (rollITerm < -settings.rollPID._maxI) {
                     rollITerm = -settings.rollPID._maxI;
                 }
-            }
+            //}
             lastRollError = error;
             rpyCorrections[ROLL_INDEX] = error * settings.rollPID._P * rollGain
                     + rollITerm * settings.rollPID._I * rollGain
