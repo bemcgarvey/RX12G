@@ -459,9 +459,9 @@ bool MainWindow::controlsValid()
             if (assignedChannels[i] == assignedChannels[j]) {
                 ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gyroTab));
                 if (QMessageBox::warning(this, QApplication::applicationName(),
-                    "You have multiple functions assigned to the same channel. Are you sure this is what you want?",
-                    QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
-                        return false;
+                                         "You have multiple functions assigned to the same channel. Are you sure this is what you want?",
+                                         QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
+                    return false;
                 }
             }
         }
@@ -471,7 +471,6 @@ bool MainWindow::controlsValid()
 
 bool MainWindow::calculateLevelOffsets()
 {
-    //FIXME need to handle mapping based on orientation
     double newOffsets[3];
     double counts = levelSampleCount;
     newOffsets[0] = ((levelSampleSums[0] / counts) * mg_PER_LSB);
@@ -480,7 +479,25 @@ bool MainWindow::calculateLevelOffsets()
     newOffsets[1] *= -512.0 / 1000.0;
     newOffsets[2] = ((levelSampleSums[2] / counts) * mg_PER_LSB);
     newOffsets[2] = 1000 - newOffsets[2];
-    newOffsets[2] *= -512.0 / 1000.0;
+    newOffsets[2] *= 512.0 / 1000.0;
+    int16_t temp;
+    if (ui->flatOrientationRadioButton->isChecked()) {
+        //TODO check this
+        //Don't need to do anything
+    } else if (ui->invertedOrientationRadioButton->isChecked()) {
+        //TODO check this
+        newOffsets[1] = -newOffsets[1];
+        newOffsets[2] = -newOffsets[2];
+    } else if (ui->leftOrientationRadioButton->isChecked()) {
+        //TODO Check this
+        temp = newOffsets[1];
+        newOffsets[1] = newOffsets[2];
+        newOffsets[2] = temp;
+    } else if (ui->rightOrientationRadioButton->isChecked()) {
+        temp = newOffsets[1];
+        newOffsets[1] = -newOffsets[2];
+        newOffsets[2] = -temp;
+    }
     for (int i = 0; i < 3; ++i) {
         if (round(newOffsets[i]) > 127 || round(newOffsets[i]) < -127) {
             return false;
