@@ -17,6 +17,15 @@
 extern "C" {
 #endif
 
+#define CENTER_COUNT    (settings.outputHz / 4)
+    //IMU data indices 
+#define IMU_GYRO_X      0
+#define IMU_GYRO_Y      1
+#define IMU_GYRO_Z      2
+#define IMU_ACCEL_X      3
+#define IMU_ACCEL_Y      4
+#define IMU_ACCEL_Z      5
+
     extern FlightModeType currentFlightMode;
     extern volatile uint16_t rawServoPositions[MAX_CHANNELS];
     extern float rollGain;
@@ -26,18 +35,13 @@ extern "C" {
     extern bool needToUpdateOutputs;
     extern int16_t deadbands[3];
     extern int centerCount;
-#define CENTER_COUNT    (settings.outputHz / 4)
-    //IMU data indices 
-#define IMU_GYRO_X      0
-#define IMU_GYRO_Y      1
-#define IMU_GYRO_Z      2
-#define IMU_ACCEL_X      3
-#define IMU_ACCEL_Y      4
-#define IMU_ACCEL_Z      5
+    extern float rateAverages[3];
+    extern int avgCount;
     extern int16_t imuData[6];
 
     void gyroTask(void *pvParameters);
     bool sticksCentered(void);
+
     enum {
         ROLL_AXIS = 0x01, PITCH_AXIS = 0x02, YAW_AXIS = 0x04
     };

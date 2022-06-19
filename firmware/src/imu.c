@@ -109,6 +109,10 @@ bool initIMU(void) {
     wValue[1] = 0b01101100; //416Hz, 2000dps
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
+    wValue[0] = CTRL6_C;
+    wValue[1] = 0b00000000; //Gyro LPF1 
+    I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
+    while (I2C2_IsBusy());
     //Configure IMU_INT1 interrupt
     INTCONbits.INT2EP = 1; //Rising edge
     EVIC_ExternalInterruptCallbackRegister(EXTERNAL_INT_2, imuIntHandler, 0);

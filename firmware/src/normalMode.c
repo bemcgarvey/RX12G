@@ -21,7 +21,7 @@ static float yawITerm;
 
 static float stickRanges[3];
 #define MAX(a,b)    (a > b ? a : b)
-#define ERROR_SCALE     0.2;
+#define ERROR_SCALE     0.4;  //TODO determine the best value for this
 #define STICK_MOVE_FACTOR   5  //This determines how fast the gain drops with stick speed
 
 void initNormalMode(void) {
@@ -53,11 +53,13 @@ void normalModeCalculate(int axes) {
     lastSticks[YAW_INDEX] = rawServoPositions[RUDDER];*/
 
     if (axes & ROLL_AXIS) {
-        dRates[ROLL_INDEX] = attitude.gyroRatesDeg.rollRate - lastRates[ROLL_INDEX];
-        lastRates[ROLL_INDEX] = attitude.gyroRatesDeg.rollRate;
+        dRates[ROLL_INDEX] = rateAverages[ROLL_INDEX] - lastRates[ROLL_INDEX];
+        attitude.ypr.yaw = rateAverages[ROLL_INDEX];
+        lastRates[ROLL_INDEX] = rateAverages[ROLL_INDEX];
         dSticks[ROLL_INDEX] = rawServoPositions[AILERON] - lastSticks[ROLL_INDEX];
         lastSticks[ROLL_INDEX] = rawServoPositions[AILERON];
-        error = -((dRates[ROLL_INDEX] + lastRates[ROLL_INDEX]) / 2.0);
+        error = -dRates[ROLL_INDEX];
+        error = (error + lastRollError) / 2.0;
         //Adjust for stick position
         if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]) {
             adjust = 1.0;

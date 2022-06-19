@@ -31,6 +31,8 @@ bool needToUpdateOutputs;
 uint16_t rpyCorrections[3];
 int16_t deadbands[3];
 int centerCount;
+float rateAverages[3];
+int avgCount;
 
 static float rollBaseGain;
 static float pitchBaseGain;
@@ -74,6 +76,10 @@ void gyroTask(void *pvParameters) {
     wiggleCount = settings.outputHz;
     imuMissedCount = 0;
     centerCount = CENTER_COUNT;
+    for (int i = 0; i < 3; ++i) {
+        rateAverages[i] = 0;
+    }
+    avgCount = 0;
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
             imuMissedCount = 0;
@@ -118,6 +124,10 @@ void gyroTask(void *pvParameters) {
                 doWiggle = true;
             }
             updateAttitude();
+            rateAverages[ROLL_INDEX] += attitude.gyroRatesDeg.rollRate;
+            rateAverages[PITCH_INDEX] += attitude.gyroRatesDeg.pitchRate;
+            rateAverages[YAW_INDEX] += attitude.gyroRatesDeg.yawRate;
+            ++avgCount;
         } else {
             if (attitudeInitialized) {
                 ++imuMissedCount;
@@ -132,6 +142,9 @@ void gyroTask(void *pvParameters) {
             rpyCorrections[AILERON_INDEX] = 0;
             rpyCorrections[ELEVATOR_INDEX] = 0;
             rpyCorrections[RUDDER_INDEX] = 0;
+            for (int i = 0; i < 3; ++i) {
+                rateAverages[i] /= (float)avgCount;
+            }
             newMode = decodeFlightMode();
             if (attitudeInitialized && newMode != currentFlightMode) {
                 currentFlightMode = newMode;
@@ -204,6 +217,10 @@ void gyroTask(void *pvParameters) {
                     outputServos[i] = rawServoPositions[i];
                 }
             }
+            for (int i = 0; i < 3; ++i) {
+                rateAverages[i] = 0.0;
+            }
+            avgCount = 0;
         }
         //TODO check stack level - remove when done
         //int stack = uxTaskGetStackHighWaterMark(NULL);

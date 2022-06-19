@@ -16,14 +16,13 @@ void initLaunchAssist(void) {
     pitchITerm = 0;
     lastPitchError = 0;
     takeoffDone = false;
-    centerCount = CENTER_COUNT;
 }
 
 void launchAssistCalculate(int axes) {
     float error;
     float deltaError;
     if ((abs(rawServoPositions[AILERON] - channelCenters[AILERON]) > deadbands[ROLL_INDEX])
-            | (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) > deadbands[ROLL_INDEX])) {
+            || (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) > deadbands[ROLL_INDEX])) {
         takeoffDone = true;
     }
     if (!takeoffDone) {
@@ -36,9 +35,9 @@ void launchAssistCalculate(int axes) {
             pitchITerm = -settings.pitchPID._maxI;
         }
         lastPitchError = error;
-        rpyCorrections[PITCH_INDEX] = error * settings.pitchPID._P * pitchGain
-                + pitchITerm * settings.pitchPID._I * pitchGain
-                + deltaError * settings.pitchPID._D * pitchGain;
+        rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
+                + pitchITerm * settings.pitchPID._I
+                + deltaError * settings.pitchPID._D) * pitchGain;
     } else {
         autoLevelCalculate(axes);
     }
