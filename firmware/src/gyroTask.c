@@ -18,6 +18,7 @@
 #include "rxTask.h"
 #include "imu.h"
 #include "launchAssist.h"
+#include "normalMode.h"
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
@@ -29,6 +30,7 @@ int16_t imuData[6];
 bool needToUpdateOutputs;
 uint16_t rpyCorrections[3];
 int16_t deadbands[3];
+int centerCount;
 
 static float rollBaseGain;
 static float pitchBaseGain;
@@ -43,14 +45,17 @@ static bool doWiggle;
 static int wiggleCount;
 static int imuMissedCount;
 
+
 FlightModeType decodeFlightMode(void);
 void calculateGains();
 void verifyAndSetOutputs(void);
 
 void gyroTask(void *pvParameters) {
     int16_t temp;
+    FlightModeType newMode;
     portTASK_USES_FLOATING_POINT();
     attitudeInitialized = false;
+    currentFlightMode = OFF_MODE;
     modeChannel = settings.flightModeChannel;
     if (settings.numFlightModes == 1) {
         modeChannel = 0;
@@ -64,12 +69,11 @@ void gyroTask(void *pvParameters) {
     deadbands[ROLL_INDEX] = (settings.deadbands[ROLL_INDEX] * 1024) / 100;
     deadbands[PITCH_INDEX] = (settings.deadbands[PITCH_INDEX] * 1024) / 100;
     deadbands[YAW_INDEX] = (settings.deadbands[YAW_INDEX] * 1024) / 100;
-    initAutoLevel();
-    initLaunchAssist();
     needToUpdateOutputs = false;
     doWiggle = false;
     wiggleCount = settings.outputHz;
     imuMissedCount = 0;
+    centerCount = CENTER_COUNT;
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
             imuMissedCount = 0;
@@ -128,7 +132,23 @@ void gyroTask(void *pvParameters) {
             rpyCorrections[AILERON_INDEX] = 0;
             rpyCorrections[ELEVATOR_INDEX] = 0;
             rpyCorrections[RUDDER_INDEX] = 0;
-            currentFlightMode = decodeFlightMode();
+            newMode = decodeFlightMode();
+            if (attitudeInitialized && newMode != currentFlightMode) {
+                currentFlightMode = newMode;
+                switch (currentFlightMode) {
+                    case NORMAL_MODE:
+                        initNormalMode();
+                        break;
+                    case AUTO_LEVEL_MODE:
+                        initAutoLevel();
+                        break;
+                    case LAUNCH_ASSIST_MODE:
+                        initLaunchAssist();
+                        break;
+                    default:
+                        break;
+                }
+            }
             calculateGains();
             if (doWiggle) {
                 if (wiggleCount > 2 * settings.outputHz / 3) {
@@ -155,15 +175,28 @@ void gyroTask(void *pvParameters) {
                     outputServos[i] = rawServoPositions[i];
                 }
             } else if (currentFlightMode == NORMAL_MODE) {
-
+                normalModeCalculate(ROLL_AXIS | PITCH_AXIS | YAW_AXIS);
+                verifyAndSetOutputs();
             } else if (currentFlightMode == AUTO_LEVEL_MODE) {
                 autoLevelCalculate(ROLL_AXIS | PITCH_AXIS);
+                normalModeCalculate(YAW_AXIS);
                 verifyAndSetOutputs();
             } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
-
+                //TODO code this
+                verifyAndSetOutputs();
             } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
                 autoLevelCalculate(ROLL_AXIS);
                 launchAssistCalculate(PITCH_AXIS);
+                normalModeCalculate(YAW_AXIS);
+                verifyAndSetOutputs();
+            } else if (currentFlightMode == TRAINER_MODE) {
+                //TODO code this
+                verifyAndSetOutputs();
+            } else if (currentFlightMode == CUSTOM_MODE_1) {
+                //TODO code this
+                verifyAndSetOutputs();
+            } else if (currentFlightMode == CUSTOM_MODE_2) {
+                //TODO code this
                 verifyAndSetOutputs();
             } else {
                 //Mode is unrecognized so same as off
@@ -187,7 +220,7 @@ FlightModeType decodeFlightMode(void) {
     } else {
         uint16_t value = rawServoPositions[modeChannel];
         if (value == 0xffff) {
-            return OFF_MODE; //TODO what should the failsafe flight mode be? Off or auto level?
+            return OFF_MODE;
         }
         if (settings.numFlightModes == 3) {
             if (value < 682) {
@@ -324,7 +357,6 @@ void verifyAndSetOutputs(void) {
 }
 
 bool sticksCentered(void) {
-    static int centerCount = CENTER_COUNT;
     if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]
             && abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]
             && abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]) {

@@ -4,7 +4,9 @@
 #include "settings.h"
 #include "autoLevel.h"
 #include "attitude.h"
-
+#include "output.h"
+#include "rxTask.h"
+#include <stdlib.h>
 
 static float lastPitchError;
 static float pitchITerm;
@@ -14,12 +16,14 @@ void initLaunchAssist(void) {
     pitchITerm = 0;
     lastPitchError = 0;
     takeoffDone = false;
+    centerCount = CENTER_COUNT;
 }
 
 void launchAssistCalculate(int axes) {
     float error;
     float deltaError;
-    if (!sticksCentered()) {
+    if ((abs(rawServoPositions[AILERON] - channelCenters[AILERON]) > deadbands[ROLL_INDEX])
+            | (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) > deadbands[ROLL_INDEX])) {
         takeoffDone = true;
     }
     if (!takeoffDone) {

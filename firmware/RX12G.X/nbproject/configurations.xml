@@ -274,6 +274,7 @@
       <itemPath>../src/attitude.h</itemPath>
       <itemPath>../src/autoLevel.h</itemPath>
       <itemPath>../src/launchAssist.h</itemPath>
+      <itemPath>../src/normalMode.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -405,6 +406,7 @@
       <itemPath>../src/attitude.c</itemPath>
       <itemPath>../src/autolevel.c</itemPath>
       <itemPath>../src/launchAssist.c</itemPath>
+      <itemPath>../src/normalMode.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -449,7 +451,7 @@
         <targetDevice>PIC32MK1024GPK064</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>pk4hybrid</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.00</languageToolchainVersion>
         <platform>3</platform>
