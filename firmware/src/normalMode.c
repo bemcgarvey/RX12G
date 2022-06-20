@@ -43,18 +43,9 @@ void normalModeCalculate(int axes) {
     float error;
     float dError;
     float adjust;
-    /*dRates[PITCH_INDEX] = attitude.gyroRatesDeg.pitchRate - lastRates[PITCH_INDEX];
-    dRates[YAW_INDEX] = attitude.gyroRatesDeg.yawRate - lastRates[YAW_INDEX];
-    lastRates[PITCH_INDEX] = attitude.gyroRatesDeg.pitchRate;
-    lastRates[YAW_INDEX] = attitude.gyroRatesDeg.yawRate;
-    dSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR] - lastSticks[PITCH_INDEX];
-    dSticks[YAW_INDEX] = rawServoPositions[RUDDER] - lastSticks[YAW_INDEX];
-    lastSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR];
-    lastSticks[YAW_INDEX] = rawServoPositions[RUDDER];*/
-
+    
     if (axes & ROLL_AXIS) {
         dRates[ROLL_INDEX] = rateAverages[ROLL_INDEX] - lastRates[ROLL_INDEX];
-        attitude.ypr.yaw = rateAverages[ROLL_INDEX];
         lastRates[ROLL_INDEX] = rateAverages[ROLL_INDEX];
         dSticks[ROLL_INDEX] = rawServoPositions[AILERON] - lastSticks[ROLL_INDEX];
         lastSticks[ROLL_INDEX] = rawServoPositions[AILERON];
@@ -104,5 +95,109 @@ void normalModeCalculate(int axes) {
         rpyCorrections[ROLL_INDEX] = (error * settings.rollPID._P
                 + rollITerm * settings.rollPID._I
                 + dError * settings.rollPID._D) * rollGain;
+    }
+    if (axes & PITCH_AXIS) {
+        dRates[PITCH_INDEX] = rateAverages[PITCH_INDEX] - lastRates[PITCH_INDEX];
+        lastRates[PITCH_INDEX] = rateAverages[PITCH_INDEX];
+        dSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR] - lastSticks[PITCH_INDEX];
+        lastSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR];
+        error = -dRates[PITCH_INDEX];
+        error = (error + lastRollError) / 2.0;
+        //Adjust for stick position
+        if (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]) {
+            adjust = 1.0;
+        } else {
+            switch (settings.gainCurves[ELEVATOR_INDEX]) {
+                case GAIN_CURVE_NORMAL:
+                    adjust = 1.0 - (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) / stickRanges[ELEVATOR_INDEX]);
+                    break;
+                case GAIN_CURVE_FLAT:
+                    adjust = 1.0 - (0.5 * (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) / stickRanges[ELEVATOR_INDEX]));
+                    break;
+                case GAIN_CURVE_STEEP:
+                    adjust = 1.0 - (2.0 * (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) / stickRanges[ELEVATOR_INDEX]));
+                    break;
+            }
+            if (adjust < 0.0) {
+                adjust = 0.0;
+            }
+        }
+        error *= adjust;
+        //Adjust for stick motion
+        if (abs(dSticks[ELEVATOR_INDEX]) > stickRanges[ELEVATOR_INDEX]) {
+            adjust = 0.0;
+        } else {
+            adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[ELEVATOR_INDEX]) / stickRanges[ELEVATOR_INDEX]));
+            if (adjust < 0.0) {
+                adjust = 0.0;
+            }
+        }
+        error *= adjust;
+        //Scale to allow for same PIDs as autolevel etc.
+        error *= ERROR_SCALE;
+        dError = error - lastPitchError;
+        lastPitchError = error;
+        pitchITerm += error;
+        if (pitchITerm > settings.pitchPID._maxI) {
+            pitchITerm = settings.pitchPID._maxI;
+        } else if (pitchITerm < -settings.pitchPID._maxI) {
+            pitchITerm = -settings.pitchPID._maxI;
+        }
+        lastPitchError = error;
+        rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
+                + rollITerm * settings.pitchPID._I
+                + dError * settings.pitchPID._D) * pitchGain;
+    }
+    if (axes & YAW_AXIS) {
+        dRates[YAW_INDEX] = rateAverages[YAW_INDEX] - lastRates[YAW_INDEX];
+        lastRates[YAW_INDEX] = rateAverages[YAW_INDEX];
+        dSticks[YAW_INDEX] = rawServoPositions[RUDDER] - lastSticks[YAW_INDEX];
+        lastSticks[YAW_INDEX] = rawServoPositions[RUDDER];
+        error = -dRates[YAW_INDEX];
+        error = (error + lastRollError) / 2.0;
+        //Adjust for stick position
+        if (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) < deadbands[YAW_INDEX]) {
+            adjust = 1.0;
+        } else {
+            switch (settings.gainCurves[RUDDER_INDEX]) {
+                case GAIN_CURVE_NORMAL:
+                    adjust = 1.0 - (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) / stickRanges[RUDDER_INDEX]);
+                    break;
+                case GAIN_CURVE_FLAT:
+                    adjust = 1.0 - (0.5 * (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) / stickRanges[RUDDER_INDEX]));
+                    break;
+                case GAIN_CURVE_STEEP:
+                    adjust = 1.0 - (2.0 * (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) / stickRanges[RUDDER_INDEX]));
+                    break;
+            }
+            if (adjust < 0.0) {
+                adjust = 0.0;
+            }
+        }
+        error *= adjust;
+        //Adjust for stick motion
+        if (abs(dSticks[RUDDER_INDEX]) > stickRanges[RUDDER_INDEX]) {
+            adjust = 0.0;
+        } else {
+            adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[RUDDER_INDEX]) / stickRanges[RUDDER_INDEX]));
+            if (adjust < 0.0) {
+                adjust = 0.0;
+            }
+        }
+        error *= adjust;
+        //Scale to allow for same PIDs as autolevel etc.
+        error *= ERROR_SCALE;
+        dError = error - lastYawError;
+        lastYawError = error;
+        yawITerm += error;
+        if (yawITerm > settings.yawPID._maxI) {
+            yawITerm = settings.yawPID._maxI;
+        } else if (yawITerm < -settings.yawPID._maxI) {
+            yawITerm = -settings.yawPID._maxI;
+        }
+        lastYawError = error;
+        rpyCorrections[YAW_INDEX] = (error * settings.yawPID._P
+                + yawITerm * settings.yawPID._I
+                + dError * settings.yawPID._D) * yawGain;
     }
 }

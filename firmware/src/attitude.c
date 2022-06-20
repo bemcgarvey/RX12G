@@ -52,7 +52,7 @@ void updateAttitude(void) {
     FusionEuler euler = FusionQuaternionToEuler(FusionAhrsGetQuaternion(&ahrs));
     attitude.ypr.roll = euler.angle.roll;
     attitude.ypr.pitch = euler.angle.pitch;
-    //attitude.ypr.yaw = 0; //REMOVE ME - uncomment
+    attitude.ypr.yaw = 0;
 }
 
 Vector AccelYPR(void) {
