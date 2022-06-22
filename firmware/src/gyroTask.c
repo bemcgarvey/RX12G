@@ -192,7 +192,7 @@ void gyroTask(void *pvParameters) {
                 verifyAndSetOutputs();
             } else if (currentFlightMode == AUTO_LEVEL_MODE) {
                 autoLevelCalculate(ROLL_AXIS | PITCH_AXIS);
-                normalModeCalculate(YAW_AXIS);
+                //normalModeCalculate(YAW_AXIS);  //TODO put in after testing normal mode
                 verifyAndSetOutputs();
             } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
                 //TODO code this
@@ -200,7 +200,7 @@ void gyroTask(void *pvParameters) {
             } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
                 autoLevelCalculate(ROLL_AXIS);
                 launchAssistCalculate(PITCH_AXIS);
-                normalModeCalculate(YAW_AXIS);
+                //normalModeCalculate(YAW_AXIS);  //TODO put in after testing normal mode
                 verifyAndSetOutputs();
             } else if (currentFlightMode == TRAINER_MODE) {
                 //TODO code this
@@ -269,7 +269,6 @@ FlightModeType decodeFlightMode(void) {
 }
 
 void calculateGains() {
-    //TODO factor in gain curve
     if (rollGainChannel) {
         rollGain = rollBaseGain * rawServoPositions[rollGainChannel] / 2047.0;
     } else {

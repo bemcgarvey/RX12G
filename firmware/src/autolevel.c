@@ -41,15 +41,11 @@ void autoLevelCalculate(int axes) {
                 error = -attitude.ypr.pitch;
             }
             deltaError = error - lastPitchError;
-            if ((error > 0 && lastPitchError < 0) || (error < 0 && lastPitchError > 0)) {
-                pitchITerm = 0;
-            } else {
-                pitchITerm += error;
-                if (pitchITerm > settings.pitchPID._maxI) {
-                    pitchITerm = settings.pitchPID._maxI;
-                } else if (pitchITerm < -settings.pitchPID._maxI) {
-                    pitchITerm = -settings.pitchPID._maxI;
-                }
+            pitchITerm += error;
+            if (pitchITerm > settings.pitchPID._maxI) {
+                pitchITerm = settings.pitchPID._maxI;
+            } else if (pitchITerm < -settings.pitchPID._maxI) {
+                pitchITerm = -settings.pitchPID._maxI;
             }
             lastPitchError = error;
             rpyCorrections[PITCH_INDEX] = error * settings.pitchPID._P * pitchGain

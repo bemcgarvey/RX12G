@@ -84,5 +84,7 @@ void updatePulses(uint32_t status, uintptr_t context) {
         uint32_t out = ((1194 * US_COUNT) * outputServos[i]) / 2048;
         *pulseRegister[i] = out + pulseOffsets[i];
     }
+    //TODO for higher output rates this should only happen every 20 ms
+    // to maintain the control loop timing?  Or maybe 10 ms?
     needToUpdateOutputs = true;
 }

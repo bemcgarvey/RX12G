@@ -43,14 +43,13 @@ void normalModeCalculate(int axes) {
     float error;
     float dError;
     float adjust;
-    
+
     if (axes & ROLL_AXIS) {
         dRates[ROLL_INDEX] = rateAverages[ROLL_INDEX] - lastRates[ROLL_INDEX];
         lastRates[ROLL_INDEX] = rateAverages[ROLL_INDEX];
         dSticks[ROLL_INDEX] = rawServoPositions[AILERON] - lastSticks[ROLL_INDEX];
         lastSticks[ROLL_INDEX] = rawServoPositions[AILERON];
         error = -dRates[ROLL_INDEX];
-        error = (error + lastRollError) / 2.0;
         //Adjust for stick position
         if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]) {
             adjust = 1.0;
@@ -72,17 +71,13 @@ void normalModeCalculate(int axes) {
         }
         error *= adjust;
         //Adjust for stick motion
-        if (abs(dSticks[AILERON_INDEX]) > stickRanges[AILERON_INDEX]) {
+        adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[AILERON_INDEX]) / stickRanges[AILERON_INDEX]));
+        if (adjust < 0.0) {
             adjust = 0.0;
-        } else {
-            adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[AILERON_INDEX]) / stickRanges[AILERON_INDEX]));
-            if (adjust < 0.0) {
-                adjust = 0.0;
-            }
         }
         error *= adjust;
-        //Scale to allow for same PIDs as autolevel etc.
-        error *= ERROR_SCALE;
+        error *= ERROR_SCALE; //Scale to allow for same PIDs as autolevel etc.
+        error = (error + 2.0 * lastRollError) / 3.0;
         dError = error - lastRollError;
         lastRollError = error;
         rollITerm += error;
@@ -91,7 +86,6 @@ void normalModeCalculate(int axes) {
         } else if (rollITerm < -settings.rollPID._maxI) {
             rollITerm = -settings.rollPID._maxI;
         }
-        lastRollError = error;
         rpyCorrections[ROLL_INDEX] = (error * settings.rollPID._P
                 + rollITerm * settings.rollPID._I
                 + dError * settings.rollPID._D) * rollGain;
@@ -102,7 +96,6 @@ void normalModeCalculate(int axes) {
         dSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR] - lastSticks[PITCH_INDEX];
         lastSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR];
         error = -dRates[PITCH_INDEX];
-        error = (error + lastRollError) / 2.0;
         //Adjust for stick position
         if (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]) {
             adjust = 1.0;
@@ -124,17 +117,13 @@ void normalModeCalculate(int axes) {
         }
         error *= adjust;
         //Adjust for stick motion
-        if (abs(dSticks[ELEVATOR_INDEX]) > stickRanges[ELEVATOR_INDEX]) {
+        adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[ELEVATOR_INDEX]) / stickRanges[ELEVATOR_INDEX]));
+        if (adjust < 0.0) {
             adjust = 0.0;
-        } else {
-            adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[ELEVATOR_INDEX]) / stickRanges[ELEVATOR_INDEX]));
-            if (adjust < 0.0) {
-                adjust = 0.0;
-            }
         }
         error *= adjust;
-        //Scale to allow for same PIDs as autolevel etc.
-        error *= ERROR_SCALE;
+        error *= ERROR_SCALE; //Scale to allow for same PIDs as autolevel etc.
+        error = (error + 2.0 * lastRollError) / 3.0;
         dError = error - lastPitchError;
         lastPitchError = error;
         pitchITerm += error;
@@ -154,7 +143,6 @@ void normalModeCalculate(int axes) {
         dSticks[YAW_INDEX] = rawServoPositions[RUDDER] - lastSticks[YAW_INDEX];
         lastSticks[YAW_INDEX] = rawServoPositions[RUDDER];
         error = -dRates[YAW_INDEX];
-        error = (error + lastRollError) / 2.0;
         //Adjust for stick position
         if (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) < deadbands[YAW_INDEX]) {
             adjust = 1.0;
@@ -176,17 +164,13 @@ void normalModeCalculate(int axes) {
         }
         error *= adjust;
         //Adjust for stick motion
-        if (abs(dSticks[RUDDER_INDEX]) > stickRanges[RUDDER_INDEX]) {
+        adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[RUDDER_INDEX]) / stickRanges[RUDDER_INDEX]));
+        if (adjust < 0.0) {
             adjust = 0.0;
-        } else {
-            adjust = (1.0 - (abs(STICK_MOVE_FACTOR * dSticks[RUDDER_INDEX]) / stickRanges[RUDDER_INDEX]));
-            if (adjust < 0.0) {
-                adjust = 0.0;
-            }
         }
         error *= adjust;
-        //Scale to allow for same PIDs as autolevel etc.
-        error *= ERROR_SCALE;
+        error *= ERROR_SCALE; //Scale to allow for same PIDs as autolevel etc.
+        error = (error + 2.0 * lastYawError) / 3.0;
         dError = error - lastYawError;
         lastYawError = error;
         yawITerm += error;
