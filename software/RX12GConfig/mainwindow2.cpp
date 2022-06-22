@@ -487,14 +487,11 @@ bool MainWindow::calculateLevelOffsets()
     newOffsets[2] *= 512.0 / 1000.0;
     int16_t temp;
     if (ui->flatOrientationRadioButton->isChecked()) {
-        //TODO check this
         //Don't need to do anything
     } else if (ui->invertedOrientationRadioButton->isChecked()) {
-        //TODO check this
         newOffsets[1] = -newOffsets[1];
         newOffsets[2] = -newOffsets[2];
     } else if (ui->leftOrientationRadioButton->isChecked()) {
-        //TODO Check this
         temp = newOffsets[1];
         newOffsets[1] = newOffsets[2];
         newOffsets[2] = temp;

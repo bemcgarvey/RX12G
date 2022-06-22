@@ -24,6 +24,8 @@ QSize GyroDisplay::minimumSizeHint() const
     return QSize(24, 24);
 }
 
+//BUG some lines are missing in release version when not run from Qt Designer
+
 void GyroDisplay::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);

@@ -55,7 +55,7 @@ void MinMaxBar::setInitialMinMax(int min, int max)
     update();
 }
 
-
+//BUG some lines are missing in release version when not run from Qt Designer
 void MinMaxBar::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
