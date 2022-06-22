@@ -12,23 +12,33 @@ SOURCES += \
     HidUSBLink.cpp \
     QHidWatcher.cpp \
     RX12G.cpp \
+    bootloader.cpp \
+    bootloaderusblink.cpp \
     gyrodisplay.cpp \
+    hexfile.cpp \
+    hidbootloader.cpp \
     main.cpp \
     mainwindow.cpp \
     mainwindow2.cpp \
     minmaxbar.cpp \
     qhorizonwidget.cpp \
-    version.cpp
+    version.cpp \
+    workerthread.cpp
 
 HEADERS += \
     HidUSBLink.h \
     QHidWatcher.h \
     RX12G.h \
+    bootloader.h \
+    bootloaderusblink.h \
     gyrodisplay.h \
+    hexfile.h \
+    hidbootloader.h \
     mainwindow.h \
     minmaxbar.h \
     qhorizonwidget.h \
-    version.h
+    version.h \
+    workerthread.h
 
 FORMS += \
     mainwindow.ui

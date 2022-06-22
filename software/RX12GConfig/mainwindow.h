@@ -8,6 +8,8 @@
 #include "QHidWatcher.h"
 #include "HidUSBLink.h"
 #include "RX12G.h"
+#include "hidbootloader.h"
+#include "workerthread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -53,6 +55,8 @@ private:
     void initSettings();
     bool controlsValid();
     bool calculateLevelOffsets();
+    std::unique_ptr<HidBootloader> bootloader;
+    std::unique_ptr<WorkerThread> worker;
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
@@ -88,6 +92,15 @@ private slots:
     void on_defaultLevelPushButton_clicked();
     void on_elevon_ARadioButton_toggled(bool checked);
     void on_elevon_BRadioButton_toggled(bool checked);
+    void on_connectBootloaderPushButton_clicked();
+    void on_browsePushButton_clicked();
+    void on_updateFirmwarePushButton_clicked();
+    void on_cancelUpdatePushButton_clicked();
+
+public slots:
+    void onBtlMessage(QString msg);
+    void onBtlProgress(int progress);
+    void onBtlFinished(bool success);
 };
 
 #endif // MAINWINDOW_H

@@ -61,7 +61,7 @@ files:
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 495C5B7830675E3FDC7A69768AD3C935
+  userChecksum: E4DC8F21C4F68F1CFE7D416A8FB9DD92
 - generatedChecksum: 384AE8E9396E7FE9A9E65B6F2B428288
   logicalPath: config/default
   name: interrupts.c
@@ -103,7 +103,7 @@ files:
   physicalPath: peripheral/clk
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 896E76393AAFA11E5B066304FB8FC3CE
+  userChecksum: B8C42457976288F32E9F4C2873EB2320
 - generatedChecksum: F8BB2BAA74068083A80E6E229BBCF3E3
   logicalPath: config/default/peripheral/coretimer
   name: plib_coretimer.c

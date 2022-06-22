@@ -12,6 +12,11 @@
 #include "output.h"
 #include "attitude.h"
 
+#define BTL_TRIGGER_RAM_START   KVA0_TO_KVA1(0x80000000)
+#define BTL_PATTERN1    0x52583132
+#define BTL_PATTERN2    0x32315852
+static uint32_t *ramStart = (uint32_t *)BTL_TRIGGER_RAM_START;
+
 typedef enum {
     APP_STATE_INIT,
     APP_STATE_WAIT_FOR_CONFIGURATION,
@@ -269,6 +274,11 @@ void USBAppTasks(void *pvParameters) {
                                     &txTransferHandle, transmitDataBuffer, 64);
                             break;
                         case REBOOT:
+                            SYS_RESET_SoftwareReset();
+                            break;
+                        case BOOTLOAD:
+                            ramStart[0] = BTL_PATTERN1;
+                            ramStart[1] = BTL_PATTERN2;
                             SYS_RESET_SoftwareReset();
                             break;
                         case GET_GAINS:

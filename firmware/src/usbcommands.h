@@ -25,7 +25,8 @@ extern "C" {
         GET_ATTITUDE = 0x09,
         CMD_ACK = 0x80,
         CMD_NACK = 0x7f,
-        REBOOT = 0x88
+        REBOOT = 0x88,
+        BOOTLOAD = 0x90
     };
 
 

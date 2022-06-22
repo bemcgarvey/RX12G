@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <math.h>
+#include <synchapi.h>
 
 //TODO add something to icon to distinguish from RX12
 
@@ -577,5 +578,109 @@ void MainWindow::on_elevon_ARadioButton_toggled(bool checked)
 void MainWindow::on_elevon_BRadioButton_toggled(bool checked)
 {
     on_elevon_ARadioButton_toggled(checked);
+}
+
+
+void MainWindow::on_connectBootloaderPushButton_clicked()
+{
+    if (usb.Connected()) {
+        buffer[0] = BOOTLOAD;
+        usb.SendReport(buffer);
+        Sleep(500);
+    }
+    bootloader.reset(new HidBootloader(0x4d63, 0x2000));
+    if (!bootloader->isConnected()) {
+        QMessageBox::critical(this, QApplication::applicationName(),
+                              "Can't connect to bootloader.  Restart the RX12G in bootload mode and try again.");
+    } else {
+        ui->browsePushButton->setEnabled(true);
+        ui->firmwareFileLabel->setText("Please select a file");
+        uint16_t version = bootloader->readBootInfo();
+        ui->statusbar->showMessage(QString("Connected to bootloader version %1.%2")
+                              .arg(version >> 8).arg(version & 0xff), 0);
+        bootloader->setFamily(Bootloader::PIC32);
+        ui->firmwareFileLabel->setText("Please select a file");
+        connect(bootloader.get(), &Bootloader::message, this, &MainWindow::onBtlMessage);
+        connect(bootloader.get(), &Bootloader::progress, this, &MainWindow::onBtlProgress);
+        connect(bootloader.get(), &Bootloader::finished, this, &MainWindow::onBtlFinished);
+    }
+}
+
+
+void MainWindow::on_browsePushButton_clicked()
+{
+    QString fileName;
+    QSettings settings;
+    QString dir = settings.value("last firmware file", "").toString();
+    if (!bootloader->isConnected()) {
+        return;
+    }
+    fileName = QFileDialog::getOpenFileName(this, "Open firmware file", dir, "Hex files (*.hex)");
+    if (fileName != "") {
+        if (bootloader->setFile(fileName)) {
+            ui->firmwareFileLabel->setText(fileName);
+            ui->updateFirmwarePushButton->setEnabled(true);
+            ui->cancelUpdatePushButton->setEnabled(true);
+        } else {
+            ui->updateFirmwarePushButton->setEnabled(false);
+            ui->firmwareFileLabel->setText("Not Selected");
+            QMessageBox::critical(this, QApplication::applicationName(), "Unable to open file.");
+        }
+        settings.setValue("last firmware file", fileName);
+    }
+}
+
+
+void MainWindow::on_updateFirmwarePushButton_clicked()
+{
+    if (!bootloader->isConnected()) {
+        return;
+    }
+    ui->updateFirmwarePushButton->setEnabled(false);
+    ui->cancelUpdatePushButton->setEnabled(false);
+    ui->browsePushButton->setEnabled(false);
+    ui->updateProgressBar->setValue(0);
+    ui->connectBootloaderPushButton->setEnabled(false);
+    worker.reset(new WorkerThread(bootloader.get()));
+    worker->start();
+}
+
+void MainWindow::onBtlMessage(QString msg)
+{
+    ui->statusbar->showMessage(msg, 0);
+}
+
+void MainWindow::onBtlProgress(int progress)
+{
+    ui->updateProgressBar->setValue(progress);
+}
+
+void MainWindow::onBtlFinished(bool success)
+{
+    if (worker) {
+        worker->wait();
+        worker = nullptr;
+    }
+    if (success) {
+        QMessageBox::information(this, QApplication::applicationName(),
+                                 "Success! Firmware updated");
+    } else {
+        QMessageBox::warning(this, QApplication::applicationName(),
+                             "Firmware update failed");
+    }
+    ui->connectBootloaderPushButton->setEnabled(true);
+    ui->statusbar->clearMessage();
+}
+
+
+void MainWindow::on_cancelUpdatePushButton_clicked()
+{
+    if (!bootloader->isConnected()) {
+        return;
+    }
+    ui->updateFirmwarePushButton->setEnabled(false);
+    ui->cancelUpdatePushButton->setEnabled(false);
+    ui->browsePushButton->setEnabled(false);
+    bootloader->jumpToApp();
 }
 
