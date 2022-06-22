@@ -16,6 +16,7 @@
 #include "gyroTask.h"
 
 TaskHandle_t rxTaskHandle;
+QueueHandle_t rxQueue;
 uint16_t channelCenters[MAX_CHANNELS];
 int centeringCount = 9;
 

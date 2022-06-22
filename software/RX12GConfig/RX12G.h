@@ -45,7 +45,7 @@ enum {
     } OrientationType;
 
     typedef enum {
-        ONE_AILERON = 0, TWO_AILERON = 1, ELEVON = 2
+        ONE_AILERON = 0, TWO_AILERON = 1, ELEVON_A = 2, ELEVON_B = 3
     } WingType;
 
     typedef enum {

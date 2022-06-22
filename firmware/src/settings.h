@@ -43,8 +43,10 @@ extern "C" {
         RIGHT_DOWN_ORIENTATION = 3
     } OrientationType;
 
+    //ELEVON_A is both servos rotating the same direction for roll/aileron
+    //ELEVON_B is both servos rotating the same direction for pitch/elevator 
     typedef enum {
-        ONE_AILERON = 0, TWO_AILERON = 1, ELEVON = 2
+        ONE_AILERON = 0, TWO_AILERON = 1, ELEVON_A = 2, ELEVON_B = 3
     } WingType;
 
     typedef enum {

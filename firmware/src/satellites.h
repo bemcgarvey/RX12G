@@ -21,7 +21,7 @@ extern "C" {
     void initSatellites(void);
     void satPowerOn(bool powerOn);
     bool bindSats(void);
-    void satLedTask(void *pvParameters);
+    
 #ifdef	__cplusplus
 }
 #endif

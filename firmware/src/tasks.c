@@ -13,15 +13,11 @@
 #include "tasks.h"
 #include "buttonTask.h"
 #include "rtosHandles.h"
-#include "output.h"
 #include "rxTask.h"
 #include "gyroTask.h"
-#include "satellites.h"
 #include "statusLedTask.h"
 #include "usbapp.h"
 #include "imu.h"
-
-QueueHandle_t rxQueue;
 
 int startMode = START_NORMAL;
 

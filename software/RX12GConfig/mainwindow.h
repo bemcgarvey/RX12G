@@ -82,11 +82,12 @@ private slots:
     void on_rebootPushButton_clicked();
     void on_oneAileronRadioButton_toggled(bool checked);
     void on_twoAileronsRadioButton_toggled(bool checked);
-    void on_elevonsRadioButton_toggled(bool checked);
     void on_oneElevatorRadioButton_toggled(bool checked);
     void on_twoElevatorRadioButton_toggled(bool checked);
     void on_levelCalibratePushButton_clicked();
     void on_defaultLevelPushButton_clicked();
+    void on_elevon_ARadioButton_toggled(bool checked);
+    void on_elevon_BRadioButton_toggled(bool checked);
 };
 
 #endif // MAINWINDOW_H

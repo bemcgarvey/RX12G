@@ -74,8 +74,10 @@ void MainWindow::getPlaneTabControls() {
         settings.wingType = ONE_AILERON;
     } else if (ui->twoAileronsRadioButton->isChecked()) {
         settings.wingType = TWO_AILERON;
-    } else if (ui->elevonsRadioButton->isChecked()) {
-        settings.wingType = ELEVON;
+    } else if (ui->elevon_ARadioButton->isChecked()) {
+        settings.wingType = ELEVON_A;
+    } else if (ui->elevon_BRadioButton->isChecked()) {
+        settings.wingType = ELEVON_B;
     }
     if (ui->oneElevatorRadioButton->isChecked()) {
         settings.tailType = ONE_ELEVATOR;
@@ -107,8 +109,11 @@ void MainWindow::setPlaneTabControls() {
     case TWO_AILERON:
         ui->twoAileronsRadioButton->setChecked(true);
         break;
-    case ELEVON:
-        ui->elevonsRadioButton->setChecked(true);
+    case ELEVON_A:
+        ui->elevon_ARadioButton->setChecked(true);
+        break;
+    case ELEVON_B:
+        ui->elevon_BRadioButton->setChecked(true);
         break;
     }
     switch (settings.tailType) {

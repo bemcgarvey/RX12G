@@ -27,7 +27,9 @@ int main(void) {
         loadDefaultSettings();
         saveSettings();
     }
-    loadPresets();
+    if (settings.failsafeType == PRESET_FAILSAFE) {
+        loadPresets();
+    }
     CORETIMER_DelayMs(30);
     if (U1OTGSTATbits.VBUSVD == 1) {
         startMode = START_USB;

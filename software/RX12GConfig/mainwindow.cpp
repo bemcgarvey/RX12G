@@ -503,22 +503,6 @@ void MainWindow::on_twoAileronsRadioButton_toggled(bool checked)
     }
 }
 
-
-void MainWindow::on_elevonsRadioButton_toggled(bool checked)
-{
-    if (checked) {
-        ui->aileron2LimitsSetPushButton->setEnabled(false);
-        ui->aileron2MinMaxBar->setEnabled(false);
-        ui->enableAileron2CheckBox->setChecked(false);
-        ui->reverseAileron2CheckBox->setChecked(false);
-        ui->enableAileron2CheckBox->setEnabled(false);
-        ui->reverseAileron2CheckBox->setEnabled(false);
-        ui->aileron2ChannelComboBox->setEnabled(false);
-        ui->aileron2ChannelComboBox->setCurrentIndex(0);
-    }
-}
-
-
 void MainWindow::on_oneElevatorRadioButton_toggled(bool checked)
 {
     if (checked) {
@@ -572,5 +556,26 @@ void MainWindow::on_defaultLevelPushButton_clicked()
     }
     QMessageBox::information(this, QApplication::applicationName(),
             "Level offsets have been zeroed. Save settings and reboot to apply");
+}
+
+
+void MainWindow::on_elevon_ARadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->aileron2LimitsSetPushButton->setEnabled(false);
+        ui->aileron2MinMaxBar->setEnabled(false);
+        ui->enableAileron2CheckBox->setChecked(false);
+        ui->reverseAileron2CheckBox->setChecked(false);
+        ui->enableAileron2CheckBox->setEnabled(false);
+        ui->reverseAileron2CheckBox->setEnabled(false);
+        ui->aileron2ChannelComboBox->setEnabled(false);
+        ui->aileron2ChannelComboBox->setCurrentIndex(0);
+    }
+}
+
+
+void MainWindow::on_elevon_BRadioButton_toggled(bool checked)
+{
+    on_elevon_ARadioButton_toggled(checked);
 }
 
