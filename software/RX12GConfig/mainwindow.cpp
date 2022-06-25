@@ -315,6 +315,9 @@ void MainWindow::onSensorTimout()
     ui->xGyroDisplay->setValue(pa->gyroRatesDeg.x);
     ui->yGyroDisplay->setValue(pa->gyroRatesDeg.y);
     ui->zGyroDisplay->setValue(pa->gyroRatesDeg.z);
+    ui->rollLabel->setText(QString("%1°").arg(pa->ypr.roll, 0, 'f', 1));
+    ui->pitchLabel->setText(QString("%1°").arg(pa->ypr.pitch, 0, 'f', 1));
+    ui->yawLabel->setText(QString("%1°").arg(pa->ypr.yaw, 0, 'f', 1));
 }
 
 void MainWindow::onGainsTimout()
