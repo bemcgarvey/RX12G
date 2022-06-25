@@ -12,6 +12,8 @@ static float lastRates[3];
 static int16_t dSticks[3];
 static int16_t lastSticks[3];
 
+//TODO can these be moved to gyroTask and used by all modes?
+// They could also be initialized on any mode change
 static float lastRollError;
 static float rollITerm;
 static float lastPitchError;
