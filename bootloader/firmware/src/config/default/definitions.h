@@ -48,8 +48,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include "usb/usb_device_hid.h"
-#include "usb/usb_hid.h"
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
@@ -57,10 +55,13 @@
 #include "usb/usb_device.h"
 #include "driver/usb/usbfs/drv_usbfs.h"
 #include "bootloader/bootloader.h"
+#include "peripheral/nvm/plib_nvm.h"
+#include "peripheral/coretimer/plib_coretimer.h"
+#include "usb/usb_device_hid.h"
+#include "usb/usb_hid.h"
 #include "system/int/sys_int.h"
 #include "osal/osal.h"
 #include "system/debug/sys_debug.h"
-#include "peripheral/nvm/plib_nvm.h"
 #include "app.h"
 
 

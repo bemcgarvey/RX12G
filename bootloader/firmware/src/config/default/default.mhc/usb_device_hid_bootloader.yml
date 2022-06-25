@@ -36,7 +36,7 @@ children:
     - type: Values
       children:
       - type: User
-        attributes: {value: '16'}
+        attributes: {value: '8'}
   - type: String
     attributes: {id: MEM_USED}
     children:

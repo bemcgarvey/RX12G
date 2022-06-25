@@ -217,17 +217,18 @@ void SYS_Initialize ( void* data )
 	GPIO_Initialize();
 
 
-
+    CORETIMER_Initialize();
+    
     if (bootloader_Trigger() == false)
     {
         run_Application();
     }
-    LED_Set();
+    LEDA_Set();
+    LEDB_Set();
+    LEDC_Set();
+    LEDD_Set();
+    LEDE_Set();
     NVM_Initialize();
-
-
-
-
 
 	 /* Initialize the USB device layer */
     sysObj.usbDevObject0 = USB_DEVICE_Initialize (USB_DEVICE_INDEX_0 , ( SYS_MODULE_INIT* ) & usbDevInitData0);

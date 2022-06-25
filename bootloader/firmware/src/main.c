@@ -41,13 +41,15 @@
 bool bootloader_Trigger(void)
 {
     if (BUTTON_Get() == 0) {
-        return true;
+        CORETIMER_DelayMs(2000);
+        if (BUTTON_Get() == 0) {
+            return true;
+        }
     }
     uint32_t *ramStart = (uint32_t *)BTL_TRIGGER_RAM_START;
     if (ramStart[0] == BTL_PATTERN1 && ramStart[1] == BTL_PATTERN2) {
         ramStart[0] = 0;
         ramStart[1] = 0;
-        //DCACHE_CLEAN_BY_ADDR(ramStart, 8);
         return true;
     }
     return false;

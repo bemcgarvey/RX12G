@@ -62,6 +62,24 @@
 // *****************************************************************************
 
 
+/*** Macros for LEDC pin ***/
+#define LEDC_Set()               (LATASET = (1<<12))
+#define LEDC_Clear()             (LATACLR = (1<<12))
+#define LEDC_Toggle()            (LATAINV= (1<<12))
+#define LEDC_OutputEnable()      (TRISACLR = (1<<12))
+#define LEDC_InputEnable()       (TRISASET = (1<<12))
+#define LEDC_Get()               ((PORTA >> 12) & 0x1)
+#define LEDC_PIN                  GPIO_PIN_RA12
+
+/*** Macros for LEDD pin ***/
+#define LEDD_Set()               (LATASET = (1<<1))
+#define LEDD_Clear()             (LATACLR = (1<<1))
+#define LEDD_Toggle()            (LATAINV= (1<<1))
+#define LEDD_OutputEnable()      (TRISACLR = (1<<1))
+#define LEDD_InputEnable()       (TRISASET = (1<<1))
+#define LEDD_Get()               ((PORTA >> 1) & 0x1)
+#define LEDD_PIN                  GPIO_PIN_RA1
+
 /*** Macros for BUTTON pin ***/
 #define BUTTON_Set()               (LATBSET = (1<<1))
 #define BUTTON_Clear()             (LATBCLR = (1<<1))
@@ -71,14 +89,32 @@
 #define BUTTON_Get()               ((PORTB >> 1) & 0x1)
 #define BUTTON_PIN                  GPIO_PIN_RB1
 
-/*** Macros for LED pin ***/
-#define LED_Set()               (LATCSET = (1<<1))
-#define LED_Clear()             (LATCCLR = (1<<1))
-#define LED_Toggle()            (LATCINV= (1<<1))
-#define LED_OutputEnable()      (TRISCCLR = (1<<1))
-#define LED_InputEnable()       (TRISCSET = (1<<1))
-#define LED_Get()               ((PORTC >> 1) & 0x1)
-#define LED_PIN                  GPIO_PIN_RC1
+/*** Macros for LEDA pin ***/
+#define LEDA_Set()               (LATCSET = (1<<0))
+#define LEDA_Clear()             (LATCCLR = (1<<0))
+#define LEDA_Toggle()            (LATCINV= (1<<0))
+#define LEDA_OutputEnable()      (TRISCCLR = (1<<0))
+#define LEDA_InputEnable()       (TRISCSET = (1<<0))
+#define LEDA_Get()               ((PORTC >> 0) & 0x1)
+#define LEDA_PIN                  GPIO_PIN_RC0
+
+/*** Macros for LEDB pin ***/
+#define LEDB_Set()               (LATCSET = (1<<1))
+#define LEDB_Clear()             (LATCCLR = (1<<1))
+#define LEDB_Toggle()            (LATCINV= (1<<1))
+#define LEDB_OutputEnable()      (TRISCCLR = (1<<1))
+#define LEDB_InputEnable()       (TRISCSET = (1<<1))
+#define LEDB_Get()               ((PORTC >> 1) & 0x1)
+#define LEDB_PIN                  GPIO_PIN_RC1
+
+/*** Macros for LEDE pin ***/
+#define LEDE_Set()               (LATBSET = (1<<7))
+#define LEDE_Clear()             (LATBCLR = (1<<7))
+#define LEDE_Toggle()            (LATBINV= (1<<7))
+#define LEDE_OutputEnable()      (TRISBCLR = (1<<7))
+#define LEDE_InputEnable()       (TRISBSET = (1<<7))
+#define LEDE_Get()               ((PORTB >> 7) & 0x1)
+#define LEDE_PIN                  GPIO_PIN_RB7
 
 
 // *****************************************************************************
