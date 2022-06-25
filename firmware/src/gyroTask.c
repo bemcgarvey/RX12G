@@ -19,6 +19,8 @@
 #include "imu.h"
 #include "launchAssist.h"
 #include "normalMode.h"
+#include "attitudeLock.h"
+#include "trainer.h"
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
@@ -143,7 +145,7 @@ void gyroTask(void *pvParameters) {
             rpyCorrections[ELEVATOR_INDEX] = 0;
             rpyCorrections[RUDDER_INDEX] = 0;
             for (int i = 0; i < 3; ++i) {
-                rateAverages[i] /= (float)avgCount;
+                rateAverages[i] /= (float) avgCount;
             }
             newMode = decodeFlightMode();
             if (attitudeInitialized && newMode != currentFlightMode) {
@@ -154,9 +156,26 @@ void gyroTask(void *pvParameters) {
                         break;
                     case AUTO_LEVEL_MODE:
                         initAutoLevel();
+                        initNormalMode();
                         break;
                     case LAUNCH_ASSIST_MODE:
                         initLaunchAssist();
+                        initAutoLevel();
+                        initNormalMode();
+                        break;
+                    case ATTITUDE_LOCK_MODE:
+                        initAttitudeLock();
+                        break;
+                    case TRAINER_MODE:
+                        initTrainerMode();
+                        initNormalMode();
+                        break;
+                    case CUSTOM_MODE_1:
+                    case CUSTOM_MODE_2:
+                        initLaunchAssist();
+                        initAutoLevel();
+                        initNormalMode();
+                        initTrainerMode();
                         break;
                     default:
                         break;
@@ -187,35 +206,82 @@ void gyroTask(void *pvParameters) {
                 for (int i = 0; i < MAX_CHANNELS; ++i) {
                     outputServos[i] = rawServoPositions[i];
                 }
-            } else if (currentFlightMode == NORMAL_MODE) {
-                normalModeCalculate(ROLL_AXIS | PITCH_AXIS | YAW_AXIS);
-                verifyAndSetOutputs();
-            } else if (currentFlightMode == AUTO_LEVEL_MODE) {
-                autoLevelCalculate(ROLL_AXIS | PITCH_AXIS);
-                //normalModeCalculate(YAW_AXIS);  //TODO put in after testing normal mode
-                verifyAndSetOutputs();
-            } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
-                //TODO code this
-                verifyAndSetOutputs();
-            } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
-                autoLevelCalculate(ROLL_AXIS);
-                launchAssistCalculate(PITCH_AXIS);
-                //normalModeCalculate(YAW_AXIS);  //TODO put in after testing normal mode
-                verifyAndSetOutputs();
-            } else if (currentFlightMode == TRAINER_MODE) {
-                //TODO code this
-                verifyAndSetOutputs();
-            } else if (currentFlightMode == CUSTOM_MODE_1) {
-                //TODO code this
-                verifyAndSetOutputs();
-            } else if (currentFlightMode == CUSTOM_MODE_2) {
-                //TODO code this
-                verifyAndSetOutputs();
-            } else {
-                //Mode is unrecognized so same as off
-                for (int i = 0; i < MAX_CHANNELS; ++i) {
-                    outputServos[i] = rawServoPositions[i];
+            } else { //We have an active flight mode
+                if (currentFlightMode == NORMAL_MODE) {
+                    normalModeCalculate(ROLL_AXIS | PITCH_AXIS | YAW_AXIS);
+                } else if (currentFlightMode == AUTO_LEVEL_MODE) {
+                    autoLevelCalculate(ROLL_AXIS | PITCH_AXIS);
+                    normalModeCalculate(YAW_AXIS);
+                } else if (currentFlightMode == ATTITUDE_LOCK_MODE) {
+                    attitudeLockCalculate(ROLL_AXIS | PITCH_AXIS | YAW_AXIS);
+                } else if (currentFlightMode == LAUNCH_ASSIST_MODE) {
+                    autoLevelCalculate(ROLL_AXIS);
+                    launchAssistCalculate(PITCH_AXIS);
+                    normalModeCalculate(YAW_AXIS);
+                } else if (currentFlightMode == TRAINER_MODE) {
+                    trainerModeCalculate(ROLL_AXIS | PITCH_AXIS);
+                    normalModeCalculate(YAW_AXIS);
+                } else if (currentFlightMode == CUSTOM_MODE_1 || currentFlightMode == CUSTOM_MODE_2) {
+                    CustomModeType *mode;
+                    if (currentFlightMode == CUSTOM_MODE_1) {
+                        mode = &settings.customMode1;
+                    } else if (currentFlightMode == CUSTOM_MODE_2) {
+                        mode = &settings.customMode2;
+                    }
+                    switch (mode->aileronMode) {
+                        case NORMAL_MODE:
+                            normalModeCalculate(ROLL_AXIS);
+                            break;
+                        case AUTO_LEVEL_MODE:
+                        case LAUNCH_ASSIST_MODE:
+                            autoLevelCalculate(ROLL_AXIS);
+                            break;
+                        case ATTITUDE_LOCK_MODE:
+                            attitudeLockCalculate(ROLL_AXIS);
+                            break;
+                        case TRAINER_MODE:
+                            trainerModeCalculate(ROLL_AXIS);
+                            break;
+                        case OFF_MODE:
+                            rpyCorrections[AILERON_INDEX] = 0;
+                            break;
+                    }
+                    switch (mode->elevatorMode) {
+                        case NORMAL_MODE:
+                            normalModeCalculate(PITCH_AXIS);
+                            break;
+                        case AUTO_LEVEL_MODE:
+                            autoLevelCalculate(PITCH_AXIS);
+                            break;
+                        case LAUNCH_ASSIST_MODE:
+                            launchAssistCalculate(PITCH_AXIS);
+                            break;
+                        case ATTITUDE_LOCK_MODE:
+                            attitudeLockCalculate(PITCH_AXIS);
+                            break;
+                        case TRAINER_MODE:
+                            trainerModeCalculate(PITCH_AXIS);
+                            break;
+                        case OFF_MODE:
+                            rpyCorrections[ELEVATOR_INDEX] = 0;
+                            break;
+                    }
+                    switch (mode->rudderMode) {
+                        case NORMAL_MODE:
+                        case AUTO_LEVEL_MODE:
+                        case LAUNCH_ASSIST_MODE:
+                        case TRAINER_MODE:
+                            normalModeCalculate(YAW_AXIS);
+                            break;
+                        case ATTITUDE_LOCK_MODE:
+                            attitudeLockCalculate(YAW_AXIS);
+                            break;
+                        case OFF_MODE:
+                            rpyCorrections[RUDDER_INDEX] = 0;
+                            break;
+                    }
                 }
+                verifyAndSetOutputs();
             }
             for (int i = 0; i < 3; ++i) {
                 rateAverages[i] = 0.0;
@@ -232,7 +298,7 @@ void gyroTask(void *pvParameters) {
 }
 
 FlightModeType decodeFlightMode(void) {
-    if (modeChannel == 0) {
+    if (modeChannel == 0 || settings.numFlightModes == 1) {
         return settings.flightModes[0];
     } else {
         uint16_t value = rawServoPositions[modeChannel];

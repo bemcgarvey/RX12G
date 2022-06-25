@@ -25,20 +25,22 @@ void launchAssistCalculate(int axes) {
             || (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) > deadbands[ROLL_INDEX])) {
         takeoffDone = true;
     }
-    if (!takeoffDone) {
-        error = settings.takeoffPitch - attitude.ypr.pitch;
-        deltaError = error - lastPitchError;
-        pitchITerm += error;
-        if (pitchITerm > settings.pitchPID._maxI) {
-            pitchITerm = settings.pitchPID._maxI;
-        } else if (pitchITerm < -settings.pitchPID._maxI) {
-            pitchITerm = -settings.pitchPID._maxI;
+    if (axes & PITCH_AXIS) {
+        if (!takeoffDone) {
+            error = settings.takeoffPitch - attitude.ypr.pitch;
+            deltaError = error - lastPitchError;
+            pitchITerm += error;
+            if (pitchITerm > settings.pitchPID._maxI) {
+                pitchITerm = settings.pitchPID._maxI;
+            } else if (pitchITerm < -settings.pitchPID._maxI) {
+                pitchITerm = -settings.pitchPID._maxI;
+            }
+            lastPitchError = error;
+            rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
+                    + pitchITerm * settings.pitchPID._I
+                    + deltaError * settings.pitchPID._D) * pitchGain;
+        } else {
+            autoLevelCalculate(PITCH_AXIS);
         }
-        lastPitchError = error;
-        rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
-                + pitchITerm * settings.pitchPID._I
-                + deltaError * settings.pitchPID._D) * pitchGain;
-    } else {
-        autoLevelCalculate(axes);
     }
 }

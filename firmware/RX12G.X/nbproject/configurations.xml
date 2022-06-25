@@ -275,6 +275,8 @@
       <itemPath>../src/autoLevel.h</itemPath>
       <itemPath>../src/launchAssist.h</itemPath>
       <itemPath>../src/normalMode.h</itemPath>
+      <itemPath>../src/attitudeLock.h</itemPath>
+      <itemPath>../src/trainer.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -407,6 +409,8 @@
       <itemPath>../src/autolevel.c</itemPath>
       <itemPath>../src/launchAssist.c</itemPath>
       <itemPath>../src/normalMode.c</itemPath>
+      <itemPath>../src/attitudeLock.c</itemPath>
+      <itemPath>../src/trainer.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
