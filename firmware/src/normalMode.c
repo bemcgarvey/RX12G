@@ -12,15 +12,6 @@ static float lastRates[3];
 static int16_t dSticks[3];
 static int16_t lastSticks[3];
 
-//TODO can these be moved to gyroTask and used by all modes?
-// They could also be initialized on any mode change
-static float lastRollError;
-static float rollITerm;
-static float lastPitchError;
-static float pitchITerm;
-static float lastYawError;
-static float yawITerm;
-
 static float stickRanges[3];
 #define MAX(a,b)    (a > b ? a : b)
 #define ERROR_SCALE     0.4;  //TODO determine the best value for this
@@ -33,12 +24,6 @@ void initNormalMode(void) {
         stickRanges[i] = MAX(channelCenters[AILERON + i] - settings.minTravelLimits[i],
                 settings.maxTravelLimits[i] - channelCenters[AILERON + i]);
     }
-    lastRollError = 0;
-    rollITerm = 0;
-    lastPitchError = 0;
-    pitchITerm = 0;
-    lastYawError = 0;
-    yawITerm = 0;
 }
 
 void normalModeCalculate(int axes) {
@@ -88,7 +73,7 @@ void normalModeCalculate(int axes) {
         } else if (rollITerm < -settings.rollPID._maxI) {
             rollITerm = -settings.rollPID._maxI;
         }
-        rpyCorrections[ROLL_INDEX] = (error * settings.rollPID._P
+        rpyCorrections[ROLL_INDEX] += (error * settings.rollPID._P
                 + rollITerm * settings.rollPID._I
                 + dError * settings.rollPID._D) * rollGain;
     }
@@ -135,7 +120,7 @@ void normalModeCalculate(int axes) {
             pitchITerm = -settings.pitchPID._maxI;
         }
         lastPitchError = error;
-        rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
+        rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
                 + rollITerm * settings.pitchPID._I
                 + dError * settings.pitchPID._D) * pitchGain;
     }
@@ -182,7 +167,7 @@ void normalModeCalculate(int axes) {
             yawITerm = -settings.yawPID._maxI;
         }
         lastYawError = error;
-        rpyCorrections[YAW_INDEX] = (error * settings.yawPID._P
+        rpyCorrections[YAW_INDEX] += (error * settings.yawPID._P
                 + yawITerm * settings.yawPID._I
                 + dError * settings.yawPID._D) * yawGain;
     }

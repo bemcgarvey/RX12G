@@ -36,6 +36,14 @@ int centerCount;
 float rateAverages[3];
 int avgCount;
 
+//PID variables used by all modes
+float lastRollError;
+float rollITerm;
+float lastPitchError;
+float pitchITerm;
+float lastYawError;
+float yawITerm;
+
 static float rollBaseGain;
 static float pitchBaseGain;
 static float yawBaseGain;
@@ -51,8 +59,9 @@ static int imuMissedCount;
 
 
 FlightModeType decodeFlightMode(void);
-void calculateGains();
+void calculateGains(void);
 void verifyAndSetOutputs(void);
+void initPIDValues(void);
 
 void gyroTask(void *pvParameters) {
     int16_t temp;
@@ -150,6 +159,7 @@ void gyroTask(void *pvParameters) {
             newMode = decodeFlightMode();
             if (attitudeInitialized && newMode != currentFlightMode) {
                 currentFlightMode = newMode;
+                initPIDValues();
                 switch (currentFlightMode) {
                     case NORMAL_MODE:
                         initNormalMode();
@@ -334,7 +344,7 @@ FlightModeType decodeFlightMode(void) {
     }
 }
 
-void calculateGains() {
+void calculateGains(void) {
     if (rollGainChannel) {
         rollGain = rollBaseGain * rawServoPositions[rollGainChannel] / 2047.0;
     } else {
@@ -451,4 +461,13 @@ bool sticksCentered(void) {
         centerCount = CENTER_COUNT;
     }
     return false;
+}
+
+void initPIDValues(void) {
+    lastRollError = 0;
+    rollITerm = 0;
+    lastPitchError = 0;
+    pitchITerm = 0;
+    lastYawError = 0;
+    yawITerm = 0;
 }

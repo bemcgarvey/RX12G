@@ -13,13 +13,6 @@ static float pitchTarget;
 static bool yawLocked;
 static float yawTarget;
 
-static float lastRollError;
-static float rollITerm;
-static float lastPitchError;
-static float pitchITerm;
-static float lastYawError;
-static float yawITerm;
-
 void initAttitudeLock(void) {
     rollLocked = false;
     pitchLocked = false;

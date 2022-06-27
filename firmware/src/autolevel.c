@@ -3,16 +3,7 @@
 #include "gyroTask.h"
 #include "attitude.h"
 
-static float lastRollError;
-static float rollITerm;
-static float lastPitchError;
-static float pitchITerm;
-
 void initAutoLevel(void) {
-    rollITerm = 0;
-    pitchITerm = 0;
-    lastRollError = 0;
-    lastPitchError = 0;
     centerCount = CENTER_COUNT;
 }
 
@@ -30,7 +21,7 @@ void autoLevelCalculate(int axes) {
                 rollITerm = -settings.rollPID._maxI;
             }
             lastRollError = error;
-            rpyCorrections[ROLL_INDEX] = error * settings.rollPID._P * rollGain
+            rpyCorrections[ROLL_INDEX] += error * settings.rollPID._P * rollGain
                     + rollITerm * settings.rollPID._I * rollGain
                     + deltaError * settings.rollPID._D * rollGain;
         }
@@ -48,7 +39,7 @@ void autoLevelCalculate(int axes) {
                 pitchITerm = -settings.pitchPID._maxI;
             }
             lastPitchError = error;
-            rpyCorrections[PITCH_INDEX] = error * settings.pitchPID._P * pitchGain
+            rpyCorrections[PITCH_INDEX] += error * settings.pitchPID._P * pitchGain
                     + pitchITerm * settings.pitchPID._I * pitchGain
                     + deltaError * settings.pitchPID._D * pitchGain;
         }

@@ -38,6 +38,12 @@ extern "C" {
     extern float rateAverages[3];
     extern int avgCount;
     extern int16_t imuData[6];
+    extern float lastRollError;
+    extern float rollITerm;
+    extern float lastPitchError;
+    extern float pitchITerm;
+    extern float lastYawError;
+    extern float yawITerm;
 
     void gyroTask(void *pvParameters);
     bool sticksCentered(void);

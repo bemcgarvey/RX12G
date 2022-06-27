@@ -8,13 +8,9 @@
 #include "rxTask.h"
 #include <stdlib.h>
 
-static float lastPitchError;
-static float pitchITerm;
 static bool takeoffDone;
 
 void initLaunchAssist(void) {
-    pitchITerm = 0;
-    lastPitchError = 0;
     takeoffDone = false;
 }
 
@@ -36,7 +32,7 @@ void launchAssistCalculate(int axes) {
                 pitchITerm = -settings.pitchPID._maxI;
             }
             lastPitchError = error;
-            rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
+            rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
                     + pitchITerm * settings.pitchPID._I
                     + deltaError * settings.pitchPID._D) * pitchGain;
         } else {
