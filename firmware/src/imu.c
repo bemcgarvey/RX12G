@@ -3,6 +3,7 @@
 #include "imu.h"
 #include "settings.h"
 #include "attitude.h"
+#include "tasks.h"
 
 #define IMU_DEVICE_ADDRESS  0x6a
 
@@ -130,6 +131,11 @@ void imuTask(void *pvParameters) {
     int16_t yGyroOffset = 0;
     int16_t zGyroOffset = 0;
     bool moving;
+    if (startMode == START_WDTO) {
+        imuReady = true;
+    } else {
+        imuReady = false;
+    }
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         I2C2_WriteRead(IMU_DEVICE_ADDRESS, (uint8_t *) & reg, 1, (uint8_t *) rawImuData, 12);

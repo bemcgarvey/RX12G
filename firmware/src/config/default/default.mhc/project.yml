@@ -55,13 +55,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 972E955D94A63BA89BF6ABD6AADB1023
-- generatedChecksum: 495C5B7830675E3FDC7A69768AD3C935
+- generatedChecksum: 48812D34B3555F392EFF538B2A6A2353
   logicalPath: config/default
   name: initialization.c
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: E4DC8F21C4F68F1CFE7D416A8FB9DD92
+  userChecksum: 3A6EB55353075EAA23272D4A66DB0A16
 - generatedChecksum: 384AE8E9396E7FE9A9E65B6F2B428288
   logicalPath: config/default
   name: interrupts.c
@@ -195,6 +195,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 3822D4C43CB11882404ECB2B28DD61EA
+- generatedChecksum: D2B5BDC2F4578FDBBADED01931AF6259
+  logicalPath: config/default/peripheral/wdt
+  name: plib_wdt.c
+  physicalPath: peripheral/wdt
+  security: NON_SECURE
+  type: SOURCE
+  userChecksum: D2B5BDC2F4578FDBBADED01931AF6259
 - generatedChecksum: 0E851159CFF7B40028D295108F0F7474
   logicalPath: FreeRTOS/Source/portable/MPLAB/PIC32MK
   name: port.c
@@ -307,13 +314,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 48B661D8C967C6BC397001F10FB43D1D
-- generatedChecksum: DB5CF9CF40FCD1CDC02CA6ED9EAA789A
+- generatedChecksum: B33906420624CD537F3925E83091D2BF
   logicalPath: config/default
   name: definitions.h
   physicalPath: ''
   security: NON_SECURE
   type: HEADER
-  userChecksum: DB5CF9CF40FCD1CDC02CA6ED9EAA789A
+  userChecksum: B33906420624CD537F3925E83091D2BF
 - generatedChecksum: 1EA4EDD5EA90F43EC407DE32441159A9
   logicalPath: FreeRTOS/Source/include
   name: deprecated_definitions.h
@@ -552,6 +559,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 7AFFC4178335897ED9D5804CAB531BCF
+- generatedChecksum: 52646F9F1734C5AA98A212549F6FE3E3
+  logicalPath: config/default/peripheral/wdt
+  name: plib_wdt.h
+  physicalPath: peripheral/wdt
+  security: NON_SECURE
+  type: HEADER
+  userChecksum: 52646F9F1734C5AA98A212549F6FE3E3
 - generatedChecksum: 5A686FF678CBFBB4A1FEB86B66DCEC98
   logicalPath: FreeRTOS/Source/include
   name: portable.h

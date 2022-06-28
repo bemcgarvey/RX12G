@@ -468,33 +468,6 @@ children:
         children:
         - {type: Value, value: 'true'}
   - type: File
-    attributes: {id: SYS_CACHE_DEF}
-    children:
-    - type: Attributes
-      children:
-      - type: Boolean
-        attributes: {id: enabled}
-        children:
-        - {type: Value, value: 'false'}
-  - type: File
-    attributes: {id: SYS_CACHE_HEADER}
-    children:
-    - type: Attributes
-      children:
-      - type: Boolean
-        attributes: {id: enabled}
-        children:
-        - {type: Value, value: 'false'}
-  - type: File
-    attributes: {id: SYS_CACHE_SOURCE}
-    children:
-    - type: Attributes
-      children:
-      - type: Boolean
-        attributes: {id: enabled}
-        children:
-        - {type: Value, value: 'false'}
-  - type: File
     attributes: {id: SYS_DEBUG_DEF_HEADER}
     children:
     - type: Attributes

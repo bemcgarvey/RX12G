@@ -13,6 +13,7 @@
 #include "uart.h"
 #include "timers.h"
 #include "output.h"
+#include "tasks.h"
 
 static bool detectedSatellites[3];
 
@@ -22,25 +23,32 @@ enum {
 
 void initSatellites(void) {
     satPowerOn(true);
-    detectedSatellites[SAT1] = false;
-    detectedSatellites[SAT2] = false;
-    detectedSatellites[SAT3] = false;
-    CNPDBbits.CNPDB0 = 1;
-    CNPDCbits.CNPDC15 = 1;
-    CNPDAbits.CNPDA11 = 1;
-    CORETIMER_DelayMs(50);
-    if (SAT1_RX_Get() == 1) {
+    if (startMode == START_WDTO) {
+        //Just assume we have all sats so we can start quickly
         detectedSatellites[SAT1] = true;
-    }
-    if (SAT2_RX_Get() == 1) {
         detectedSatellites[SAT2] = true;
-    }
-    if (SAT3_RX_Get() == 1) {
         detectedSatellites[SAT3] = true;
+    } else {
+        detectedSatellites[SAT1] = false;
+        detectedSatellites[SAT2] = false;
+        detectedSatellites[SAT3] = false;
+        CNPDBbits.CNPDB0 = 1;
+        CNPDCbits.CNPDC15 = 1;
+        CNPDAbits.CNPDA11 = 1;
+        CORETIMER_DelayMs(50);
+        if (SAT1_RX_Get() == 1) {
+            detectedSatellites[SAT1] = true;
+        }
+        if (SAT2_RX_Get() == 1) {
+            detectedSatellites[SAT2] = true;
+        }
+        if (SAT3_RX_Get() == 1) {
+            detectedSatellites[SAT3] = true;
+        }
+        CNPDBbits.CNPDB0 = 0;
+        CNPDCbits.CNPDC15 = 0;
+        CNPDAbits.CNPDA11 = 0;
     }
-    CNPDBbits.CNPDB0 = 0;
-    CNPDCbits.CNPDC15 = 0;
-    CNPDAbits.CNPDA11 = 0;
     initUARTs(detectedSatellites);
 }
 
@@ -73,7 +81,7 @@ bool bindSats(void) {
     } else if (detectedSatellites[SAT3]) {
         firstSat = SAT3;
     }
-   for (int i = 0; i < pulseCount; ++i) {
+    for (int i = 0; i < pulseCount; ++i) {
         if (firstSat == SAT1) {
             if (i < pulseCount - 1) {
                 LATBbits.LATB0 = 0;

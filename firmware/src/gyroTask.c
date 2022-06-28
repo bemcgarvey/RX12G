@@ -91,6 +91,7 @@ void gyroTask(void *pvParameters) {
         rateAverages[i] = 0;
     }
     avgCount = 0;
+    WDT_Enable();
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
             imuMissedCount = 0;
@@ -132,7 +133,9 @@ void gyroTask(void *pvParameters) {
             if (!attitudeInitialized) {
                 initAttitude();
                 attitudeInitialized = true;
-                doWiggle = true;
+                if (startMode != START_WDTO) {
+                    doWiggle = true;
+                }
             }
             updateAttitude();
             rateAverages[ROLL_INDEX] += attitude.gyroRatesDeg.rollRate;
@@ -297,6 +300,7 @@ void gyroTask(void *pvParameters) {
                 rateAverages[i] = 0.0;
             }
             avgCount = 0;
+            WDT_Clear();
         }
         //TODO check stack level - remove when done
         //int stack = uxTaskGetStackHighWaterMark(NULL);

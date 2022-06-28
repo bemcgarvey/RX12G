@@ -18,10 +18,20 @@
 
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
-//TODO enable WDT and/or DMT
 
 int main(void) {
-    startMode = START_NORMAL;
+    if (RCONbits.POR == 1) {
+        //power on reset
+        RCONbits.POR = 0;
+        RCONbits.BOR = 0;
+        startMode = START_NORMAL;
+    } else if (RCONbits.WDTO == 1) {
+        startMode = START_WDTO;
+        RCONbits.WDTO = 0;
+    } else if (RCONbits.BOR == 1) {
+        startMode = START_WDTO; //Treat a brown-out like a WDT reset - start quickly
+        RCONbits.BOR = 0;
+    }
     SYS_Initialize(NULL);
     if (!loadSettings()) {
         loadDefaultSettings();
@@ -30,9 +40,13 @@ int main(void) {
     if (settings.failsafeType == PRESET_FAILSAFE) {
         loadPresets();
     }
-    CORETIMER_DelayMs(30);
-    if (U1OTGSTATbits.VBUSVD == 1) {
-        startMode = START_USB;
+    if (startMode != START_WDTO) {
+        CORETIMER_DelayMs(30);
+        if (U1OTGSTATbits.VBUSVD == 1) {
+            startMode = START_USB;
+        } else {
+            U1PWRCbits.USBPWR = 0;
+        }
     } else {
         U1PWRCbits.USBPWR = 0;
     }
