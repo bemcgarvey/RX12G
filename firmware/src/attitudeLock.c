@@ -7,11 +7,13 @@
 #include <stdlib.h>
 
 static bool rollLocked;
-static float rollTarget;
+static float rollSum;
 static bool pitchLocked;
-static float pitchTarget;
+static float pitchSum;
 static bool yawLocked;
-static float yawTarget;
+static float yawSum;
+
+#define ERROR_SCALE_FACTOR  0.2
 
 void initAttitudeLock(void) {
     rollLocked = false;
@@ -22,16 +24,12 @@ void initAttitudeLock(void) {
 void attitudeLockCalculate(int axes) {
     float error;
     float deltaError;
-
-    //TODO pitch and yaw are in the world frame so the surface to adjust depends on the roll
-    //How do we put these in the aircraft frame?
-    //Also when inverted pitch is reversed.
     
     if (axes & ROLL_AXIS) {
         if (!rollLocked) {
             if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) <= deadbands[AILERON_INDEX]) {
                 rollLocked = true;
-                rollTarget = attitude.ypr.roll;
+                rollSum = 0;
                 lastRollError = 0;
                 rollITerm = 0;
             }
@@ -39,7 +37,9 @@ void attitudeLockCalculate(int axes) {
             if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) > deadbands[AILERON_INDEX]) {
                 rollLocked = false;
             } else {
-                error = rollTarget - attitude.ypr.roll;
+                rollSum += attitude.gyroRatesDeg.rollRate;
+                error = -rollSum;
+                error *= ERROR_SCALE_FACTOR;
                 deltaError = error - lastRollError;
                 rollITerm += error;
                 if (rollITerm > settings.rollPID._maxI) {
@@ -48,7 +48,7 @@ void attitudeLockCalculate(int axes) {
                     rollITerm = -settings.rollPID._maxI;
                 }
                 lastRollError = error;
-                rpyCorrections[ROLL_INDEX] = error * settings.rollPID._P * rollGain
+                rpyCorrections[ROLL_INDEX] += error * settings.rollPID._P * rollGain
                         + rollITerm * settings.rollPID._I * rollGain
                         + deltaError * settings.rollPID._D * rollGain;
             }
@@ -58,7 +58,7 @@ void attitudeLockCalculate(int axes) {
         if (!pitchLocked) {
             if (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) <= deadbands[ELEVATOR_INDEX]) {
                 pitchLocked = true;
-                pitchTarget = attitude.ypr.pitch;
+                pitchSum = 0;
                 lastPitchError = 0;
                 pitchITerm = 0;
             }
@@ -66,7 +66,9 @@ void attitudeLockCalculate(int axes) {
             if (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) > deadbands[ELEVATOR_INDEX]) {
                 pitchLocked = false;
             } else {
-                error = pitchTarget - attitude.ypr.pitch;
+                pitchSum += attitude.gyroRatesDeg.pitchRate;
+                error = -pitchSum;
+                error *= ERROR_SCALE_FACTOR;
                 deltaError = error - lastPitchError;
                 pitchITerm += error;
                 if (pitchITerm > settings.pitchPID._maxI) {
@@ -75,7 +77,7 @@ void attitudeLockCalculate(int axes) {
                     pitchITerm = -settings.pitchPID._maxI;
                 }
                 lastPitchError = error;
-                rpyCorrections[PITCH_INDEX] = error * settings.pitchPID._P * pitchGain
+                rpyCorrections[PITCH_INDEX] += error * settings.pitchPID._P * pitchGain
                         + pitchITerm * settings.pitchPID._I * pitchGain
                         + deltaError * settings.pitchPID._D * pitchGain;
             }
@@ -83,9 +85,9 @@ void attitudeLockCalculate(int axes) {
     }
     if (axes & YAW_AXIS) {
         if (!yawLocked) {
-            if (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) <= deadbands[RUDDER_INDEX]) {
+            if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) <= deadbands[AILERON_INDEX]) {
                 yawLocked = true;
-                yawTarget = attitude.ypr.yaw;
+                yawSum = 0;
                 lastYawError = 0;
                 yawITerm = 0;
             }
@@ -93,7 +95,9 @@ void attitudeLockCalculate(int axes) {
             if (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) > deadbands[RUDDER_INDEX]) {
                 yawLocked = false;
             } else {
-                error = yawTarget - attitude.ypr.yaw;
+                yawSum += attitude.gyroRatesDeg.yawRate;
+                error = -yawSum;
+                error *= ERROR_SCALE_FACTOR;
                 deltaError = error - lastYawError;
                 yawITerm += error;
                 if (yawITerm > settings.yawPID._maxI) {
@@ -102,7 +106,7 @@ void attitudeLockCalculate(int axes) {
                     yawITerm = -settings.yawPID._maxI;
                 }
                 lastRollError = error;
-                rpyCorrections[YAW_INDEX] = error * settings.yawPID._P * yawGain
+                rpyCorrections[YAW_INDEX] += error * settings.yawPID._P * yawGain
                         + yawITerm * settings.yawPID._I * yawGain
                         + deltaError * settings.yawPID._D * yawGain;
             }
