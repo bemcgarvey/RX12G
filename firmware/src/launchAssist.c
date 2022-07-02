@@ -35,6 +35,10 @@ void launchAssistCalculate(int axes) {
             rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
                     + pitchITerm * settings.pitchPID._I
                     + deltaError * settings.pitchPID._D) * pitchGain;
+            //Correct for roll - this will reverse correction when inverted
+            //and reduce correction the closer we are to 90 degrees of roll.
+            //This should only be a factor if the launch is way off from level
+            rpyCorrections[PITCH_INDEX] *= cos(attitude.ypr.roll * DEGREES_TO_RAD);
         } else {
             autoLevelCalculate(PITCH_AXIS);
         }
