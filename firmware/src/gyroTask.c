@@ -84,7 +84,7 @@ void gyroTask(void *pvParameters) {
     deadbands[YAW_INDEX] = (settings.deadbands[YAW_INDEX] * 1024) / 100;
     needToUpdateOutputs = false;
     doWiggle = false;
-    wiggleCount = settings.outputHz;
+    wiggleCount = settings.outputHz / 2;
     imuMissedCount = 0;
     centerCount = CENTER_COUNT;
     for (int i = 0; i < 3; ++i) {
@@ -196,13 +196,13 @@ void gyroTask(void *pvParameters) {
             }
             calculateGains();
             if (doWiggle) {
-                if (wiggleCount > 2 * settings.outputHz / 3) {
-                    rpyCorrections[AILERON_INDEX] = 200;
-                    rpyCorrections[ELEVATOR_INDEX] = 200;
+                if (wiggleCount > 2 * settings.outputHz / 6) {
+                    rpyCorrections[AILERON_INDEX] = 300;
+                    rpyCorrections[ELEVATOR_INDEX] = 300;
                     rpyCorrections[RUDDER_INDEX] = 0;
-                } else if (wiggleCount > settings.outputHz / 3) {
-                    rpyCorrections[AILERON_INDEX] = -200;
-                    rpyCorrections[ELEVATOR_INDEX] = -200;
+                } else if (wiggleCount > settings.outputHz / 6) {
+                    rpyCorrections[AILERON_INDEX] = -300;
+                    rpyCorrections[ELEVATOR_INDEX] = -300;
                     rpyCorrections[RUDDER_INDEX] = 0;
                 } else if (wiggleCount > 0) {
                     rpyCorrections[AILERON_INDEX] = 0;

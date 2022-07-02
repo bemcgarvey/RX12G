@@ -18,6 +18,7 @@
 
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
+//BUG when switching to bootloader mode servos sometimes go way out of range
 
 int main(void) {
     if (RCONbits.POR == 1) {
