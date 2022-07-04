@@ -24,28 +24,37 @@ void buttonHandler(EXTERNAL_INT_PIN pin, uintptr_t context) {
 }
 
 void buttonTask(void *pvParameters) {
+    int wdtState;
     EVIC_ExternalInterruptCallbackRegister(EXTERNAL_INT_3, buttonHandler, 0);
     EVIC_ExternalInterruptEnable(EXTERNAL_INT_3);
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        wdtState = WDTCONbits.ON;
+        WDT_Disable();
         vTaskDelay(2000);
         if (BIND_BUTTON_Get() == 0) {
             isBinding = true;
             bindSats();
-            while (1) {
+            while (isBinding) {
                 int n = ulTaskNotifyTake(pdTRUE, 100);
                 if (n) {
-                    satPowerOn(false);
-                    vTaskDelay(500);
-                    satPowerOn(true);
-                    break;
+                    vTaskDelay(20);
+                    if (BIND_BUTTON_Get() == 0) {
+                        satPowerOn(false);
+                        vTaskDelay(500);
+                        satPowerOn(true);
+                        isBinding = false;
+                    }
                 }
                 if (validPacketReceived) {
-                    break;
+                    isBinding = false;
                 }
             }
-            isBinding = false;
+        }
+        if (wdtState == 1) {
+            WDT_Enable();
         }
     }
 }
+
 
