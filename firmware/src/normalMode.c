@@ -110,7 +110,7 @@ void normalModeCalculate(int axes) {
         }
         error *= adjust;
         error *= ERROR_SCALE; //Scale to allow for same PIDs as autolevel etc.
-        error = (error + 2.0 * lastRollError) / 3.0;
+        error = (error + 2.0 * lastPitchError) / 3.0;
         dError = error - lastPitchError;
         lastPitchError = error;
         pitchITerm += error;
@@ -121,7 +121,7 @@ void normalModeCalculate(int axes) {
         }
         lastPitchError = error;
         rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
-                + rollITerm * settings.pitchPID._I
+                + pitchITerm * settings.pitchPID._I
                 + dError * settings.pitchPID._D) * pitchGain;
     }
     if (axes & YAW_AXIS) {
