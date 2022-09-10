@@ -181,6 +181,7 @@ void gyroTask(void *pvParameters) {
                         break;
                     case TRAINER_MODE:
                         initTrainerMode();
+                        initAutoLevel();
                         initNormalMode();
                         break;
                     case CUSTOM_MODE_1:
@@ -189,6 +190,7 @@ void gyroTask(void *pvParameters) {
                         initAutoLevel();
                         initNormalMode();
                         initTrainerMode();
+                        initAttitudeLock();
                         break;
                     default:
                         break;

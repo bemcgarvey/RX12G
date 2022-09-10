@@ -19,6 +19,8 @@
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
 //BUG when switching to bootloader mode servos sometimes go way out of range
+// need to shut down pwm outputs before reset
+//TODO Add rx only mode where all imu functions are shut off
 
 int main(void) {
     if (RCONbits.POR == 1) {
