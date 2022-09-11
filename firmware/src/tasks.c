@@ -18,6 +18,7 @@
 #include "statusLedTask.h"
 #include "usbapp.h"
 #include "imu.h"
+#include "rxOnlyTask.h"
 
 int startMode = START_NORMAL;
 
@@ -35,9 +36,13 @@ void initQueues(void) {
 }
 
 void initTasks(void) {
-    xTaskCreate(buttonTask, "button", 128, NULL, 4, &buttonTaskHandle);
-    xTaskCreate(rxTask, "rxtask", 128, NULL, 3, &rxTaskHandle);
-    xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 2, &gyroTaskHandle);
+    xTaskCreate(buttonTask, "buttonTask", 128, NULL, 4, &buttonTaskHandle);
+    xTaskCreate(rxTask, "rxTask", 128, NULL, 3, &rxTaskHandle);
+    if (settings.rxOnly == RX_ONLY_MODE) {
+        xTaskCreate(rxOnlyTask, "rxOnlyTask", 128, NULL, 2, &rxOnlyTaskHandle);
+    } else {
+        xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 2, &gyroTaskHandle);
+    }
     xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, 1, &statusLedTaskHandle);
     if (imuInitialized) {
         xTaskCreate(imuTask, "imuTask", 256, NULL, 4, &imuTaskHandle);

@@ -97,6 +97,8 @@ private slots:
     void on_updateFirmwarePushButton_clicked();
     void on_cancelUpdatePushButton_clicked();
 
+    void on_rxOnlyCheckBox_stateChanged(int arg1);
+
 public slots:
     void onBtlMessage(QString msg);
     void onBtlProgress(int progress);

@@ -1,29 +1,27 @@
 /////////////////////////////////////////////////////
 // Project: RX12G                                  //
-// File: version.h                                 //
+// File: rxOnlyTask.h                              //
 // Target: PIC32MK1024GPK064                       // 
 // Compiler: XC32                                  //
 // Author: Brad McGarvey                           //
 // License: GNU General Public License v3.0        //
-// Description: firmware version                   //
+// Description: task for rx functions only (no imu)//
 /////////////////////////////////////////////////////
 
-#ifndef VERSION_H
-#define	VERSION_H
+#ifndef RXONLYTASK_H
+#define	RXONLYTASK_H
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-#define MAJOR_VERSION   0
-#define MINOR_VERSION   8
-    
-    extern const unsigned int firmwareVersion;
+
+void rxOnlyTask(void *pvParameters);
 
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* VERSION_H */
+#endif	/* RXONLYTASK_H */
 

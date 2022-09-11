@@ -19,7 +19,7 @@ volatile bool failsafeEngaged = false;
 int numPWMOutputs = NUM_OUTPUTS;
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
-    0, OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET, 2 * OFFSET};
+    0, OFFSET, 0, OFFSET, 0, OFFSET};
 
 const unsigned int pulseOffsets[NUM_OUTPUTS] = {0 + PULSE, OFFSET + PULSE,
     0 + PULSE, OFFSET + PULSE, 0 + PULSE, OFFSET + PULSE, 0 + PULSE, OFFSET + PULSE,

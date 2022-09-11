@@ -28,6 +28,11 @@ void MainWindow::getRxTabControls() {
     } else {
         settings.failsafeType = PRESET_FAILSAFE;
     }
+    if (ui->rxOnlyCheckBox->isChecked()) {
+        settings.rxOnly = RX_ONLY_MODE;
+    } else {
+        settings.rxOnly = NORMAL_RX_MODE;
+    }
 }
 
 void MainWindow::setRxTabControls() {
@@ -57,6 +62,11 @@ void MainWindow::setRxTabControls() {
         ui->normalFailsafeRadioButton->setChecked(false);
         ui->presetFailsafeRadioButton->setChecked(true);
         ui->savePresetsPushButton->setEnabled(true);
+    }
+    if (settings.rxOnly == RX_ONLY_MODE) {
+        ui->rxOnlyCheckBox->setChecked(true);
+    } else {
+        ui->rxOnlyCheckBox->setChecked(false);
     }
 }
 

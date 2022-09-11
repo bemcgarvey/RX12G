@@ -687,3 +687,19 @@ void MainWindow::on_cancelUpdatePushButton_clicked()
     bootloader->jumpToApp();
 }
 
+
+void MainWindow::on_rxOnlyCheckBox_stateChanged(int arg1)
+{
+    if (arg1) {
+        settings.rxOnly = RX_ONLY_MODE;
+        for (int i = 1; i <= 5; ++i) {
+            ui->tabWidget->setTabEnabled(i, false);
+        }
+    } else {
+        settings.rxOnly = NORMAL_RX_MODE;
+        for (int i = 1; i <= 5; ++i) {
+            ui->tabWidget->setTabEnabled(i, true);
+        }
+    }
+}
+

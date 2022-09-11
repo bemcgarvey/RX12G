@@ -20,7 +20,6 @@
 //TODO enable BOR and do fast start when detected
 //BUG when switching to bootloader mode servos sometimes go way out of range
 // need to shut down pwm outputs before reset
-//TODO Add rx only mode where all imu functions are shut off
 
 int main(void) {
     if (RCONbits.POR == 1) {
@@ -57,10 +56,11 @@ int main(void) {
     startSystemTime();
     initSatellites();
     initOutputs();
-    if (initIMU()) {
-        imuInitialized = true;
-    } else {
-        imuInitialized = false;
+    imuInitialized = false;
+    if (settings.rxOnly != RX_ONLY_MODE) {
+        if (initIMU()) {
+            imuInitialized = true;
+        }
     }
     //Lock PPS
     __builtin_disable_interrupts();

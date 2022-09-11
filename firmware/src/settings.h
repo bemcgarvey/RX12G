@@ -76,12 +76,15 @@ extern "C" {
         uint8_t rudderMode;
     } CustomModeType;
 
+    enum {NORMAL_RX_MODE = 0, RX_ONLY_MODE = 'X'};
+    
     typedef struct {
         //rx settings
         uint8_t outputHz;
         uint8_t sBusPeriodMs;
         uint8_t numSBusOutputs;
         uint8_t failsafeType;
+        uint8_t rxOnly;
         //gyro settings
         uint8_t gyroOrientation;
         uint8_t wingType;

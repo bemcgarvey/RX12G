@@ -280,6 +280,7 @@
       <itemPath>../src/normalMode.h</itemPath>
       <itemPath>../src/attitudeLock.h</itemPath>
       <itemPath>../src/trainer.h</itemPath>
+      <itemPath>../src/rxOnlyTask.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -417,6 +418,7 @@
       <itemPath>../src/normalMode.c</itemPath>
       <itemPath>../src/attitudeLock.c</itemPath>
       <itemPath>../src/trainer.c</itemPath>
+      <itemPath>../src/rxOnlyTask.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
