@@ -29,10 +29,12 @@ extern "C" {
     
     extern volatile uint16_t outputServos[MAX_CHANNELS];
     extern volatile bool failsafeEngaged;
+    extern volatile bool outputsDisabled;
     
     void initOutputs(void);
     void disableThrottle(void);
     void engageFailsafe(void);
+    void disableOutputs(void);
 
 #ifdef	__cplusplus
 }

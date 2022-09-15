@@ -597,6 +597,7 @@ void MainWindow::on_connectBootloaderPushButton_clicked()
                               "Can't connect to bootloader.  Restart the RX12G in bootload mode and try again.");
     } else {
         ui->browsePushButton->setEnabled(true);
+        ui->cancelUpdatePushButton->setEnabled(true);
         ui->firmwareFileLabel->setText("Please select a file");
         uint16_t version = bootloader->readBootInfo();
         ui->statusbar->showMessage(QString("Connected to bootloader version %1.%2")
@@ -623,7 +624,6 @@ void MainWindow::on_browsePushButton_clicked()
         if (bootloader->setFile(fileName)) {
             ui->firmwareFileLabel->setText(fileName);
             ui->updateFirmwarePushButton->setEnabled(true);
-            ui->cancelUpdatePushButton->setEnabled(true);
         } else {
             ui->updateFirmwarePushButton->setEnabled(false);
             ui->firmwareFileLabel->setText("Not Selected");

@@ -18,8 +18,6 @@
 
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
-//BUG when switching to bootloader mode servos sometimes go way out of range
-// need to shut down pwm outputs before reset
 
 int main(void) {
     if (RCONbits.POR == 1) {
@@ -43,16 +41,6 @@ int main(void) {
     if (settings.failsafeType == PRESET_FAILSAFE) {
         loadPresets();
     }
-    /*if (startMode != START_WDTO) {
-        CORETIMER_DelayMs(30);
-        if (U1OTGSTATbits.VBUSVD == 1) {
-            startMode = START_USB;
-        } else {
-            U1PWRCbits.USBPWR = 0;
-        }
-    } else {
-        U1PWRCbits.USBPWR = 0;
-    }*/
     initQueues();
     startSystemTime();
     initSatellites();

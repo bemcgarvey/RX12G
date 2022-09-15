@@ -17,6 +17,9 @@
 volatile uint16_t outputServos[MAX_CHANNELS];
 volatile bool failsafeEngaged = false;
 int numPWMOutputs = NUM_OUTPUTS;
+volatile bool outputsDisabled = false;
+
+bool requestDisableOutputs = false;
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
     0, OFFSET, 0, OFFSET, 0, OFFSET};
@@ -75,6 +78,13 @@ void engageFailsafe(void) {
 }
 
 void updatePulses(uint32_t status, uintptr_t context) {
+    if (requestDisableOutputs) {
+       for (int i = 0; i < numPWMOutputs; ++i) {
+            *OCxCONCLRRegister[i] = 0x8000;
+       }
+       outputsDisabled = true;
+       return;
+    }
     for (int i = 0; i < numPWMOutputs; ++i) {
         if (outputServos[i] != 0xffff && !failsafeEngaged) {
             if (!(*OCxCONRegister[i] & 0x8000)) {
@@ -87,4 +97,8 @@ void updatePulses(uint32_t status, uintptr_t context) {
     //TODO for higher output rates this should only happen every 20 ms
     // to maintain the control loop timing?  Or maybe 10 ms?
     needToUpdateOutputs = true;
+}
+
+void disableOutputs(void) {
+    requestDisableOutputs = true;
 }

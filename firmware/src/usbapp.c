@@ -274,9 +274,17 @@ void USBAppTasks(void *pvParameters) {
                                     &txTransferHandle, transmitDataBuffer, 64);
                             break;
                         case REBOOT:
+                            disableOutputs();
+                            while (!outputsDisabled) {
+                                taskYIELD();
+                            }
                             SYS_RESET_SoftwareReset();
                             break;
                         case BOOTLOAD:
+                            disableOutputs();
+                            while (!outputsDisabled) {
+                                taskYIELD();
+                            }
                             ramStart[0] = BTL_PATTERN1;
                             ramStart[1] = BTL_PATTERN2;
                             SYS_RESET_SoftwareReset();

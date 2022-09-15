@@ -15,7 +15,7 @@
 extern "C" {
 #endif
     
-    enum {START_NORMAL = 0, START_BOR, START_WDTO};
+    enum {START_NORMAL = 0, START_WDTO};
     
     extern int startMode;
     
