@@ -27,6 +27,7 @@ extern "C" {
     extern TaskHandle_t usbAppTaskHandle;
     extern TaskHandle_t imuTaskHandle;
     extern TaskHandle_t rxOnlyTaskHandle;
+    extern TaskHandle_t detectUSBTaskHandle;
 
 #ifdef	__cplusplus
 }

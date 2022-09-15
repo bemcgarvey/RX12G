@@ -1,31 +1,26 @@
 /////////////////////////////////////////////////////
 // Project: RX12G                                  //
-// File: tasks.h                                   //
+// File: detectUSBTask.h                           //
 // Target: PIC32MK1024GPK064                       // 
 // Compiler: XC32                                  //
 // Author: Brad McGarvey                           //
 // License: GNU General Public License v3.0        //
-// Description: task creation and scheduler start  //
+// Description: check for USB connect              //
 /////////////////////////////////////////////////////
 
-#ifndef TASKS_H
-#define	TASKS_H
+#ifndef DETECTUSBTASK_H
+#define	DETECTUSBTASK_H
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
-    
-    enum {START_NORMAL = 0, START_BOR, START_WDTO};
-    
-    extern int startMode;
-    
-    void initQueues(void);
-    void initTasks(void);
-    void _USB_DEVICE_Tasks(void *pvParameters);
+
+void detectUSBTask(void *pvParameters);
+
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* TASKS_H */
+#endif	/* DETECTUSBTASK_H */
 

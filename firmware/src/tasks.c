@@ -19,6 +19,7 @@
 #include "usbapp.h"
 #include "imu.h"
 #include "rxOnlyTask.h"
+#include "detectUSBTask.h"
 
 int startMode = START_NORMAL;
 
@@ -47,10 +48,7 @@ void initTasks(void) {
     if (imuInitialized) {
         xTaskCreate(imuTask, "imuTask", 256, NULL, 4, &imuTaskHandle);
     }
-    if (startMode == START_USB) {
-        xTaskCreate(_USB_DEVICE_Tasks, "USB_DEVICE_TASKS", 1024, NULL, 1, NULL);
-        xTaskCreate(USBAppTasks, "USBAppTasks", 1024, NULL, 1, &usbAppTaskHandle);
-    }
+    xTaskCreate(detectUSBTask, "detectUSBTask", 128, NULL, 1, &detectUSBTaskHandle);
     vTaskStartScheduler();
 }
 

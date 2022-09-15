@@ -3,6 +3,7 @@
 #include "gyroTask.h"
 #include "attitude.h"
 #include "trainer.h"
+#include "normalMode.h"
 
 static bool rollOutOfBounds;
 static float rollSum;
@@ -53,6 +54,8 @@ void trainerModeCalculate(int axes) {
                 } else {
                     rollDirection = -1;
                 }
+            } else {
+                normalModeCalculate(ROLL_AXIS);
             }
         }
     }

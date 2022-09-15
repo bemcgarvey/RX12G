@@ -35,6 +35,7 @@ int main(void) {
         RCONbits.BOR = 0;
     }
     SYS_Initialize(NULL);
+    U1PWRCbits.USBPWR = 0;  //Turn off USB module for now
     if (!loadSettings()) {
         loadDefaultSettings();
         saveSettings();
@@ -42,7 +43,7 @@ int main(void) {
     if (settings.failsafeType == PRESET_FAILSAFE) {
         loadPresets();
     }
-    if (startMode != START_WDTO) {
+    /*if (startMode != START_WDTO) {
         CORETIMER_DelayMs(30);
         if (U1OTGSTATbits.VBUSVD == 1) {
             startMode = START_USB;
@@ -51,7 +52,7 @@ int main(void) {
         }
     } else {
         U1PWRCbits.USBPWR = 0;
-    }
+    }*/
     initQueues();
     startSystemTime();
     initSatellites();
