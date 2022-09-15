@@ -198,14 +198,29 @@ void gyroTask(void *pvParameters) {
             }
             calculateGains();
             if (doWiggle) {
+                rpyCorrections[AILERON_INDEX] = 0;
+                rpyCorrections[ELEVATOR_INDEX] = 0;
+                rpyCorrections[RUDDER_INDEX] = 0;
                 if (wiggleCount > 2 * settings.outputHz / 6) {
-                    rpyCorrections[AILERON_INDEX] = 300;
-                    rpyCorrections[ELEVATOR_INDEX] = 300;
-                    rpyCorrections[RUDDER_INDEX] = 0;
+                    if (settings.gyroEnabledFlags & AILERON_MASK) {
+                        rpyCorrections[AILERON_INDEX] = 300;
+                    }
+                    if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
+                        rpyCorrections[ELEVATOR_INDEX] = 300;
+                    }
+                    if (settings.gyroEnabledFlags & RUDDER_MASK) {
+                        rpyCorrections[RUDDER_INDEX] = 300;
+                    }
                 } else if (wiggleCount > settings.outputHz / 6) {
-                    rpyCorrections[AILERON_INDEX] = -300;
-                    rpyCorrections[ELEVATOR_INDEX] = -300;
-                    rpyCorrections[RUDDER_INDEX] = 0;
+                    if (settings.gyroEnabledFlags & AILERON_MASK) {
+                        rpyCorrections[AILERON_INDEX] = -300;
+                    }
+                    if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
+                        rpyCorrections[ELEVATOR_INDEX] = -300;
+                    }
+                    if (settings.gyroEnabledFlags & RUDDER_MASK) {
+                        rpyCorrections[RUDDER_INDEX] = -300;
+                    }
                 } else if (wiggleCount > 0) {
                     rpyCorrections[AILERON_INDEX] = 0;
                     rpyCorrections[ELEVATOR_INDEX] = 0;
