@@ -35,12 +35,12 @@ void autoLevelCalculate(int axes) {
                 pitchITerm = -settings.pitchPID._maxI;
             }
             lastPitchError = error;
-            rpyCorrections[PITCH_INDEX] += error * settings.pitchPID._P * pitchGain
+            rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P * pitchGain
                     + pitchITerm * settings.pitchPID._I * pitchGain
-                    + deltaError * settings.pitchPID._D * pitchGain;
-            //Correct for roll - this will reverse correction when inverted
+                    + deltaError * settings.pitchPID._D * pitchGain)
+                    * cos(attitude.ypr.roll * DEGREES_TO_RAD);
+            //cos term above corrects for roll - this will reverse correction when inverted
             //and reduce correction the closer we are to 90 degrees of roll
-            rpyCorrections[PITCH_INDEX] *= cos(attitude.ypr.roll * DEGREES_TO_RAD);
         }
     } else {
         rollITerm = 0;
