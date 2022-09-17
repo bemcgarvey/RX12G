@@ -471,8 +471,7 @@ void verifyAndSetOutputs(void) {
 
 bool sticksCentered(void) {
     if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]
-            && abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]
-            && abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]) {
+            && abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]) {
         if (centerCount > 0) {
             --centerCount;
         } else {
