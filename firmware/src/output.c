@@ -19,7 +19,9 @@ volatile bool failsafeEngaged = false;
 int numPWMOutputs = NUM_OUTPUTS;
 volatile bool outputsDisabled = false;
 
-bool requestDisableOutputs = false;
+int updateCount;
+int updateCountReset;
+int requestDisableOutputs = 0;
 
 const unsigned int startOffsets[NUM_OUTPUTS] = {0, OFFSET, 0, OFFSET, 0, OFFSET,
     0, OFFSET, 0, OFFSET, 0, OFFSET};
@@ -46,6 +48,11 @@ volatile unsigned int* const OCxCONRegister[NUM_OUTPUTS] = {&OC11CON, &OC10CON, 
 void updatePulses(uint32_t status, uintptr_t context);
 
 void initOutputs(void) {
+    updateCountReset = settings.outputHz / CONTROL_LOOP_FREQ;
+    if (updateCountReset < 1) {
+        updateCountReset = 1;
+    }
+    updateCount = updateCountReset;
     for (int i = 0; i < MAX_CHANNELS; ++i) {
         outputServos[i] = 0xffff;
     }
@@ -78,7 +85,7 @@ void engageFailsafe(void) {
 }
 
 void updatePulses(uint32_t status, uintptr_t context) {
-    if (requestDisableOutputs) {
+    if (requestDisableOutputs == DISABLE_KEY) {
        for (int i = 0; i < numPWMOutputs; ++i) {
             *OCxCONCLRRegister[i] = 0x8000;
        }
@@ -94,11 +101,20 @@ void updatePulses(uint32_t status, uintptr_t context) {
         uint32_t out = ((1194 * US_COUNT) * outputServos[i]) / 2048;
         *pulseRegister[i] = out + pulseOffsets[i];
     }
-    //TODO for higher output rates this should only happen every 20 ms
-    // to maintain the control loop timing?  Or maybe 10 ms?
-    needToUpdateOutputs = true;
+    
+    if (settings.rxOnly) {
+        //Update as often as possible
+        needToUpdateOutputs = true;
+    } else {
+        //Update at control loop frequency (50 Hz)
+        --updateCount;
+        if (updateCount == 0) {
+            needToUpdateOutputs = true;
+            updateCount = updateCountReset;
+        }
+    }
 }
 
-void disableOutputs(void) {
-    requestDisableOutputs = true;
+void disableOutputs(int key) {
+    requestDisableOutputs = key;
 }

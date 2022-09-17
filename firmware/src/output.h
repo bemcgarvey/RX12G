@@ -34,7 +34,8 @@ extern "C" {
     void initOutputs(void);
     void disableThrottle(void);
     void engageFailsafe(void);
-    void disableOutputs(void);
+    void disableOutputs(int key);
+    #define DISABLE_KEY         0x12983476
 
 #ifdef	__cplusplus
 }

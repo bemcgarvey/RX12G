@@ -274,14 +274,14 @@ void USBAppTasks(void *pvParameters) {
                                     &txTransferHandle, transmitDataBuffer, 64);
                             break;
                         case REBOOT:
-                            disableOutputs();
+                            disableOutputs(DISABLE_KEY);
                             while (!outputsDisabled) {
                                 taskYIELD();
                             }
                             SYS_RESET_SoftwareReset();
                             break;
                         case BOOTLOAD:
-                            disableOutputs();
+                            disableOutputs(DISABLE_KEY);
                             while (!outputsDisabled) {
                                 taskYIELD();
                             }

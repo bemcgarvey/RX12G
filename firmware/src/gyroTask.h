@@ -17,7 +17,10 @@
 extern "C" {
 #endif
 
-#define CENTER_COUNT    (settings.outputHz / 4)
+#define CONTROL_LOOP_FREQ       50    //50Hz, 20ms control loop
+#define CONTROL_LOOP_PERIOD     20
+    
+#define CENTER_COUNT    (CONTROL_LOOP_FREQ / 4)
     //IMU data indices 
 #define IMU_GYRO_X      0
 #define IMU_GYRO_Y      1
@@ -25,7 +28,7 @@ extern "C" {
 #define IMU_ACCEL_X      3
 #define IMU_ACCEL_Y      4
 #define IMU_ACCEL_Z      5
-
+    
     extern FlightModeType currentFlightMode;
     extern volatile uint16_t rawServoPositions[MAX_CHANNELS];
     extern float rollGain;

@@ -84,7 +84,7 @@ void gyroTask(void *pvParameters) {
     deadbands[YAW_INDEX] = (settings.deadbands[YAW_INDEX] * 1024) / 100;
     needToUpdateOutputs = false;
     doWiggle = false;
-    wiggleCount = settings.outputHz / 2;
+    wiggleCount = CONTROL_LOOP_FREQ / 2;
     imuMissedCount = 0;
     centerCount = CENTER_COUNT;
     for (int i = 0; i < 3; ++i) {
