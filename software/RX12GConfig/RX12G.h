@@ -97,7 +97,9 @@ enum {
         uint8_t deadbands[3];
         CustomModeType customMode1;
         CustomModeType customMode2;
-        uint8_t gains[3];
+        uint8_t normalGains[3];
+        uint8_t levelGains[2];
+        uint8_t lockGains[3];
         uint8_t gainChannels[3];
         uint8_t gainCurves[3];
         uint8_t rollLimit;

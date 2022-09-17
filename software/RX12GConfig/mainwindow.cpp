@@ -268,7 +268,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
             ui->yGyroDisplay->setEnabled(true);
             ui->zGyroDisplay->setEnabled(true);
             sensorTimer->start(100);
-        } else if (ui->tabWidget->tabText(index) == "Gyro Settings") {
+        } else if (ui->tabWidget->tabText(index) == "Gains") {
             gainsTimer->start(100);
         }
     }
@@ -320,8 +320,7 @@ void MainWindow::onSensorTimout()
     ui->yawLabel->setText(QString("%1°").arg(pa->ypr.yaw, 0, 'f', 1));
 }
 
-void MainWindow::onGainsTimout()
-{
+void MainWindow::onGainsTimout() {
     if (!usb.Connected()) {
         return;
     }
@@ -329,12 +328,23 @@ void MainWindow::onGainsTimout()
     usb.SendReport(buffer);
     usb.GetReport(buffer);
     float *fp = reinterpret_cast<float *>(buffer);
-    int rollGain = round(fp[0] * 100);
-    int pitchGain = round(fp[1] * 100);
-    int yawGain = round(fp[2] * 100);
-    ui->actualGainLabel->setText(QString("Actual: Roll = %1%, Pitch = %2%, Yaw = %3%").arg(rollGain).arg(pitchGain).arg(yawGain));
+    int value = round(fp[0] * 100);
+    ui->normalRollLabel->setText(QString("%1%").arg(value));
+    value = round(fp[1] * 100);
+    ui->normalPitchLabel->setText(QString("%1%").arg(value));
+    value = round(fp[2] * 100);
+    ui->normalYawLabel->setText(QString("%1%").arg(value));
+    value = round(fp[3] * 100);
+    ui->levelRollLabel->setText(QString("%1%").arg(value));
+    value = round(fp[4] * 100);
+    ui->levelPitchLabel->setText(QString("%1%").arg(value));
+    value = round(fp[6] * 100);
+    ui->lockRollLabel->setText(QString("%1%").arg(value));
+    value = round(fp[7] * 100);
+    ui->lockPitchLabel->setText(QString("%1%").arg(value));
+    value = round(fp[8] * 100);
+    ui->lockYawLabel->setText(QString("%1%").arg(value));
 }
-
 
 void MainWindow::on_oneModeRadioButton_clicked(bool checked)
 {
@@ -692,12 +702,12 @@ void MainWindow::on_rxOnlyCheckBox_stateChanged(int arg1)
 {
     if (arg1) {
         settings.rxOnly = RX_ONLY_MODE;
-        for (int i = 1; i <= 5; ++i) {
+        for (int i = 1; i <= 6; ++i) {
             ui->tabWidget->setTabEnabled(i, false);
         }
     } else {
         settings.rxOnly = NORMAL_RX_MODE;
-        for (int i = 1; i <= 5; ++i) {
+        for (int i = 1; i <= 6; ++i) {
             ui->tabWidget->setTabEnabled(i, true);
         }
     }

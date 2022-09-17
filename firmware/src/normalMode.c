@@ -14,7 +14,6 @@ static int16_t lastSticks[3];
 
 static float stickRanges[3];
 #define MAX(a,b)    (a > b ? a : b)
-#define ERROR_SCALE     0.4;  //TODO determine the best value for this
 #define STICK_MOVE_FACTOR   5  //This determines how fast the gain drops with stick speed
 
 void initNormalMode(void) {
@@ -63,7 +62,6 @@ void normalModeCalculate(int axes) {
             adjust = 0.0;
         }
         error *= adjust;
-        error *= ERROR_SCALE; //Scale to allow for same PIDs as autolevel etc.
         error = (error + 2.0 * lastRollError) / 3.0;
         dError = error - lastRollError;
         lastRollError = error;
@@ -75,7 +73,7 @@ void normalModeCalculate(int axes) {
         }
         rpyCorrections[ROLL_INDEX] += (error * settings.rollPID._P
                 + rollITerm * settings.rollPID._I
-                + dError * settings.rollPID._D) * rollGain;
+                + dError * settings.rollPID._D) * rollGains[NORMAL_GAIN];
     }
     if (axes & PITCH_AXIS) {
         dRates[PITCH_INDEX] = rateAverages[PITCH_INDEX] - lastRates[PITCH_INDEX];
@@ -109,7 +107,6 @@ void normalModeCalculate(int axes) {
             adjust = 0.0;
         }
         error *= adjust;
-        error *= ERROR_SCALE; //Scale to allow for same PIDs as autolevel etc.
         error = (error + 2.0 * lastPitchError) / 3.0;
         dError = error - lastPitchError;
         lastPitchError = error;
@@ -122,7 +119,7 @@ void normalModeCalculate(int axes) {
         lastPitchError = error;
         rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
                 + pitchITerm * settings.pitchPID._I
-                + dError * settings.pitchPID._D) * pitchGain;
+                + dError * settings.pitchPID._D) * pitchGains[NORMAL_GAIN];
     }
     if (axes & YAW_AXIS) {
         dRates[YAW_INDEX] = rateAverages[YAW_INDEX] - lastRates[YAW_INDEX];
@@ -156,7 +153,6 @@ void normalModeCalculate(int axes) {
             adjust = 0.0;
         }
         error *= adjust;
-        error *= ERROR_SCALE; //Scale to allow for same PIDs as autolevel etc.
         error = (error + 2.0 * lastYawError) / 3.0;
         dError = error - lastYawError;
         lastYawError = error;
@@ -169,6 +165,6 @@ void normalModeCalculate(int axes) {
         lastYawError = error;
         rpyCorrections[YAW_INDEX] += (error * settings.yawPID._P
                 + yawITerm * settings.yawPID._I
-                + dError * settings.yawPID._D) * yawGain;
+                + dError * settings.yawPID._D) * yawGains[NORMAL_GAIN];
     }
 }

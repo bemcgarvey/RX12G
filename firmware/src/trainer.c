@@ -40,9 +40,9 @@ void trainerModeCalculate(int axes) {
                         rollITerm = -settings.rollPID._maxI;
                     }
                     lastRollError = error;
-                    rpyCorrections[ROLL_INDEX] += error * settings.rollPID._P * rollGain
-                            + rollITerm * settings.rollPID._I * rollGain
-                            + deltaError * settings.rollPID._D * rollGain;
+                    rpyCorrections[ROLL_INDEX] += (error * settings.rollPID._P
+                            + rollITerm * settings.rollPID._I
+                            + deltaError * settings.rollPID._D) * rollGains[LOCK_GAIN];
                 }
             } else if (attitude.ypr.roll > settings.rollLimit || attitude.ypr.roll < -settings.rollLimit) {
                 lastRollError = 0;

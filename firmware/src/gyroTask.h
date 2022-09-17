@@ -29,11 +29,12 @@ extern "C" {
 #define IMU_ACCEL_Y      4
 #define IMU_ACCEL_Z      5
     
+    enum {NORMAL_GAIN = 0, LEVEL_GAIN = 1, LOCK_GAIN = 2};
     extern FlightModeType currentFlightMode;
     extern volatile uint16_t rawServoPositions[MAX_CHANNELS];
-    extern float rollGain;
-    extern float pitchGain;
-    extern float yawGain;
+    extern float rollGains[3];
+    extern float pitchGains[3];
+    extern float yawGains[3];
     extern uint16_t rpyCorrections[3];
     extern bool needToUpdateOutputs;
     extern int16_t deadbands[3];

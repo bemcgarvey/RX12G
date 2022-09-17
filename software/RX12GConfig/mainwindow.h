@@ -48,6 +48,8 @@ private:
     void setLimitsTabControls();
     void getTuningTabControls();
     void setTuningTabControls();
+    void getGainTabControls();
+    void setGainTabControls();
     void getControls();
     void setControls();
     bool openFile(QString fileName);

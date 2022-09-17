@@ -24,9 +24,9 @@
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
-float rollGain;
-float pitchGain;
-float yawGain;
+float rollGains[3];
+float pitchGains[3];
+float yawGains[3];
 volatile uint16_t rawServoPositions[MAX_CHANNELS];
 int16_t imuData[6];
 bool needToUpdateOutputs;
@@ -44,9 +44,9 @@ float pitchITerm;
 float lastYawError;
 float yawITerm;
 
-static float rollBaseGain;
-static float pitchBaseGain;
-static float yawBaseGain;
+static float normalBaseGains[3];
+static float levelBaseGains[2];
+static float lockBaseGains[3];
 static int modeChannel;
 static int rollGainChannel;
 static int pitchGainChannel;
@@ -76,9 +76,22 @@ void gyroTask(void *pvParameters) {
     rollGainChannel = settings.gainChannels[ROLL_INDEX];
     pitchGainChannel = settings.gainChannels[PITCH_INDEX];
     yawGainChannel = settings.gainChannels[YAW_INDEX];
-    rollBaseGain = settings.gains[ROLL_INDEX] / 100.0;
-    pitchBaseGain = settings.gains[PITCH_INDEX] / 100.0;
-    yawBaseGain = settings.gains[YAW_INDEX] / 100.0;
+    for (int i = 0; i < 3; ++i) {
+        normalBaseGains[i] = settings.normalGains[i] / 100.0;
+        lockBaseGains[i] = settings.lockGains[i] / 100.0;
+        if (i < 2) {
+            levelBaseGains[i] = settings.levelGains[i] / 100.0;
+        }
+    }
+    rollGains[NORMAL_GAIN] = normalBaseGains[ROLL_INDEX];
+    rollGains[LEVEL_GAIN] = levelBaseGains[ROLL_INDEX];
+    rollGains[LOCK_GAIN] = lockBaseGains[ROLL_INDEX];
+    pitchGains[NORMAL_GAIN] = normalBaseGains[PITCH_INDEX];
+    pitchGains[LEVEL_GAIN] = levelBaseGains[PITCH_INDEX];
+    pitchGains[LOCK_GAIN] = lockBaseGains[PITCH_INDEX];
+    yawGains[NORMAL_GAIN] = normalBaseGains[YAW_INDEX];
+    yawGains[LOCK_GAIN] = lockBaseGains[YAW_INDEX];
+    yawGains[LEVEL_GAIN] = 0;
     deadbands[ROLL_INDEX] = (settings.deadbands[ROLL_INDEX] * 1024) / 100;
     deadbands[PITCH_INDEX] = (settings.deadbands[PITCH_INDEX] * 1024) / 100;
     deadbands[YAW_INDEX] = (settings.deadbands[YAW_INDEX] * 1024) / 100;
@@ -366,20 +379,23 @@ FlightModeType decodeFlightMode(void) {
 }
 
 void calculateGains(void) {
+    float gainAdjust;
     if (rollGainChannel) {
-        rollGain = rollBaseGain * rawServoPositions[rollGainChannel] / 2047.0;
-    } else {
-        rollGain = rollBaseGain;
+        gainAdjust = rawServoPositions[rollGainChannel] / 2047.0;
+        rollGains[NORMAL_GAIN] = normalBaseGains[ROLL_INDEX] * gainAdjust;
+        rollGains[LEVEL_GAIN] = levelBaseGains[ROLL_INDEX] * gainAdjust;
+        rollGains[LOCK_GAIN] = lockBaseGains[ROLL_INDEX] * gainAdjust;
     }
     if (pitchGainChannel) {
-        pitchGain = pitchBaseGain * rawServoPositions[pitchGainChannel] / 2047.0;
-    } else {
-        pitchGain = pitchBaseGain;
+        gainAdjust = rawServoPositions[pitchGainChannel] / 2047.0;
+        pitchGains[NORMAL_GAIN] = normalBaseGains[PITCH_INDEX] * gainAdjust;
+        pitchGains[LEVEL_GAIN] = levelBaseGains[PITCH_INDEX] * gainAdjust;
+        pitchGains[LOCK_GAIN] = lockBaseGains[PITCH_INDEX] * gainAdjust;
     }
     if (yawGainChannel) {
-        yawGain = yawBaseGain * rawServoPositions[yawGainChannel] / 2047.0;
-    } else {
-        yawGain = yawBaseGain;
+        gainAdjust = rawServoPositions[pitchGainChannel] / 2047.0;
+        yawGains[NORMAL_GAIN] = normalBaseGains[YAW_INDEX] * gainAdjust;
+        yawGains[LOCK_GAIN] = lockBaseGains[YAW_INDEX] * gainAdjust;
     }
 }
 

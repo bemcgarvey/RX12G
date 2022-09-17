@@ -199,27 +199,6 @@ void MainWindow::getGyroTabControls() {
     settings.customMode2.aileronMode = ui->cm2AileronComboBox->currentIndex();
     settings.customMode2.elevatorMode = ui->cm2ElevatorComboBox->currentIndex();
     settings.customMode2.rudderMode = ui->cm2RudderComboBox->currentIndex();
-    settings.gains[AILERON_INDEX] = ui->aileronGainSpinBox->value();
-    settings.gains[ELEVATOR_INDEX] = ui->elevatorGainSpinBox->value();
-    settings.gains[RUDDER_INDEX] = ui->rudderGainSpinBox->value();
-    settings.gainCurves[AILERON_INDEX] = ui->aileronGainCurveComboBox->currentIndex();
-    settings.gainCurves[ELEVATOR_INDEX] = ui->elevatorGainCurveComboBox->currentIndex();
-    settings.gainCurves[RUDDER_INDEX] = ui->rudderGainCurveComboBox->currentIndex();
-    index = ui->aileronGainChannelComboBox->currentIndex();
-    if (index > 0) {
-        index += 3;
-    }
-    settings.gainChannels[AILERON_INDEX] = index;
-    index = ui->elevatorGainChannelComboBox->currentIndex();
-    if (index > 0) {
-        index += 3;
-    }
-    settings.gainChannels[ELEVATOR_INDEX] = index;
-    index = ui->rudderGainChannelComboBox->currentIndex();
-    if (index > 0) {
-        index += 3;
-    }
-    settings.gainChannels[RUDDER_INDEX] = index;
     index = ui->aileron2ChannelComboBox->currentIndex();
     if (index > 0) {
         index += 3;
@@ -230,7 +209,6 @@ void MainWindow::getGyroTabControls() {
         index += 3;
     }
     settings.elevator2Channel = index;
-
 }
 
 void MainWindow::setGyroTabControls() {
@@ -278,27 +256,6 @@ void MainWindow::setGyroTabControls() {
     ui->cm2AileronComboBox->setCurrentIndex(settings.customMode2.aileronMode);
     ui->cm2ElevatorComboBox->setCurrentIndex(settings.customMode2.elevatorMode);
     ui->cm2RudderComboBox->setCurrentIndex(settings.customMode2.rudderMode);
-    ui->aileronGainSpinBox->setValue(settings.gains[AILERON_INDEX]);
-    ui->elevatorGainSpinBox->setValue(settings.gains[ELEVATOR_INDEX]);
-    ui->rudderGainSpinBox->setValue(settings.gains[RUDDER_INDEX]);
-    ui->aileronGainCurveComboBox->setCurrentIndex(settings.gainCurves[AILERON_INDEX]);
-    ui->elevatorGainCurveComboBox->setCurrentIndex(settings.gainCurves[ELEVATOR_INDEX]);
-    ui->rudderGainCurveComboBox->setCurrentIndex(settings.gainCurves[RUDDER_INDEX]);
-    index = settings.gainChannels[AILERON_INDEX];
-    if (index > 0) {
-        index -= 3;
-    }
-    ui->aileronGainChannelComboBox->setCurrentIndex(index);
-    index = settings.gainChannels[ELEVATOR_INDEX];
-    if (index > 0) {
-        index -= 3;
-    }
-    ui->elevatorGainChannelComboBox->setCurrentIndex(index);
-    index = settings.gainChannels[RUDDER_INDEX];
-    if (index > 0) {
-        index -= 3;
-    }
-    ui->rudderGainChannelComboBox->setCurrentIndex(index);
     index = settings.aileron2Channel;
     if (index > 0) {
         index -= 3;
@@ -378,6 +335,66 @@ void MainWindow::setTuningTabControls()
     ui->yawMaxILineEdit->setText(QString().setNum(settings.yawPID._maxI));
 }
 
+void MainWindow::getGainTabControls()
+{
+    settings.normalGains[AILERON_INDEX] = ui->rollNormalGainSpinBox->value();
+    settings.levelGains[AILERON_INDEX] = ui->rollLevelGainSpinBox->value();
+    settings.lockGains[AILERON_INDEX] = ui->rollLockGainSpinBox->value();
+    settings.normalGains[ELEVATOR_INDEX] = ui->pitchNormalGainSpinBox->value();
+    settings.levelGains[ELEVATOR_INDEX] = ui->pitchLevelGainSpinBox->value();
+    settings.lockGains[ELEVATOR_INDEX] = ui->pitchLockGainSpinBox->value();
+    settings.normalGains[RUDDER_INDEX] = ui->yawNormalGainSpinBox->value();
+    settings.lockGains[RUDDER_INDEX] = ui->yawLockGainSpinBox->value();
+    settings.gainCurves[AILERON_INDEX] = ui->aileronGainCurveComboBox->currentIndex();
+    settings.gainCurves[ELEVATOR_INDEX] = ui->elevatorGainCurveComboBox->currentIndex();
+    settings.gainCurves[RUDDER_INDEX] = ui->rudderGainCurveComboBox->currentIndex();
+    int index = ui->aileronGainChannelComboBox->currentIndex();
+    if (index > 0) {
+        index += 3;
+    }
+    settings.gainChannels[AILERON_INDEX] = index;
+    index = ui->elevatorGainChannelComboBox->currentIndex();
+    if (index > 0) {
+        index += 3;
+    }
+    settings.gainChannels[ELEVATOR_INDEX] = index;
+    index = ui->rudderGainChannelComboBox->currentIndex();
+    if (index > 0) {
+        index += 3;
+    }
+    settings.gainChannels[RUDDER_INDEX] = index;
+}
+
+void MainWindow::setGainTabControls()
+{
+    ui->rollNormalGainSpinBox->setValue(settings.normalGains[AILERON_INDEX]);
+    ui->pitchNormalGainSpinBox->setValue(settings.normalGains[ELEVATOR_INDEX]);
+    ui->yawNormalGainSpinBox->setValue(settings.normalGains[RUDDER_INDEX]);
+    ui->rollLevelGainSpinBox->setValue(settings.levelGains[AILERON_INDEX]);
+    ui->pitchLevelGainSpinBox->setValue(settings.levelGains[ELEVATOR_INDEX]);
+    ui->rollLockGainSpinBox->setValue(settings.lockGains[AILERON_INDEX]);
+    ui->pitchLockGainSpinBox->setValue(settings.lockGains[ELEVATOR_INDEX]);
+    ui->yawLockGainSpinBox->setValue(settings.lockGains[RUDDER_INDEX]);
+    ui->aileronGainCurveComboBox->setCurrentIndex(settings.gainCurves[AILERON_INDEX]);
+    ui->elevatorGainCurveComboBox->setCurrentIndex(settings.gainCurves[ELEVATOR_INDEX]);
+    ui->rudderGainCurveComboBox->setCurrentIndex(settings.gainCurves[RUDDER_INDEX]);
+    int index = settings.gainChannels[AILERON_INDEX];
+    if (index > 0) {
+        index -= 3;
+    }
+    ui->aileronGainChannelComboBox->setCurrentIndex(index);
+    index = settings.gainChannels[ELEVATOR_INDEX];
+    if (index > 0) {
+        index -= 3;
+    }
+    ui->elevatorGainChannelComboBox->setCurrentIndex(index);
+    index = settings.gainChannels[RUDDER_INDEX];
+    if (index > 0) {
+        index -= 3;
+    }
+    ui->rudderGainChannelComboBox->setCurrentIndex(index);
+}
+
 void MainWindow::getControls()
 {
     getRxTabControls();
@@ -385,6 +402,7 @@ void MainWindow::getControls()
     getGyroTabControls();
     getLimitsTabControls();
     getTuningTabControls();
+    getGainTabControls();
 }
 
 void MainWindow::setControls()
@@ -394,6 +412,7 @@ void MainWindow::setControls()
     setLimitsTabControls();
     setTuningTabControls();
     setPlaneTabControls();
+    setGainTabControls();
 }
 
 bool MainWindow::openFile(QString fileName)
@@ -466,17 +485,29 @@ bool MainWindow::controlsValid()
     assignedChannels[3] = ui->aileronGainChannelComboBox->currentIndex();
     assignedChannels[4] = ui->elevatorGainChannelComboBox->currentIndex();
     assignedChannels[5] = ui->rudderGainChannelComboBox->currentIndex();
-    for (int i = 0; i < 5; ++i) {
-        for (int j = i + 1; j < 6; ++j) {
+    for (int i = 0; i < 2; ++i) {
+        for (int j = i + 1; j < 3; ++j) {
             if (assignedChannels[i] == 0) {
                 continue;
             }
             if (assignedChannels[i] == assignedChannels[j]) {
                 ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gyroTab));
-                if (QMessageBox::warning(this, QApplication::applicationName(),
-                                         "You have multiple functions assigned to the same channel. Are you sure this is what you want?",
-                                         QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
+                QMessageBox::critical(this, QApplication::applicationName(),
+                  "You have multiple control surfaces assigned to the same channel.");
                     return false;
+                }
+            }
+        }
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 3; j < 6; ++j) {
+            if (assignedChannels[i] == assignedChannels[j]) {
+                ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gainTab));
+                if (QMessageBox::critical(this, QApplication::applicationName(),
+                  "You have a control and a gain on the same channel.  Are you sure this is what you want?",
+                                      QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
+                    return false;
+                } else {
+                    return true;
                 }
             }
         }

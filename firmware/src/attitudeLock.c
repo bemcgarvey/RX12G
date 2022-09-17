@@ -13,8 +13,6 @@ static float pitchSum;
 static bool yawLocked;
 static float yawSum;
 
-#define ERROR_SCALE_FACTOR  0.2
-
 void initAttitudeLock(void) {
     rollLocked = false;
     pitchLocked = false;
@@ -39,7 +37,6 @@ void attitudeLockCalculate(int axes) {
             } else {
                 rollSum += attitude.gyroRatesDeg.rollRate;
                 error = -rollSum;
-                error *= ERROR_SCALE_FACTOR;
                 deltaError = error - lastRollError;
                 rollITerm += error;
                 if (rollITerm > settings.rollPID._maxI) {
@@ -48,9 +45,9 @@ void attitudeLockCalculate(int axes) {
                     rollITerm = -settings.rollPID._maxI;
                 }
                 lastRollError = error;
-                rpyCorrections[ROLL_INDEX] += error * settings.rollPID._P * rollGain
-                        + rollITerm * settings.rollPID._I * rollGain
-                        + deltaError * settings.rollPID._D * rollGain;
+                rpyCorrections[ROLL_INDEX] += (error * settings.rollPID._P
+                        + rollITerm * settings.rollPID._I
+                        + deltaError * settings.rollPID._D) * rollGains[LOCK_GAIN];
             }
         }
     }
@@ -68,7 +65,6 @@ void attitudeLockCalculate(int axes) {
             } else {
                 pitchSum += attitude.gyroRatesDeg.pitchRate;
                 error = -pitchSum;
-                error *= ERROR_SCALE_FACTOR;
                 deltaError = error - lastPitchError;
                 pitchITerm += error;
                 if (pitchITerm > settings.pitchPID._maxI) {
@@ -77,9 +73,9 @@ void attitudeLockCalculate(int axes) {
                     pitchITerm = -settings.pitchPID._maxI;
                 }
                 lastPitchError = error;
-                rpyCorrections[PITCH_INDEX] += error * settings.pitchPID._P * pitchGain
-                        + pitchITerm * settings.pitchPID._I * pitchGain
-                        + deltaError * settings.pitchPID._D * pitchGain;
+                rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
+                        + pitchITerm * settings.pitchPID._I
+                        + deltaError * settings.pitchPID._D) * pitchGains[LOCK_GAIN];
             }
         }
     }
@@ -97,7 +93,6 @@ void attitudeLockCalculate(int axes) {
             } else {
                 yawSum += attitude.gyroRatesDeg.yawRate;
                 error = -yawSum;
-                error *= ERROR_SCALE_FACTOR;
                 deltaError = error - lastYawError;
                 yawITerm += error;
                 if (yawITerm > settings.yawPID._maxI) {
@@ -106,9 +101,9 @@ void attitudeLockCalculate(int axes) {
                     yawITerm = -settings.yawPID._maxI;
                 }
                 lastRollError = error;
-                rpyCorrections[YAW_INDEX] += error * settings.yawPID._P * yawGain
-                        + yawITerm * settings.yawPID._I * yawGain
-                        + deltaError * settings.yawPID._D * yawGain;
+                rpyCorrections[YAW_INDEX] += (error * settings.yawPID._P
+                        + yawITerm * settings.yawPID._I
+                        + deltaError * settings.yawPID._D) * yawGains[LOCK_GAIN];
             }
         }
     }

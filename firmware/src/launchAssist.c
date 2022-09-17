@@ -32,10 +32,10 @@ void launchAssistCalculate(int axes) {
                 pitchITerm = -settings.pitchPID._maxI;
             }
             lastPitchError = error;
-            rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P * pitchGain
-                    + pitchITerm * settings.pitchPID._I * pitchGain
-                    + deltaError * settings.pitchPID._D * pitchGain)
-                    * cos(attitude.ypr.roll * DEGREES_TO_RAD);
+            rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
+                    + pitchITerm * settings.pitchPID._I
+                    + deltaError * settings.pitchPID._D)
+                    * cos(attitude.ypr.roll * DEGREES_TO_RAD) * pitchGains[LEVEL_GAIN];
             //cos term above corrects for roll - this will reverse correction when inverted
             //and reduce correction the closer we are to 90 degrees of roll
         } else {
