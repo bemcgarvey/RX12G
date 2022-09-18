@@ -18,6 +18,7 @@
 
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
+//TODO implement AETR channel order
 
 int main(void) {
     if (RCONbits.POR == 1) {

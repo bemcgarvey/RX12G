@@ -63,6 +63,8 @@ enum {
         GAIN_CURVE_NORMAL = 0, GAIN_CURVE_FLAT = 1, GAIN_CURVE_STEEP = 2
     } GainCurveType;
 
+    enum {CHANNEL_ORDER_TAER = 0x00, CHANNEL_ORDER_AETR = 0xae};
+
     typedef struct {
         float _P;
         float _I;
@@ -85,6 +87,7 @@ enum {
         uint8_t numSBusOutputs;
         uint8_t failsafeType;
         uint8_t rxOnly;
+        uint8_t channelOrder;
         //gyro settings
         uint8_t gyroOrientation;
         uint8_t wingType;

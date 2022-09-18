@@ -33,6 +33,11 @@ void MainWindow::getRxTabControls() {
     } else {
         settings.rxOnly = NORMAL_RX_MODE;
     }
+    if (ui->aetrRadioButton->isChecked()) {
+        settings.channelOrder = CHANNEL_ORDER_AETR;
+    } else {
+        settings.channelOrder = CHANNEL_ORDER_TAER;
+    }
 }
 
 void MainWindow::setRxTabControls() {
@@ -67,6 +72,11 @@ void MainWindow::setRxTabControls() {
         ui->rxOnlyCheckBox->setChecked(true);
     } else {
         ui->rxOnlyCheckBox->setChecked(false);
+    }
+    if (settings.channelOrder == CHANNEL_ORDER_AETR) {
+        ui->aetrRadioButton->setChecked(true);
+    } else {
+        ui->taerRadioButton->setChecked(true);
     }
 }
 
@@ -500,6 +510,9 @@ bool MainWindow::controlsValid()
         }
     for (int i = 0; i < 3; ++i) {
         for (int j = 3; j < 6; ++j) {
+            if (assignedChannels[i] == 0) {
+                continue;
+            }
             if (assignedChannels[i] == assignedChannels[j]) {
                 ui->tabWidget->setCurrentIndex(ui->tabWidget->indexOf(ui->gainTab));
                 if (QMessageBox::critical(this, QApplication::applicationName(),

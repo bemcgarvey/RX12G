@@ -713,3 +713,23 @@ void MainWindow::on_rxOnlyCheckBox_stateChanged(int arg1)
     }
 }
 
+
+void MainWindow::on_taerRadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->ch1Label->setText("CH 1 (Thr)");
+        ui->ch2Label->setText("CH 2 (Ail)");
+        ui->ch3Label->setText("CH 3 (Ele)");
+    }
+}
+
+
+void MainWindow::on_aetrRadioButton_toggled(bool checked)
+{
+    if (checked) {
+        ui->ch1Label->setText("CH 1 (Ail)");
+        ui->ch2Label->setText("CH 2 (Ele)");
+        ui->ch3Label->setText("CH 3 (Thr)");
+    }
+}
+

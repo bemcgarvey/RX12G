@@ -10,6 +10,12 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>100</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>RX12G Config</string>
   </property>
@@ -189,24 +195,59 @@
            </widget>
           </item>
           <item>
+           <widget class="QGroupBox" name="channelOrderGroupBox">
+            <property name="title">
+             <string>Channel Order</string>
+            </property>
+            <widget class="QRadioButton" name="taerRadioButton">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>50</y>
+               <width>111</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>TAER (Spektrum)</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="aetrRadioButton">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>90</y>
+               <width>89</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>AETR</string>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="rxOnlyCheckBox">
             <property name="text">
              <string>Rx Only Mode</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </item>
@@ -233,16 +274,16 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QLabel" name="label_4">
+            <widget class="QLabel" name="ch1Label">
              <property name="text">
-              <string>Ch. 1 (Thr)</string>
+              <string>CH 1 (Thr)</string>
              </property>
             </widget>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Ch. 4 (Rud)</string>
+              <string>CH 4 (Rud)</string>
              </property>
             </widget>
            </item>
@@ -348,7 +389,7 @@
            <item row="5" column="0">
             <widget class="QLabel" name="label_9">
              <property name="text">
-              <string>Ch. 6</string>
+              <string>CH 6</string>
              </property>
             </widget>
            </item>
@@ -371,14 +412,14 @@
            <item row="4" column="0">
             <widget class="QLabel" name="label_8">
              <property name="text">
-              <string>CH. 5</string>
+              <string>CH 5</string>
              </property>
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QLabel" name="label_6">
+            <widget class="QLabel" name="ch3Label">
              <property name="text">
-              <string>Ch. 3 (Ele)</string>
+              <string>CH 3 (Ele)</string>
              </property>
             </widget>
            </item>
@@ -447,51 +488,51 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="label_5">
+            <widget class="QLabel" name="ch2Label">
              <property name="text">
-              <string>Ch. 2 (Ail)</string>
+              <string>CH 2 (Ail)</string>
              </property>
             </widget>
            </item>
            <item row="0" column="2">
             <widget class="QLabel" name="label_10">
              <property name="text">
-              <string>Ch. 7</string>
+              <string>CH 7</string>
              </property>
             </widget>
            </item>
            <item row="1" column="2">
             <widget class="QLabel" name="label_11">
              <property name="text">
-              <string>Ch. 8</string>
+              <string>CH 8</string>
              </property>
             </widget>
            </item>
            <item row="2" column="2">
             <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>Ch. 9</string>
+              <string>CH 9</string>
              </property>
             </widget>
            </item>
            <item row="3" column="2">
             <widget class="QLabel" name="label_13">
              <property name="text">
-              <string>Ch. 10</string>
+              <string>CH 10</string>
              </property>
             </widget>
            </item>
            <item row="4" column="2">
             <widget class="QLabel" name="label_14">
              <property name="text">
-              <string>Ch. 11</string>
+              <string>CH 11</string>
              </property>
             </widget>
            </item>
            <item row="5" column="2">
             <widget class="QLabel" name="label_15">
              <property name="text">
-              <string>Ch. 12</string>
+              <string>CH 12</string>
              </property>
             </widget>
            </item>
