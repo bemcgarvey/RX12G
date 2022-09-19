@@ -17,8 +17,8 @@ void initLaunchAssist(void) {
 void launchAssistCalculate(int axes) {
     float error;
     float deltaError;
-    if ((abs(rawServoPositions[AILERON] - channelCenters[AILERON]) > deadbands[ROLL_INDEX])
-            || (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) > deadbands[ROLL_INDEX])) {
+    if ((abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) > deadbands[ROLL_INDEX])
+            || (abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) > deadbands[ROLL_INDEX])) {
         takeoffDone = true;
     }
     if (axes & PITCH_AXIS) {

@@ -18,7 +18,9 @@
 
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
-//TODO implement AETR channel order
+//TODO add option to put channels 5-20 on sBus (as sBus 1 - 15 channels)??
+// think about the best way to map the upper channels, maybe different
+// channels on each sBus output?
 
 int main(void) {
     if (RCONbits.POR == 1) {

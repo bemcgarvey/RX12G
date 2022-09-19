@@ -18,6 +18,9 @@ volatile uint16_t outputServos[MAX_CHANNELS];
 volatile bool failsafeEngaged = false;
 int numPWMOutputs = NUM_OUTPUTS;
 volatile bool outputsDisabled = false;
+int throttleChannel = 0;  //TAER order by default
+int aileronChannel = 1;
+int elevatorChannel = 2;
 
 int updateCount;
 int updateCountReset;
@@ -48,6 +51,15 @@ volatile unsigned int* const OCxCONRegister[NUM_OUTPUTS] = {&OC11CON, &OC10CON, 
 void updatePulses(uint32_t status, uintptr_t context);
 
 void initOutputs(void) {
+    if (settings.channelOrder == CHANNEL_ORDER_AETR) {
+        aileronChannel = 0;
+        elevatorChannel = 1;
+        throttleChannel = 2;
+    } else { //TAER
+        throttleChannel = 0;
+        aileronChannel = 1;
+        elevatorChannel = 2;
+    }
     updateCountReset = settings.outputHz / CONTROL_LOOP_FREQ;
     if (updateCountReset < 1) {
         updateCountReset = 1;
@@ -69,8 +81,8 @@ void initOutputs(void) {
 }
 
 void disableThrottle(void) {
-    rawServoPositions[THROTTLE] = 0xffff;
-    *OCxCONCLRRegister[THROTTLE] = 0x8000;
+    rawServoPositions[throttleChannel] = 0xffff;
+    *OCxCONCLRRegister[throttleChannel] = 0x8000;
 }
 
 void engageFailsafe(void) {

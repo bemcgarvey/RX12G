@@ -22,14 +22,18 @@ extern "C" {
 #define OFFSET          (2097 * US_COUNT)
 #define PULSE           (903 * US_COUNT)
 
+    //Channels 0, 1, 2 depend on channel ordering
     enum {
-        THROTTLE = 0, AILERON = 1, ELEVATOR = 2, RUDDER = 3, GEAR = 4, AUX1 = 5,
-        AUX2 = 6, AUX3 = 7, AUX4 = 8, AUX5 = 9, AUX6 = 10, AUX7 = 11
+        RUDDER = 3, GEAR = 4, AUX1 = 5, AUX2 = 6, AUX3 = 7, AUX4 = 8, 
+        AUX5 = 9, AUX6 = 10, AUX7 = 11
     };
     
     extern volatile uint16_t outputServos[MAX_CHANNELS];
     extern volatile bool failsafeEngaged;
     extern volatile bool outputsDisabled;
+    extern int throttleChannel;
+    extern int aileronChannel;
+    extern int elevatorChannel;
     
     void initOutputs(void);
     void disableThrottle(void);

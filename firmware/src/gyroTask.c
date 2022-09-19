@@ -214,7 +214,7 @@ void gyroTask(void *pvParameters) {
                 rpyCorrections[AILERON_INDEX] = 0;
                 rpyCorrections[ELEVATOR_INDEX] = 0;
                 rpyCorrections[RUDDER_INDEX] = 0;
-                if (wiggleCount > 2 * settings.outputHz / 6) {
+                if (wiggleCount > 2 * CONTROL_LOOP_FREQ / 6) {
                     if (settings.gyroEnabledFlags & AILERON_MASK) {
                         rpyCorrections[AILERON_INDEX] = 300;
                     }
@@ -224,7 +224,7 @@ void gyroTask(void *pvParameters) {
                     if (settings.gyroEnabledFlags & RUDDER_MASK) {
                         rpyCorrections[RUDDER_INDEX] = 300;
                     }
-                } else if (wiggleCount > settings.outputHz / 6) {
+                } else if (wiggleCount > CONTROL_LOOP_FREQ / 6) {
                     if (settings.gyroEnabledFlags & AILERON_MASK) {
                         rpyCorrections[AILERON_INDEX] = -300;
                     }
@@ -402,12 +402,12 @@ void calculateGains(void) {
 void verifyAndSetOutputs(void) {
     if (settings.gyroEnabledFlags & AILERON_MASK) {
         if (settings.gyroReverseFlags & AILERON_MASK) {
-            newServoPositions[AILERON_INDEX] = rawServoPositions[AILERON] - rpyCorrections[AILERON_INDEX];
+            newServoPositions[AILERON_INDEX] = rawServoPositions[aileronChannel] - rpyCorrections[AILERON_INDEX];
         } else {
-            newServoPositions[AILERON_INDEX] = rawServoPositions[AILERON] + rpyCorrections[AILERON_INDEX];
+            newServoPositions[AILERON_INDEX] = rawServoPositions[aileronChannel] + rpyCorrections[AILERON_INDEX];
         }
     } else {
-        newServoPositions[AILERON_INDEX] = rawServoPositions[AILERON];
+        newServoPositions[AILERON_INDEX] = rawServoPositions[aileronChannel];
     }
     if (newServoPositions[AILERON_INDEX] < settings.minTravelLimits[AILERON_INDEX]) {
         newServoPositions[AILERON_INDEX] = settings.minTravelLimits[AILERON_INDEX];
@@ -416,12 +416,12 @@ void verifyAndSetOutputs(void) {
     }
     if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
         if (settings.gyroReverseFlags & ELEVATOR_MASK) {
-            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR] - rpyCorrections[ELEVATOR_INDEX];
+            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[elevatorChannel] - rpyCorrections[ELEVATOR_INDEX];
         } else {
-            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR] + rpyCorrections[ELEVATOR_INDEX];
+            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[elevatorChannel] + rpyCorrections[ELEVATOR_INDEX];
         }
     } else {
-        newServoPositions[ELEVATOR_INDEX] = rawServoPositions[ELEVATOR];
+        newServoPositions[ELEVATOR_INDEX] = rawServoPositions[elevatorChannel];
     }
     if (newServoPositions[ELEVATOR_INDEX] < settings.minTravelLimits[ELEVATOR_INDEX]) {
         newServoPositions[ELEVATOR_INDEX] = settings.minTravelLimits[ELEVATOR_INDEX];
@@ -470,9 +470,9 @@ void verifyAndSetOutputs(void) {
     } else if (newServoPositions[ELEVATOR2_INDEX] > settings.maxTravelLimits[ELEVATOR2_INDEX]) {
         newServoPositions[ELEVATOR2_INDEX] = settings.maxTravelLimits[ELEVATOR2_INDEX];
     }
-    outputServos[THROTTLE] = rawServoPositions[THROTTLE];
-    outputServos[AILERON] = newServoPositions[AILERON_INDEX];
-    outputServos[ELEVATOR] = newServoPositions[ELEVATOR_INDEX];
+    outputServos[throttleChannel] = rawServoPositions[throttleChannel];
+    outputServos[aileronChannel] = newServoPositions[AILERON_INDEX];
+    outputServos[elevatorChannel] = newServoPositions[ELEVATOR_INDEX];
     outputServos[RUDDER] = newServoPositions[RUDDER_INDEX];
     for (int i = GEAR; i < MAX_CHANNELS; ++i) {
         if (i == settings.aileron2Channel) {
@@ -486,8 +486,8 @@ void verifyAndSetOutputs(void) {
 }
 
 bool sticksCentered(void) {
-    if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]
-            && abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]) {
+    if (abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) < deadbands[ROLL_INDEX]
+            && abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) < deadbands[PITCH_INDEX]) {
         if (centerCount > 0) {
             --centerCount;
         } else {

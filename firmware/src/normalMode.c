@@ -20,9 +20,13 @@ void initNormalMode(void) {
     for (int i = 0; i < 3; ++i) {
         lastRates[i] = 0;
         lastSticks[i] = 0;
-        stickRanges[i] = MAX(channelCenters[AILERON + i] - settings.minTravelLimits[i],
-                settings.maxTravelLimits[i] - channelCenters[AILERON + i]);
     }
+    stickRanges[AILERON_INDEX] = MAX(channelCenters[aileronChannel] - settings.minTravelLimits[AILERON_INDEX],
+                settings.maxTravelLimits[AILERON_INDEX] - channelCenters[aileronChannel]);
+    stickRanges[ELEVATOR_INDEX] = MAX(channelCenters[elevatorChannel] - settings.minTravelLimits[ELEVATOR_INDEX],
+                settings.maxTravelLimits[ELEVATOR_INDEX] - channelCenters[elevatorChannel]);
+    stickRanges[RUDDER_INDEX] = MAX(channelCenters[RUDDER] - settings.minTravelLimits[RUDDER_INDEX],
+                settings.maxTravelLimits[RUDDER_INDEX] - channelCenters[RUDDER]);
 }
 
 void normalModeCalculate(int axes) {
@@ -33,22 +37,22 @@ void normalModeCalculate(int axes) {
     if (axes & ROLL_AXIS) {
         dRates[ROLL_INDEX] = rateAverages[ROLL_INDEX] - lastRates[ROLL_INDEX];
         lastRates[ROLL_INDEX] = rateAverages[ROLL_INDEX];
-        dSticks[ROLL_INDEX] = rawServoPositions[AILERON] - lastSticks[ROLL_INDEX];
-        lastSticks[ROLL_INDEX] = rawServoPositions[AILERON];
+        dSticks[ROLL_INDEX] = rawServoPositions[aileronChannel] - lastSticks[ROLL_INDEX];
+        lastSticks[ROLL_INDEX] = rawServoPositions[aileronChannel];
         error = -dRates[ROLL_INDEX];
         //Adjust for stick position
-        if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) < deadbands[ROLL_INDEX]) {
+        if (abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) < deadbands[ROLL_INDEX]) {
             adjust = 1.0;
         } else {
             switch (settings.gainCurves[AILERON_INDEX]) {
                 case GAIN_CURVE_NORMAL:
-                    adjust = 1.0 - (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) / stickRanges[AILERON_INDEX]);
+                    adjust = 1.0 - (abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) / stickRanges[AILERON_INDEX]);
                     break;
                 case GAIN_CURVE_FLAT:
-                    adjust = 1.0 - (0.5 * (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) / stickRanges[AILERON_INDEX]));
+                    adjust = 1.0 - (0.5 * (abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) / stickRanges[AILERON_INDEX]));
                     break;
                 case GAIN_CURVE_STEEP:
-                    adjust = 1.0 - (2.0 * (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) / stickRanges[AILERON_INDEX]));
+                    adjust = 1.0 - (2.0 * (abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) / stickRanges[AILERON_INDEX]));
                     break;
             }
             if (adjust < 0.0) {
@@ -78,22 +82,22 @@ void normalModeCalculate(int axes) {
     if (axes & PITCH_AXIS) {
         dRates[PITCH_INDEX] = rateAverages[PITCH_INDEX] - lastRates[PITCH_INDEX];
         lastRates[PITCH_INDEX] = rateAverages[PITCH_INDEX];
-        dSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR] - lastSticks[PITCH_INDEX];
-        lastSticks[PITCH_INDEX] = rawServoPositions[ELEVATOR];
+        dSticks[PITCH_INDEX] = rawServoPositions[elevatorChannel] - lastSticks[PITCH_INDEX];
+        lastSticks[PITCH_INDEX] = rawServoPositions[elevatorChannel];
         error = -dRates[PITCH_INDEX];
         //Adjust for stick position
-        if (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) < deadbands[PITCH_INDEX]) {
+        if (abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) < deadbands[PITCH_INDEX]) {
             adjust = 1.0;
         } else {
             switch (settings.gainCurves[ELEVATOR_INDEX]) {
                 case GAIN_CURVE_NORMAL:
-                    adjust = 1.0 - (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) / stickRanges[ELEVATOR_INDEX]);
+                    adjust = 1.0 - (abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) / stickRanges[ELEVATOR_INDEX]);
                     break;
                 case GAIN_CURVE_FLAT:
-                    adjust = 1.0 - (0.5 * (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) / stickRanges[ELEVATOR_INDEX]));
+                    adjust = 1.0 - (0.5 * (abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) / stickRanges[ELEVATOR_INDEX]));
                     break;
                 case GAIN_CURVE_STEEP:
-                    adjust = 1.0 - (2.0 * (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) / stickRanges[ELEVATOR_INDEX]));
+                    adjust = 1.0 - (2.0 * (abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) / stickRanges[ELEVATOR_INDEX]));
                     break;
             }
             if (adjust < 0.0) {

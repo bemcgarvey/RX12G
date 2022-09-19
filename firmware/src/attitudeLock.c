@@ -25,14 +25,14 @@ void attitudeLockCalculate(int axes) {
     
     if (axes & ROLL_AXIS) {
         if (!rollLocked) {
-            if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) <= deadbands[AILERON_INDEX]) {
+            if (abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) <= deadbands[AILERON_INDEX]) {
                 rollLocked = true;
                 rollSum = 0;
                 lastRollError = 0;
                 rollITerm = 0;
             }
         } else if (rollLocked) {
-            if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) > deadbands[AILERON_INDEX]) {
+            if (abs(rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) > deadbands[AILERON_INDEX]) {
                 rollLocked = false;
             } else {
                 rollSum += attitude.gyroRatesDeg.rollRate;
@@ -53,14 +53,14 @@ void attitudeLockCalculate(int axes) {
     }
     if (axes & PITCH_AXIS) {
         if (!pitchLocked) {
-            if (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) <= deadbands[ELEVATOR_INDEX]) {
+            if (abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) <= deadbands[ELEVATOR_INDEX]) {
                 pitchLocked = true;
                 pitchSum = 0;
                 lastPitchError = 0;
                 pitchITerm = 0;
             }
         } else if (pitchLocked) {
-            if (abs(rawServoPositions[ELEVATOR] - channelCenters[ELEVATOR]) > deadbands[ELEVATOR_INDEX]) {
+            if (abs(rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) > deadbands[ELEVATOR_INDEX]) {
                 pitchLocked = false;
             } else {
                 pitchSum += attitude.gyroRatesDeg.pitchRate;
@@ -81,7 +81,7 @@ void attitudeLockCalculate(int axes) {
     }
     if (axes & YAW_AXIS) {
         if (!yawLocked) {
-            if (abs(rawServoPositions[AILERON] - channelCenters[AILERON]) <= deadbands[AILERON_INDEX]) {
+            if (abs(rawServoPositions[RUDDER] - channelCenters[RUDDER]) <= deadbands[RUDDER_INDEX]) {
                 yawLocked = true;
                 yawSum = 0;
                 lastYawError = 0;

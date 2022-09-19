@@ -9,8 +9,6 @@ static bool rollOutOfBounds;
 static float rollSum;
 static int rollDirection;
 
-#define ERROR_SCALE_FACTOR  0.2
-
 void initTrainerMode(void) {
     rollOutOfBounds = false;
 }
@@ -31,7 +29,6 @@ void trainerModeCalculate(int axes) {
                     rollOutOfBounds = false;
                 } else {
                     error = -rollSum;
-                    error *= ERROR_SCALE_FACTOR;
                     deltaError = error - lastRollError;
                     rollITerm += error;
                     if (rollITerm > settings.rollPID._maxI) {

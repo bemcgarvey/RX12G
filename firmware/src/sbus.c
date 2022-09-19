@@ -16,7 +16,8 @@ typedef union __attribute__((packed)) {
         uint8_t footer;
     };
     uint8_t bytes[25];
-} SBusPacket;
+}
+SBusPacket;
 
 static volatile __attribute__((coherent, aligned(4))) SBusPacket sbusPacket;
 
@@ -77,14 +78,14 @@ void initSBus(void) {
             RPA7R = 1;
             break;
     }
-    
+
     //Setup DMA
     DCH3SSA = (uint32_t) KVA_TO_PA((uint32_t) & sbusPacket);
     DCH3DSA = (uint32_t) KVA_TO_PA((uint32_t) & U3TXREG);
     DCH3SSIZ = 25;
     DCH3DSIZ = 1;
     DCH3CSIZ = 1;
-    
+
     if (settings.numSBusOutputs > 1) {
         DCH4SSA = (uint32_t) KVA_TO_PA((uint32_t) & sbusPacket);
         DCH4DSA = (uint32_t) KVA_TO_PA((uint32_t) & U1TXREG);
@@ -108,11 +109,19 @@ void transmitSBusPacket(uint32_t status, uintptr_t context) {
             adjustedServos[i] = outputServos[i] & 0x07ff;
         }
     }
-    sbusPacket.channels[0] = adjustedServos[1];
-    sbusPacket.channels[1] = (adjustedServos[1] >> 8) | (adjustedServos[2] << 3);
-    sbusPacket.channels[2] = (adjustedServos[2] >> 5) | (adjustedServos[0] << 6);
-    sbusPacket.channels[3] = (adjustedServos[0] >> 2);
-    sbusPacket.channels[4] = (adjustedServos[0] >> 10) | (adjustedServos[3] << 1);
+    if (settings.channelOrder == CHANNEL_ORDER_AETR) {
+        sbusPacket.channels[0] = adjustedServos[0];
+        sbusPacket.channels[1] = (adjustedServos[0] >> 8) | (adjustedServos[1] << 3);
+        sbusPacket.channels[2] = (adjustedServos[1] >> 5) | (adjustedServos[2] << 6);
+        sbusPacket.channels[3] = (adjustedServos[2] >> 2);
+        sbusPacket.channels[4] = (adjustedServos[2] >> 10) | (adjustedServos[3] << 1);
+    } else {
+        sbusPacket.channels[0] = adjustedServos[1];
+        sbusPacket.channels[1] = (adjustedServos[1] >> 8) | (adjustedServos[2] << 3);
+        sbusPacket.channels[2] = (adjustedServos[2] >> 5) | (adjustedServos[0] << 6);
+        sbusPacket.channels[3] = (adjustedServos[0] >> 2);
+        sbusPacket.channels[4] = (adjustedServos[0] >> 10) | (adjustedServos[3] << 1);
+    }
     sbusPacket.channels[5] = (adjustedServos[3] >> 7) | (adjustedServos[4] << 4);
     sbusPacket.channels[6] = (adjustedServos[4] >> 4) | (adjustedServos[5] << 7);
     sbusPacket.channels[7] = (adjustedServos[5] >> 1);

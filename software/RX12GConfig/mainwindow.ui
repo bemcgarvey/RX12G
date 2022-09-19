@@ -197,7 +197,7 @@
           <item>
            <widget class="QGroupBox" name="channelOrderGroupBox">
             <property name="title">
-             <string>Channel Order</string>
+             <string>TX Channel Order</string>
             </property>
             <widget class="QRadioButton" name="taerRadioButton">
              <property name="geometry">
