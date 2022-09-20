@@ -8,12 +8,14 @@
 static bool rollOutOfBounds;
 static float rollSum;
 static int rollDirection;
+static bool pitchOutOfBounds;
+static float pitchSum;
+static int pitchDirection;
 
 void initTrainerMode(void) {
     rollOutOfBounds = false;
+    pitchOutOfBounds = false;
 }
-
-//TODO finish trainer mode
 
 void trainerModeCalculate(int axes) {
     float error;
@@ -53,6 +55,39 @@ void trainerModeCalculate(int axes) {
                 }
             } else {
                 normalModeCalculate(ROLL_AXIS);
+            }
+        }
+        if (axes & PITCH_AXIS) {
+            if (pitchOutOfBounds) {
+                pitchSum += attitude.gyroRatesDeg.pitchRate;
+                if ((pitchDirection > 0 && pitchSum <= 0) || (pitchDirection < 0 && pitchSum >= 0)) {
+                    pitchOutOfBounds = false;
+                } else {
+                    error = -pitchSum;
+                    deltaError = error - lastPitchError;
+                    pitchITerm += error;
+                    if (pitchITerm > settings.pitchPID._maxI) {
+                        pitchITerm = settings.pitchPID._maxI;
+                    } else if (pitchITerm < -settings.pitchPID._maxI) {
+                        pitchITerm = -settings.pitchPID._maxI;
+                    }
+                    lastPitchError = error;
+                    rpyCorrections[PITCH_INDEX] += (error * settings.pitchPID._P
+                            + pitchITerm * settings.pitchPID._I
+                            + deltaError * settings.pitchPID._D) * pitchGains[LOCK_GAIN];
+                }
+            } else if (attitude.ypr.pitch > settings.pitchLimit || attitude.ypr.pitch < -settings.pitchLimit) {
+                lastPitchError = 0;
+                pitchITerm = 0;
+                pitchOutOfBounds = true;
+                pitchSum = 0;
+                if (attitude.ypr.pitch > 0) {
+                    pitchDirection = 1;
+                } else {
+                    pitchDirection = -1;
+                }
+            } else {
+                normalModeCalculate(PITCH_AXIS);
             }
         }
     }

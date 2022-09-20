@@ -91,7 +91,7 @@ bool initIMU(void) {
     wValue[1] = 0b01100000; //416Hz, 4g range, LPF2_XL_EN off
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    wValue[0] = CTRL8_XL; //TODO may want to remove this - see below
+    wValue[0] = CTRL8_XL;  //This setting is ignored
     wValue[1] = 0b00000000; //LPF2 at ODR/4 = 104Hz Only if LPF2_XL_EN is on
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());

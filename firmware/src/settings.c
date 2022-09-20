@@ -75,6 +75,7 @@ bool saveSettings(void) {
 }
 
 void loadDefaultSettings(void) {
+    //TODO may want to set some default PID's and gains once testing is done
     memset(&settings, 0, sizeof(settings));
     settings.outputHz = 50;
     settings.sBusPeriodMs = 7;

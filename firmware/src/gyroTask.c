@@ -332,12 +332,6 @@ void gyroTask(void *pvParameters) {
             avgCount = 0;
             WDT_Clear();
         }
-        //TODO check stack level - remove when done
-        //int stack = uxTaskGetStackHighWaterMark(NULL);
-        //if (stack < 1) {
-        //    SAT2_LED_Set();
-        //    while (1);
-        //}
     }
 }
 
