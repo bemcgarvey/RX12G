@@ -282,6 +282,7 @@
       <itemPath>../src/trainer.h</itemPath>
       <itemPath>../src/rxOnlyTask.h</itemPath>
       <itemPath>../src/detectUSBTask.h</itemPath>
+      <itemPath>../src/usbBindTask.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -421,6 +422,7 @@
       <itemPath>../src/trainer.c</itemPath>
       <itemPath>../src/rxOnlyTask.c</itemPath>
       <itemPath>../src/detectUSBTask.c</itemPath>
+      <itemPath>../src/usbBindTask.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

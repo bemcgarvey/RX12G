@@ -18,7 +18,6 @@
 
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
-//TODO add option to put channels upper channels (to 20) on sBus?
 
 int main(void) {
     if (RCONbits.POR == 1) {

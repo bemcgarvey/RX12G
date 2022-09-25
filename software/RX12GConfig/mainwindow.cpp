@@ -71,6 +71,7 @@ void MainWindow::onUsbRemoved()
     ui->savePushButton->setEnabled(false);
     ui->rebootPushButton->setEnabled(false);
     ui->levelCalibratePushButton->setEnabled(false);
+    ui->bindPushButton->setEnabled(false);
     channelsTimer->stop();
     for (int i = 0; i < 12; ++i) {
         channelBars[i]->setValue(0);
@@ -126,6 +127,7 @@ void MainWindow::on_connectPushButton_clicked()
         ui->savePushButton->setEnabled(true);
         ui->rebootPushButton->setEnabled(true);
         ui->levelCalibratePushButton->setEnabled(true);
+        ui->bindPushButton->setEnabled(true);
         on_loadPushButton_clicked();
         on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
         ui->connectPushButton->setEnabled(false);
@@ -135,6 +137,7 @@ void MainWindow::on_connectPushButton_clicked()
         ui->savePushButton->setEnabled(false);
         ui->rebootPushButton->setEnabled(false);
         ui->levelCalibratePushButton->setEnabled(false);
+        ui->bindPushButton->setEnabled(false);
         channelsTimer->stop();
         sensorTimer->stop();
         for (int i = 0; i < 12; ++i) {
@@ -733,3 +736,12 @@ void MainWindow::on_aetrRadioButton_toggled(bool checked)
     }
 }
 
+
+void MainWindow::on_bindPushButton_clicked()
+{
+    if (!usb.Connected()) {
+        return;
+    }
+    buffer[0] = BIND;
+    usb.SendReport(buffer);
+}

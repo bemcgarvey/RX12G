@@ -20,6 +20,7 @@
 #include "imu.h"
 #include "rxOnlyTask.h"
 #include "detectUSBTask.h"
+#include "usbBindTask.h"
 
 int startMode = START_NORMAL;
 
@@ -49,6 +50,9 @@ void initTasks(void) {
         xTaskCreate(imuTask, "imuTask", 256, NULL, 4, &imuTaskHandle);
     }
     xTaskCreate(detectUSBTask, "detectUSBTask", 128, NULL, 1, &detectUSBTaskHandle);
+    xTaskCreate(usbBindTask, "usbBindTask", 128, NULL, 1, &usbBindTaskHandle);
+    //Create this task suspended - will be resumed when needed and then will suspend itself when done
+    vTaskSuspend(usbBindTaskHandle);
     vTaskStartScheduler();
 }
 

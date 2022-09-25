@@ -11,11 +11,14 @@
 #include "imu.h"
 #include "output.h"
 #include "attitude.h"
+#include "usbBindTask.h"
+#include "rtosHandles.h"
+#include "satellites.h"
 
 #define BTL_TRIGGER_RAM_START   KVA0_TO_KVA1(0x80000000)
 #define BTL_PATTERN1    0x52583132
 #define BTL_PATTERN2    0x32315852
-static uint32_t *ramStart = (uint32_t *)BTL_TRIGGER_RAM_START;
+static uint32_t *ramStart = (uint32_t *) BTL_TRIGGER_RAM_START;
 
 typedef enum {
     APP_STATE_INIT,
@@ -278,6 +281,8 @@ void USBAppTasks(void *pvParameters) {
                             while (!outputsDisabled) {
                                 taskYIELD();
                             }
+                            satPowerOn(false);
+                            vTaskDelay(300);
                             SYS_RESET_SoftwareReset();
                             break;
                         case BOOTLOAD:
@@ -314,10 +319,13 @@ void USBAppTasks(void *pvParameters) {
                         case GET_ATTITUDE:
                             while (!hidDataTransmitted)
                                 taskYIELD();
-                            memcpy(transmitDataBuffer, (void *) &attitude, sizeof(attitude));
+                            memcpy(transmitDataBuffer, (void *) &attitude, sizeof (attitude));
                             hidDataTransmitted = false;
                             USB_DEVICE_HID_ReportSend(USB_DEVICE_HID_INDEX_0,
                                     &txTransferHandle, transmitDataBuffer, 64);
+                            break;
+                        case BIND:
+                            vTaskResume(usbBindTaskHandle);
                             break;
                     }
                     hidDataReceived = false;

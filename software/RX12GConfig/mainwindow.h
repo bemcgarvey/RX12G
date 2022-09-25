@@ -105,6 +105,8 @@ private slots:
 
     void on_aetrRadioButton_toggled(bool checked);
 
+    void on_bindPushButton_clicked();
+
 public slots:
     void onBtlMessage(QString msg);
     void onBtlProgress(int progress);

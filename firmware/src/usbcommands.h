@@ -26,6 +26,7 @@ extern "C" {
         CMD_ACK = 0x80,
         CMD_NACK = 0x7f,
         REBOOT = 0x88,
+        BIND = 0x89,
         BOOTLOAD = 0x90
     };
 
