@@ -387,7 +387,7 @@ void calculateGains(void) {
         pitchGains[LOCK_GAIN] = lockBaseGains[PITCH_INDEX] * gainAdjust;
     }
     if (yawGainChannel) {
-        gainAdjust = rawServoPositions[pitchGainChannel] / 2047.0;
+        gainAdjust = rawServoPositions[yawGainChannel] / 2047.0;
         yawGains[NORMAL_GAIN] = normalBaseGains[YAW_INDEX] * gainAdjust;
         yawGains[LOCK_GAIN] = lockBaseGains[YAW_INDEX] * gainAdjust;
     }
