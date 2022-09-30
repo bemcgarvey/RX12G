@@ -219,7 +219,7 @@ void MainWindow::onChannelTimout()
     usb.GetReport(buffer);
     uint16_t *channels = (uint16_t *)buffer;
     if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()) == "Receiver") {
-        for (int i = 0; i < 12; ++i) {
+        for (int i = 0; i < 8; ++i) {
             if (channels[i] == 0xffff) {
                 channelBars[i]->setEnabled(false);
                 channelBars[i]->setValue(0);
@@ -228,10 +228,48 @@ void MainWindow::onChannelTimout()
                 channelBars[i]->setValue(channels[i]);
             }
         }
+        if (ui->show13RadioButton->isChecked()) {
+            for (int i = 12; i < 16; ++i) {
+                if (channels[i] == 0xffff) {
+                    channelBars[i - 4]->setEnabled(false);
+                    channelBars[i - 4]->setValue(0);
+                } else {
+                    channelBars[i - 4]->setEnabled(true);
+                    channelBars[i - 4]->setValue(channels[i]);
+                }
+            }
+        } else if (ui->show17RadioButton->isChecked()) {
+            for (int i = 16; i < 20; ++i) {
+                if (channels[i] == 0xffff) {
+                    channelBars[i - 8]->setEnabled(false);
+                    channelBars[i - 8]->setValue(0);
+                } else {
+                    channelBars[i - 8]->setEnabled(true);
+                    channelBars[i - 8]->setValue(channels[i]);
+                }
+            }
+        } else {
+            for (int i = 8; i < 12; ++i) {
+                if (channels[i] == 0xffff) {
+                    channelBars[i]->setEnabled(false);
+                    channelBars[i]->setValue(0);
+                } else {
+                    channelBars[i]->setEnabled(true);
+                    channelBars[i]->setValue(channels[i]);
+                }
+            }
+        }
     } else if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()) == "Limits") {
-        ui->aileronMinMaxBar->setValue(channels[1]);
-        ui->elevatorMinMaxBar->setValue(channels[2]);
-        ui->rudderMinMaxBar->setValue(channels[3]);
+        if (settings.channelOrder == CHANNEL_ORDER_TAER) {
+            ui->aileronMinMaxBar->setValue(channels[1]);
+            ui->elevatorMinMaxBar->setValue(channels[2]);
+            ui->rudderMinMaxBar->setValue(channels[3]);
+        }
+        if (settings.channelOrder == CHANNEL_ORDER_AETR) {
+            ui->aileronMinMaxBar->setValue(channels[0]);
+            ui->elevatorMinMaxBar->setValue(channels[1]);
+            ui->rudderMinMaxBar->setValue(channels[3]);
+        }
     }
 }
 
@@ -745,3 +783,22 @@ void MainWindow::on_bindPushButton_clicked()
     buffer[0] = BIND;
     usb.SendReport(buffer);
 }
+
+
+void MainWindow::on_show9RadioButton_clicked()
+{
+    updateChannelDisplay();
+}
+
+
+void MainWindow::on_show13RadioButton_clicked()
+{
+    updateChannelDisplay();
+}
+
+
+void MainWindow::on_show17RadioButton_clicked()
+{
+    updateChannelDisplay();
+}
+

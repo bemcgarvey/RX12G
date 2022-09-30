@@ -59,6 +59,7 @@ private:
     bool calculateLevelOffsets();
     std::unique_ptr<HidBootloader> bootloader;
     std::unique_ptr<WorkerThread> worker;
+    void updateChannelDisplay();
 private slots:
     void onUsbConnected();
     void onUsbRemoved();
@@ -98,15 +99,13 @@ private slots:
     void on_browsePushButton_clicked();
     void on_updateFirmwarePushButton_clicked();
     void on_cancelUpdatePushButton_clicked();
-
     void on_rxOnlyCheckBox_stateChanged(int arg1);
-
     void on_taerRadioButton_toggled(bool checked);
-
     void on_aetrRadioButton_toggled(bool checked);
-
     void on_bindPushButton_clicked();
-
+    void on_show9RadioButton_clicked();
+    void on_show13RadioButton_clicked();
+    void on_show17RadioButton_clicked();
 public slots:
     void onBtlMessage(QString msg);
     void onBtlProgress(int progress);

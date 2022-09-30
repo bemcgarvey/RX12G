@@ -564,3 +564,23 @@ bool MainWindow::calculateLevelOffsets()
     }
     return true;
 }
+
+void MainWindow::updateChannelDisplay()
+{
+    if (ui->show13RadioButton->isChecked()) {
+        ui->ch9label->setText("CH 13");
+        ui->ch10label->setText("CH 14");
+        ui->ch11label->setText("CH 15");
+        ui->ch12label->setText("CH 16");
+    } else if (ui->show17RadioButton->isChecked()) {
+        ui->ch9label->setText("CH 17");
+        ui->ch10label->setText("CH 18");
+        ui->ch11label->setText("CH 19");
+        ui->ch12label->setText("CH 20");
+    } else {
+        ui->ch9label->setText("CH 9");
+        ui->ch10label->setText("CH 10");
+        ui->ch11label->setText("CH 11");
+        ui->ch12label->setText("CH 12");
+    }
+}
