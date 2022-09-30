@@ -33,17 +33,14 @@ void rxTask(void *pvParameters) {
             for (int i = 1; i < 8; ++i) {
                 uint16_t channelData = (buffer[i] >> 8) | (buffer[i] << 8);
                 uint16_t channel = (channelData >> 11) & 0x000f;
-                if (channel > 12) {
-                    continue;
-                }
-                if (channel == 12) { //XPlus channels - this is not tested!
+                if (channel < 12) { //Normal channel
+                    rawServoPositions[channel] = channelData & 0x07ff;
+                } else if (channel == 12) { //XPlus channels
                     channel += (channelData >> 9) & 0x0003;
-                    if (channelData & 0x80) { //phase = 1
+                    if (channelData & 0x8000) { //phase = 1
                         channel += 4;
                     }
                     rawServoPositions[channel] = (channelData & 0x01ff) << 2;
-                } else { //Normal channel
-                    rawServoPositions[channel] = channelData & 0x07ff;
                 }
             }
             if (centeringCount != 0) {
