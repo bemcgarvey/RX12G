@@ -3,8 +3,11 @@
 #include "gyroTask.h"
 #include "attitude.h"
 
+static bool started;
+
 void initAutoLevel(void) {
     centerCount = CENTER_COUNT;
+    started = false;
 }
 
 void autoLevelCalculate(int axes) {
@@ -13,7 +16,12 @@ void autoLevelCalculate(int axes) {
     if (sticksCentered()) {
         if (axes & ROLL_AXIS) {
             error = -attitude.ypr.roll;
-            deltaError = error - lastRollError;
+            if (started) {
+                deltaError = error - lastRollError;
+            } else {
+                deltaError = 0;
+                started = true;
+            }
             rollITerm += error;
             if (rollITerm > settings.rollPID._maxI) {
                 rollITerm = settings.rollPID._maxI;
@@ -27,7 +35,12 @@ void autoLevelCalculate(int axes) {
         }
         if (axes & PITCH_AXIS) {
             error = -attitude.ypr.pitch;
-            deltaError = error - lastPitchError;
+            if (started) {
+                deltaError = error - lastPitchError;
+            } else {
+                deltaError = 0;
+                started = true;
+            }
             pitchITerm += error;
             if (pitchITerm > settings.pitchPID._maxI) {
                 pitchITerm = settings.pitchPID._maxI;
@@ -43,9 +56,12 @@ void autoLevelCalculate(int axes) {
             //and reduce correction the closer we are to 90 degrees of roll
         }
     } else {
-        rollITerm = 0;
-        pitchITerm = 0;
-        lastRollError = 0;
-        lastPitchError = 0;
+        started = false;
+        if (axes & ROLL_AXIS) {
+            rollITerm = 0;
+        }
+        if (axes & PITCH_AXIS) {
+            pitchITerm = 0;
+        }
     }
 }
