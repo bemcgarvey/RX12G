@@ -2,15 +2,11 @@
 #include "attitude.h"
 #include "gyroTask.h"
 #include "imu.h"
-#include "fusion.h"
+#include "dcm2.h"
 
 Vector AccelYPR(void);
 
 AttitudeData attitude;
-FusionAhrs ahrs;
-FusionOffset offset;
-FusionVector gyroscope;
-FusionVector accelerometer;
 
 void initAttitude(void) {
     Vector v = AccelYPR();
@@ -19,40 +15,26 @@ void initAttitude(void) {
     attitude.gyroRatesDeg.rollRate = 0;
     attitude.gyroRatesDeg.pitchRate = 0;
     attitude.gyroRatesDeg.yawRate = 0;
-    attitude.zSign = 1;
-    FusionOffsetInitialise(&offset, GYRO_ODR);
-//    const FusionAhrsSettings settings = {
-//            .gain = 0.5f,
-//            .accelerationRejection = 0.0f,
-//            .magneticRejection = 0.0f,
-//            .rejectionTimeout = 5 * GYRO_ODR
-//    };
-//    FusionAhrsSetSettings(&ahrs, &settings);
-//    FusionAhrsReset(&ahrs);
-    FusionAhrsInitialise(&ahrs);
+    float state[6] = DEFAULT_state;
+    initDCM_IMU_uC(state);
 }
 
 void updateAttitude(void) {
     attitude.gyroRatesDeg.rollRate = imuData[IMU_GYRO_X] * (70.0 / 1000.0);
     attitude.gyroRatesDeg.pitchRate = imuData[IMU_GYRO_Y] * (70.0 / 1000.0);
     attitude.gyroRatesDeg.yawRate = imuData[IMU_GYRO_Z] * (70.0 / 1000.0);
-    gyroscope.axis.x = attitude.gyroRatesDeg.rollRate;
-    gyroscope.axis.y = attitude.gyroRatesDeg.pitchRate;
-    gyroscope.axis.z = attitude.gyroRatesDeg.yawRate;
-    accelerometer.axis.x = imuData[IMU_ACCEL_X] * (0.122 / 1000.0);
-    accelerometer.axis.y = imuData[IMU_ACCEL_Y] * (0.122 / 1000.0);
-    accelerometer.axis.z = imuData[IMU_ACCEL_Z] * (0.122 / 1000.0);
-    if (imuData[IMU_ACCEL_Z] < 0) {
-        attitude.zSign = -1;
-    } else {
-        attitude.zSign = 1;
-    }
-    gyroscope = FusionOffsetUpdate(&offset, gyroscope);
-    FusionAhrsUpdateNoMagnetometer(&ahrs, gyroscope, accelerometer, GYRO_SAMPLE_PERIOD);
-    FusionEuler euler = FusionQuaternionToEuler(FusionAhrsGetQuaternion(&ahrs));
-    attitude.ypr.roll = euler.angle.roll;
-    attitude.ypr.pitch = euler.angle.pitch;
-    attitude.ypr.yaw = euler.angle.yaw;
+    float gyro[3];
+    float accel[3];
+    gyro[0] = attitude.gyroRatesDeg.rollRate * DEGREES_TO_RAD;
+    gyro[1] = attitude.gyroRatesDeg.pitchRate * DEGREES_TO_RAD;
+    gyro[2] = attitude.gyroRatesDeg.yawRate * DEGREES_TO_RAD;
+    accel[0] = imuData[IMU_ACCEL_X] * (0.122 / 1000.0);
+    accel[1] = imuData[IMU_ACCEL_Y] * (0.122 / 1000.0);
+    accel[2]= imuData[IMU_ACCEL_Z] * (0.122 / 1000.0);
+    updateIMU(gyro, accel, GYRO_SAMPLE_PERIOD);
+    attitude.ypr.roll = getRoll() * RAD_TO_DEGREES;
+    attitude.ypr.pitch = getPitch() * RAD_TO_DEGREES;
+    attitude.ypr.yaw = getYaw() * RAD_TO_DEGREES;
 }
 
 Vector AccelYPR(void) {

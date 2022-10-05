@@ -38,7 +38,6 @@ extern "C" {
     typedef struct {
         Vector ypr;
         Vector gyroRatesDeg;
-        int zSign; //sign of z axis acceleration: 1 = upright, -1 = inverted
     } AttitudeData;
 
     extern AttitudeData attitude;

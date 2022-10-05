@@ -144,7 +144,6 @@ enum {
     typedef struct {
         Vector ypr;
         Vector gyroRatesDeg;
-        int zSign; //sign of z axis acceleration: 1 = upright, -1 = inverted
     } AttitudeData;
 
 uint32_t calculateCRC(void *data, int len);
