@@ -17,7 +17,6 @@ void initAttitude(void) {
     attitude.gyroRatesDeg.rollRate = 0;
     attitude.gyroRatesDeg.pitchRate = 0;
     attitude.gyroRatesDeg.yawRate = 0;
-    attitude.zSign = 1;
     dcmInit(v.pitch, v.roll, v.yaw);
 }
 
@@ -29,13 +28,6 @@ void updateAttitude(void) {
     float accelX = imuData[IMU_ACCEL_X] * (0.122 / 1000.0);
     float accelY = imuData[IMU_ACCEL_Y] * (0.122 / 1000.0);
     float accelZ = imuData[IMU_ACCEL_Z] * (0.122 / 1000.0);
-    
-    //TODO we can probably remove this
-    if (imuData[IMU_ACCEL_Z] < 0) {
-        attitude.zSign = -1;
-    } else {
-        attitude.zSign = 1;
-    }
     dcmUpdate(GYRO_SAMPLE_PERIOD, attitude.gyroRatesDeg.rollRate, attitude.gyroRatesDeg.pitchRate,
             attitude.gyroRatesDeg.yawRate, accelX, accelY, accelZ);
     attitude.ypr.roll = dcmGetRoll();
