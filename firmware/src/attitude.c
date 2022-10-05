@@ -11,12 +11,14 @@ AttitudeData attitude;
 void initAttitude(void) {
     Vector v = AccelYPR();
     v.yaw = 0;
-    attitude.ypr = v;
+    attitude.ypr.pitch = v.pitch * RAD_TO_DEGREES;
+    attitude.ypr.roll = v.roll * RAD_TO_DEGREES;
+    attitude.ypr.yaw = 0;
     attitude.gyroRatesDeg.rollRate = 0;
     attitude.gyroRatesDeg.pitchRate = 0;
     attitude.gyroRatesDeg.yawRate = 0;
     attitude.zSign = 1;
-    dcmInit();
+    dcmInit(v.pitch, v.roll, v.yaw);
 }
 
 void updateAttitude(void) {

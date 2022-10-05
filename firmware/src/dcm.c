@@ -29,21 +29,21 @@ static float VectorDotProduct(const float v1[3], const float v2[3]);
 #define YAW_KP        1.2f
 #define YAW_KI        0.00002f
 
-void dcmInit(void) {
+void dcmInit(float pitch, float roll, float yaw) {
   // Init the DCM matrix.The rotation is performed in ZYX order. Note that in this section
   // all Euler angles are assumed to be zero, so it will takes a few hundreds of ms to converge.
   // If you want quicker convergence, try to initiate the dcm matrix with the first read Euler angles.
-  _dcm[0][0] = 1;  // cos(pitch) * cos(yaw)
-  _dcm[0][1] = 0;  // cos(yaw)   * sin(roll) * sin(pitch) - cos(roll) * sin(yaw)
-  _dcm[0][2] = 0;  // sin(roll)  * sin(yaw) + cos(roll) * cos(yaw) * sin(pitch)
+  _dcm[0][0] = cos(pitch) * cos(yaw);
+  _dcm[0][1] = cos(yaw)   * sin(roll) * sin(pitch) - cos(roll) * sin(yaw);
+  _dcm[0][2] = sin(roll)  * sin(yaw) + cos(roll) * cos(yaw) * sin(pitch);
   
-  _dcm[1][0] = 0;  // cos(pitch) * sin(yaw)
-  _dcm[1][1] = 1;  // cos(roll)  * cos(yaw) + sin(roll)*sin(pitch)*sin(yaw)
-  _dcm[1][2] = 0;  // cos(roll)  * sin(pitch)*sin(yaw) - cos(yaw)*sin(roll)
+  _dcm[1][0] = cos(pitch) * sin(yaw);
+  _dcm[1][1] = cos(roll)  * cos(yaw) + sin(roll)*sin(pitch)*sin(yaw);
+  _dcm[1][2] = cos(roll)  * sin(pitch)*sin(yaw) - cos(yaw)*sin(roll);
   
-  _dcm[2][0] = 0;  // -sin(pitch)
-  _dcm[2][1] = 0;  //  cos(pitch) * sin(roll)
-  _dcm[2][2] = 1;  //  cos(roll)  * cos(pitch)
+  _dcm[2][0] = -sin(pitch);
+  _dcm[2][1] = cos(pitch) * sin(roll);
+  _dcm[2][2] = cos(roll)  * cos(pitch);
   
   // Initiate the proportional and integrative term of the PID controller to zero
   _omegaProp[0] = 0;

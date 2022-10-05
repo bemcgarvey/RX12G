@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-  void dcmInit(void);
+  void dcmInit(float pitch, float roll, float yaw);
   void dcmUpdate(float dt, float gx, float gy, float gz, float ax, float ay, float az);
   float dcmGetRoll();
   float dcmGetPitch();
