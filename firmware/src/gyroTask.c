@@ -403,6 +403,7 @@ void verifyAndSetOutputs(void) {
     } else {
         newServoPositions[AILERON_INDEX] = rawServoPositions[aileronChannel];
     }
+    //TODO move below into if above - same for other surfaces
     if (newServoPositions[AILERON_INDEX] < settings.minTravelLimits[AILERON_INDEX]) {
         newServoPositions[AILERON_INDEX] = settings.minTravelLimits[AILERON_INDEX];
     } else if (newServoPositions[AILERON_INDEX] > settings.maxTravelLimits[AILERON_INDEX]) {
@@ -469,7 +470,7 @@ void verifyAndSetOutputs(void) {
     outputServos[elevatorChannel] = newServoPositions[ELEVATOR_INDEX];
     outputServos[RUDDER] = newServoPositions[RUDDER_INDEX];
     for (int i = GEAR; i < MAX_CHANNELS; ++i) {
-        if (i == settings.aileron2Channel) {
+        if (i == settings.aileron2Channel) { //TODO add (settings.gyroEnabledFlags & AILERON2_MASK && ...) etc. 
             outputServos[i] = newServoPositions[AILERON2_INDEX];
         } else if (i == settings.elevator2Channel) {
             outputServos[i] = newServoPositions[ELEVATOR2_INDEX];
