@@ -51,7 +51,6 @@ static int modeChannel;
 static int rollGainChannel;
 static int pitchGainChannel;
 static int yawGainChannel;
-static int16_t newServoPositions[5];
 static bool attitudeInitialized;
 static bool doWiggle;
 static int wiggleCount;
@@ -394,86 +393,86 @@ void calculateGains(void) {
 }
 
 void verifyAndSetOutputs(void) {
+    int16_t newServoPosition;
     if (settings.gyroEnabledFlags & AILERON_MASK) {
         if (settings.gyroReverseFlags & AILERON_MASK) {
-            newServoPositions[AILERON_INDEX] = rawServoPositions[aileronChannel] - rpyCorrections[AILERON_INDEX];
+            newServoPosition = rawServoPositions[aileronChannel] - rpyCorrections[AILERON_INDEX];
         } else {
-            newServoPositions[AILERON_INDEX] = rawServoPositions[aileronChannel] + rpyCorrections[AILERON_INDEX];
+            newServoPosition = rawServoPositions[aileronChannel] + rpyCorrections[AILERON_INDEX];
         }
+        if (newServoPosition < settings.minTravelLimits[AILERON_INDEX]) {
+            newServoPosition = settings.minTravelLimits[AILERON_INDEX];
+        } else if (newServoPosition > settings.maxTravelLimits[AILERON_INDEX]) {
+            newServoPosition = settings.maxTravelLimits[AILERON_INDEX];
+        }
+        outputServos[aileronChannel] = newServoPosition;
     } else {
-        newServoPositions[AILERON_INDEX] = rawServoPositions[aileronChannel];
-    }
-    //TODO move below into if above - same for other surfaces
-    if (newServoPositions[AILERON_INDEX] < settings.minTravelLimits[AILERON_INDEX]) {
-        newServoPositions[AILERON_INDEX] = settings.minTravelLimits[AILERON_INDEX];
-    } else if (newServoPositions[AILERON_INDEX] > settings.maxTravelLimits[AILERON_INDEX]) {
-        newServoPositions[AILERON_INDEX] = settings.maxTravelLimits[AILERON_INDEX];
+       outputServos[aileronChannel] = rawServoPositions[aileronChannel];
     }
     if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
         if (settings.gyroReverseFlags & ELEVATOR_MASK) {
-            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[elevatorChannel] - rpyCorrections[ELEVATOR_INDEX];
+            newServoPosition = rawServoPositions[elevatorChannel] - rpyCorrections[ELEVATOR_INDEX];
         } else {
-            newServoPositions[ELEVATOR_INDEX] = rawServoPositions[elevatorChannel] + rpyCorrections[ELEVATOR_INDEX];
+            newServoPosition = rawServoPositions[elevatorChannel] + rpyCorrections[ELEVATOR_INDEX];
         }
+        if (newServoPosition < settings.minTravelLimits[ELEVATOR_INDEX]) {
+            newServoPosition = settings.minTravelLimits[ELEVATOR_INDEX];
+        } else if (newServoPosition > settings.maxTravelLimits[ELEVATOR_INDEX]) {
+            newServoPosition = settings.maxTravelLimits[ELEVATOR_INDEX];
+        }
+        outputServos[elevatorChannel] = newServoPosition;
     } else {
-        newServoPositions[ELEVATOR_INDEX] = rawServoPositions[elevatorChannel];
-    }
-    if (newServoPositions[ELEVATOR_INDEX] < settings.minTravelLimits[ELEVATOR_INDEX]) {
-        newServoPositions[ELEVATOR_INDEX] = settings.minTravelLimits[ELEVATOR_INDEX];
-    } else if (newServoPositions[ELEVATOR_INDEX] > settings.maxTravelLimits[ELEVATOR_INDEX]) {
-        newServoPositions[ELEVATOR_INDEX] = settings.maxTravelLimits[ELEVATOR_INDEX];
+        outputServos[elevatorChannel] = rawServoPositions[elevatorChannel];
     }
     if (settings.gyroEnabledFlags & RUDDER_MASK) {
         if (settings.gyroReverseFlags & RUDDER_MASK) {
-            newServoPositions[RUDDER_INDEX] = rawServoPositions[RUDDER] - rpyCorrections[RUDDER_INDEX];
+            newServoPosition = rawServoPositions[RUDDER] - rpyCorrections[RUDDER_INDEX];
         } else {
-            newServoPositions[RUDDER_INDEX] = rawServoPositions[RUDDER] + rpyCorrections[RUDDER_INDEX];
+            newServoPosition = rawServoPositions[RUDDER] + rpyCorrections[RUDDER_INDEX];
         }
+        if (newServoPosition < settings.minTravelLimits[RUDDER_INDEX]) {
+            newServoPosition = settings.minTravelLimits[RUDDER_INDEX];
+        } else if (newServoPosition > settings.maxTravelLimits[RUDDER_INDEX]) {
+            newServoPosition = settings.maxTravelLimits[RUDDER_INDEX];
+        }
+        outputServos[RUDDER] = newServoPosition;
     } else {
-        newServoPositions[RUDDER_INDEX] = rawServoPositions[RUDDER];
-    }
-    if (newServoPositions[RUDDER_INDEX] < settings.minTravelLimits[RUDDER_INDEX]) {
-        newServoPositions[RUDDER_INDEX] = settings.minTravelLimits[RUDDER_INDEX];
-    } else if (newServoPositions[RUDDER_INDEX] > settings.maxTravelLimits[RUDDER_INDEX]) {
-        newServoPositions[RUDDER_INDEX] = settings.maxTravelLimits[RUDDER_INDEX];
+        outputServos[RUDDER] = rawServoPositions[RUDDER];
     }
     if (settings.gyroEnabledFlags & AILERON2_MASK) {
         if (settings.gyroReverseFlags & AILERON2_MASK) {
-            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] + rpyCorrections[AILERON_INDEX];
+            newServoPosition = rawServoPositions[settings.aileron2Channel] + rpyCorrections[AILERON_INDEX];
         } else {
-            newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel] - rpyCorrections[AILERON_INDEX];
+            newServoPosition = rawServoPositions[settings.aileron2Channel] - rpyCorrections[AILERON_INDEX];
         }
-    } else {
-        newServoPositions[AILERON2_INDEX] = rawServoPositions[settings.aileron2Channel];
-    }
-    if (newServoPositions[AILERON2_INDEX] < settings.minTravelLimits[AILERON2_INDEX]) {
-        newServoPositions[AILERON2_INDEX] = settings.minTravelLimits[AILERON2_INDEX];
-    } else if (newServoPositions[AILERON2_INDEX] > settings.maxTravelLimits[AILERON2_INDEX]) {
-        newServoPositions[AILERON2_INDEX] = settings.maxTravelLimits[AILERON2_INDEX];
+        if (newServoPosition < settings.minTravelLimits[AILERON2_INDEX]) {
+            newServoPosition = settings.minTravelLimits[AILERON2_INDEX];
+        } else if (newServoPosition > settings.maxTravelLimits[AILERON2_INDEX]) {
+            newServoPosition = settings.maxTravelLimits[AILERON2_INDEX];
+        }
+        outputServos[settings.aileron2Channel] = newServoPosition;
     }
     if (settings.gyroEnabledFlags & ELEVATOR2_MASK) {
         if (settings.gyroReverseFlags & ELEVATOR2_MASK) {
-            newServoPositions[ELEVATOR2_INDEX] = rawServoPositions[settings.elevator2Channel] - rpyCorrections[ELEVATOR2_INDEX];
+            newServoPosition = rawServoPositions[settings.elevator2Channel] - rpyCorrections[ELEVATOR_INDEX];
         } else {
-            newServoPositions[ELEVATOR2_INDEX] = rawServoPositions[settings.elevator2Channel] + rpyCorrections[ELEVATOR2_INDEX];
+            newServoPosition = rawServoPositions[settings.elevator2Channel] + rpyCorrections[ELEVATOR_INDEX];
         }
-    } else {
-        newServoPositions[ELEVATOR2_INDEX] = rawServoPositions[settings.elevator2Channel];
-    }
-    if (newServoPositions[ELEVATOR2_INDEX] < settings.minTravelLimits[ELEVATOR2_INDEX]) {
-        newServoPositions[ELEVATOR2_INDEX] = settings.minTravelLimits[ELEVATOR2_INDEX];
-    } else if (newServoPositions[ELEVATOR2_INDEX] > settings.maxTravelLimits[ELEVATOR2_INDEX]) {
-        newServoPositions[ELEVATOR2_INDEX] = settings.maxTravelLimits[ELEVATOR2_INDEX];
+        if (newServoPosition < settings.minTravelLimits[ELEVATOR2_INDEX]) {
+            newServoPosition = settings.minTravelLimits[ELEVATOR2_INDEX];
+        } else if (newServoPosition > settings.maxTravelLimits[ELEVATOR2_INDEX]) {
+            newServoPosition = settings.maxTravelLimits[ELEVATOR2_INDEX];
+        }
+        outputServos[settings.elevator2Channel] = newServoPosition;
     }
     outputServos[throttleChannel] = rawServoPositions[throttleChannel];
-    outputServos[aileronChannel] = newServoPositions[AILERON_INDEX];
-    outputServos[elevatorChannel] = newServoPositions[ELEVATOR_INDEX];
-    outputServos[RUDDER] = newServoPositions[RUDDER_INDEX];
-    for (int i = GEAR; i < MAX_CHANNELS; ++i) {
-        if (i == settings.aileron2Channel) { //TODO add (settings.gyroEnabledFlags & AILERON2_MASK && ...) etc. 
-            outputServos[i] = newServoPositions[AILERON2_INDEX];
-        } else if (i == settings.elevator2Channel) {
-            outputServos[i] = newServoPositions[ELEVATOR2_INDEX];
+    //All managed channels have there outputs set so the rest need to be done
+    // Aileron2 and Elevator2 should be skipped if enabled as they are done
+    for (int i = RUDDER + 1; i < MAX_CHANNELS; ++i) {
+        if ((settings.gyroEnabledFlags & AILERON2_MASK) && (i == settings.aileron2Channel)) {
+            continue;
+        } else if ((settings.gyroEnabledFlags & ELEVATOR2_MASK) && (i == settings.elevator2Channel)) {
+            continue;
         } else {
             outputServos[i] = rawServoPositions[i];
         }

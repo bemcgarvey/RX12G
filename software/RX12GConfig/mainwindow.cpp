@@ -270,6 +270,12 @@ void MainWindow::onChannelTimout()
             ui->elevatorMinMaxBar->setValue(channels[1]);
             ui->rudderMinMaxBar->setValue(channels[3]);
         }
+        if (settings.gyroEnabledFlags & AILERON2_MASK) {
+            ui->aileron2MinMaxBar->setValue(channels[settings.aileron2Channel]);
+        }
+        if (settings.gyroEnabledFlags & ELEVATOR2_MASK) {
+            ui->elevator2MinMaxBar->setValue(channels[settings.elevator2Channel]);
+        }
     }
 }
 
