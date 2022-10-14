@@ -21,6 +21,7 @@
 #include "normalMode.h"
 #include "attitudeLock.h"
 #include "trainer.h"
+#include "angleMode.h"
 
 TaskHandle_t gyroTaskHandle;
 FlightModeType currentFlightMode = OFF_MODE;
@@ -205,6 +206,9 @@ void gyroTask(void *pvParameters) {
                         initTrainerMode();
                         initNormalMode();
                         break;
+                    case ANGLE_MODE:
+                        initAngleMode();
+                        break;
                     case CUSTOM_MODE_1:
                     case CUSTOM_MODE_2:
                         initLaunchAssist();
@@ -212,6 +216,7 @@ void gyroTask(void *pvParameters) {
                         initNormalMode();
                         initTrainerMode();
                         initAttitudeLock();
+                        initAngleMode();
                         break;
                     default:
                         break;
@@ -272,6 +277,8 @@ void gyroTask(void *pvParameters) {
                 } else if (currentFlightMode == TRAINER_MODE) {
                     trainerModeCalculate(ROLL_AXIS | PITCH_AXIS);
                     normalModeCalculate(YAW_AXIS);
+                } else if (currentFlightMode == ANGLE_MODE) {
+                    angleModeCalculate(ROLL_AXIS | PITCH_AXIS | YAW_AXIS);
                 } else if (currentFlightMode == CUSTOM_MODE_1 || currentFlightMode == CUSTOM_MODE_2) {
                     CustomModeType *mode;
                     if (currentFlightMode == CUSTOM_MODE_1) {
@@ -293,6 +300,9 @@ void gyroTask(void *pvParameters) {
                         case TRAINER_MODE:
                             trainerModeCalculate(ROLL_AXIS);
                             break;
+                        case ANGLE_MODE:
+                            angleModeCalculate(ROLL_AXIS);
+                            break;
                         case OFF_MODE:
                             rpyCorrections[AILERON_INDEX] = 0;
                             break;
@@ -313,6 +323,9 @@ void gyroTask(void *pvParameters) {
                         case TRAINER_MODE:
                             trainerModeCalculate(PITCH_AXIS);
                             break;
+                        case ANGLE_MODE:
+                            angleModeCalculate(PITCH_AXIS);
+                            break;
                         case OFF_MODE:
                             rpyCorrections[ELEVATOR_INDEX] = 0;
                             break;
@@ -326,6 +339,9 @@ void gyroTask(void *pvParameters) {
                             break;
                         case ATTITUDE_LOCK_MODE:
                             attitudeLockCalculate(YAW_AXIS);
+                            break;
+                        case ANGLE_MODE:
+                            angleModeCalculate(YAW_AXIS);
                             break;
                         case OFF_MODE:
                             rpyCorrections[RUDDER_INDEX] = 0;

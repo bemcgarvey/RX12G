@@ -276,6 +276,7 @@
       <itemPath>../src/detectUSBTask.h</itemPath>
       <itemPath>../src/usbBindTask.h</itemPath>
       <itemPath>../src/dcm2.h</itemPath>
+      <itemPath>../src/angleMode.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -413,6 +414,7 @@
       <itemPath>../src/detectUSBTask.c</itemPath>
       <itemPath>../src/usbBindTask.c</itemPath>
       <itemPath>../src/dcm2.c</itemPath>
+      <itemPath>../src/angleMode.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

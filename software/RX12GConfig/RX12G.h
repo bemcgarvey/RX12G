@@ -56,8 +56,8 @@ enum {
 
     typedef enum {
         OFF_MODE = 0, NORMAL_MODE = 1, AUTO_LEVEL_MODE = 2, TRAINER_MODE = 3,
-        ATTITUDE_LOCK_MODE = 4, LAUNCH_ASSIST_MODE = 5, CUSTOM_MODE_1 = 6,
-        CUSTOM_MODE_2 = 7
+        ATTITUDE_LOCK_MODE = 4, LAUNCH_ASSIST_MODE = 5, ANGLE_MODE = 6, CUSTOM_MODE_1 = 7,
+        CUSTOM_MODE_2 = 8
     } FlightModeType;
 
     typedef enum {
@@ -114,6 +114,9 @@ enum {
         uint8_t elevator2Channel;
         uint16_t minTravelLimits[5];
         uint16_t maxTravelLimits[5];
+        uint16_t maxRollRate;
+        uint16_t maxPitchRate;
+        uint16_t maxYawRate;
         _PID rollPID;
         _PID pitchPID;
         _PID yawPID;
