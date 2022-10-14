@@ -48,6 +48,9 @@ extern "C" {
     extern float pitchITerm;
     extern float lastYawError;
     extern float yawITerm;
+    extern bool rollIgnoreStick;
+    extern bool pitchIgnoreStick;
+    extern bool yawIgnoreStick;
 
     void gyroTask(void *pvParameters);
     bool sticksCentered(void);

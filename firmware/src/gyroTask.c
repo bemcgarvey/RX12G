@@ -44,6 +44,10 @@ float pitchITerm;
 float lastYawError;
 float yawITerm;
 
+bool rollIgnoreStick;
+bool pitchIgnoreStick;
+bool yawIgnoreStick;
+
 static float normalBaseGains[3];
 static float levelBaseGains[2];
 static float lockBaseGains[3];
@@ -103,6 +107,9 @@ void gyroTask(void *pvParameters) {
         rateAverages[i] = 0;
     }
     avgCount = 0;
+    rollIgnoreStick = false;
+    pitchIgnoreStick = false;
+    yawIgnoreStick = false;
     WDT_Enable();
     while (1) {
         if (xQueueReceive(imuQueue, imuData, 3) == pdTRUE) {
@@ -175,6 +182,9 @@ void gyroTask(void *pvParameters) {
             if (attitudeInitialized && newMode != currentFlightMode) {
                 currentFlightMode = newMode;
                 initPIDValues();
+                rollIgnoreStick = false;
+                pitchIgnoreStick = false;
+                yawIgnoreStick = false;
                 switch (currentFlightMode) {
                     case NORMAL_MODE:
                         initNormalMode();
@@ -193,7 +203,6 @@ void gyroTask(void *pvParameters) {
                         break;
                     case TRAINER_MODE:
                         initTrainerMode();
-                        initAutoLevel();
                         initNormalMode();
                         break;
                     case CUSTOM_MODE_1:
@@ -395,10 +404,15 @@ void calculateGains(void) {
 void verifyAndSetOutputs(void) {
     int16_t newServoPosition;
     if (settings.gyroEnabledFlags & AILERON_MASK) {
-        if (settings.gyroReverseFlags & AILERON_MASK) {
-            newServoPosition = rawServoPositions[aileronChannel] - rpyCorrections[AILERON_INDEX];
+        if (rollIgnoreStick) {
+            newServoPosition = channelCenters[aileronChannel];
         } else {
-            newServoPosition = rawServoPositions[aileronChannel] + rpyCorrections[AILERON_INDEX];
+            newServoPosition = rawServoPositions[aileronChannel];
+        }
+        if (settings.gyroReverseFlags & AILERON_MASK) {
+            newServoPosition -= rpyCorrections[AILERON_INDEX];
+        } else {
+            newServoPosition += rpyCorrections[AILERON_INDEX];
         }
         if (newServoPosition < settings.minTravelLimits[AILERON_INDEX]) {
             newServoPosition = settings.minTravelLimits[AILERON_INDEX];
@@ -407,13 +421,18 @@ void verifyAndSetOutputs(void) {
         }
         outputServos[aileronChannel] = newServoPosition;
     } else {
-       outputServos[aileronChannel] = rawServoPositions[aileronChannel];
+        outputServos[aileronChannel] = rawServoPositions[aileronChannel];
     }
     if (settings.gyroEnabledFlags & ELEVATOR_MASK) {
-        if (settings.gyroReverseFlags & ELEVATOR_MASK) {
-            newServoPosition = rawServoPositions[elevatorChannel] - rpyCorrections[ELEVATOR_INDEX];
+        if (rollIgnoreStick) {
+            newServoPosition = channelCenters[elevatorChannel];
         } else {
-            newServoPosition = rawServoPositions[elevatorChannel] + rpyCorrections[ELEVATOR_INDEX];
+            newServoPosition = rawServoPositions[elevatorChannel];
+        }
+        if (settings.gyroReverseFlags & ELEVATOR_MASK) {
+            newServoPosition -= rpyCorrections[ELEVATOR_INDEX];
+        } else {
+            newServoPosition += rpyCorrections[ELEVATOR_INDEX];
         }
         if (newServoPosition < settings.minTravelLimits[ELEVATOR_INDEX]) {
             newServoPosition = settings.minTravelLimits[ELEVATOR_INDEX];
@@ -425,10 +444,15 @@ void verifyAndSetOutputs(void) {
         outputServos[elevatorChannel] = rawServoPositions[elevatorChannel];
     }
     if (settings.gyroEnabledFlags & RUDDER_MASK) {
-        if (settings.gyroReverseFlags & RUDDER_MASK) {
-            newServoPosition = rawServoPositions[RUDDER] - rpyCorrections[RUDDER_INDEX];
+        if (yawIgnoreStick) {
+            newServoPosition = channelCenters[RUDDER];
         } else {
-            newServoPosition = rawServoPositions[RUDDER] + rpyCorrections[RUDDER_INDEX];
+            newServoPosition = rawServoPositions[RUDDER];
+        }
+        if (settings.gyroReverseFlags & RUDDER_MASK) {
+            newServoPosition -= rpyCorrections[RUDDER_INDEX];
+        } else {
+            newServoPosition += rpyCorrections[RUDDER_INDEX];
         }
         if (newServoPosition < settings.minTravelLimits[RUDDER_INDEX]) {
             newServoPosition = settings.minTravelLimits[RUDDER_INDEX];
@@ -440,10 +464,15 @@ void verifyAndSetOutputs(void) {
         outputServos[RUDDER] = rawServoPositions[RUDDER];
     }
     if (settings.gyroEnabledFlags & AILERON2_MASK) {
-        if (settings.gyroReverseFlags & AILERON2_MASK) {
-            newServoPosition = rawServoPositions[settings.aileron2Channel] + rpyCorrections[AILERON_INDEX];
+        if (rollIgnoreStick) {
+            newServoPosition = channelCenters[settings.aileron2Channel];
         } else {
-            newServoPosition = rawServoPositions[settings.aileron2Channel] - rpyCorrections[AILERON_INDEX];
+            newServoPosition = rawServoPositions[settings.aileron2Channel];
+        }
+        if (settings.gyroReverseFlags & AILERON2_MASK) {
+            newServoPosition += rpyCorrections[AILERON_INDEX];
+        } else {
+            newServoPosition -= rpyCorrections[AILERON_INDEX];
         }
         if (newServoPosition < settings.minTravelLimits[AILERON2_INDEX]) {
             newServoPosition = settings.minTravelLimits[AILERON2_INDEX];
@@ -453,10 +482,15 @@ void verifyAndSetOutputs(void) {
         outputServos[settings.aileron2Channel] = newServoPosition;
     }
     if (settings.gyroEnabledFlags & ELEVATOR2_MASK) {
-        if (settings.gyroReverseFlags & ELEVATOR2_MASK) {
-            newServoPosition = rawServoPositions[settings.elevator2Channel] - rpyCorrections[ELEVATOR_INDEX];
+        if (pitchIgnoreStick) {
+            newServoPosition = channelCenters[settings.elevator2Channel];
         } else {
-            newServoPosition = rawServoPositions[settings.elevator2Channel] + rpyCorrections[ELEVATOR_INDEX];
+            newServoPosition = rawServoPositions[settings.elevator2Channel];
+        }
+        if (settings.gyroReverseFlags & ELEVATOR2_MASK) {
+            newServoPosition -= rpyCorrections[ELEVATOR_INDEX];
+        } else {
+            newServoPosition += rpyCorrections[ELEVATOR_INDEX];
         }
         if (newServoPosition < settings.minTravelLimits[ELEVATOR2_INDEX]) {
             newServoPosition = settings.minTravelLimits[ELEVATOR2_INDEX];

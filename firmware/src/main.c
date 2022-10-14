@@ -19,6 +19,9 @@
 //TODO add clock monitoring and NMI handler
 //TODO enable BOR and do fast start when detected
 
+//TODO add soft center for autolevel mode
+//TODO add an angle mode where sticks control rate for each axis
+
 int main(void) {
     if (RCONbits.POR == 1) {
         //power on reset
