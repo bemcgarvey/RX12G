@@ -2,11 +2,89 @@
 #include "gyroTask.h"
 #include "attitude.h"
 #include "rxTask.h"
+#include "settings.h"
+
+static float angleRollScale;
+static float anglePitchScale;
+static float angleYawScale;
 
 void initAngleMode(void) {
-    
+    float maxRange;
+    float minRange;
+    maxRange = settings.maxTravelLimits[AILERON_INDEX] - channelCenters[aileronChannel];
+    minRange = channelCenters[aileronChannel] - settings.minTravelLimits[AILERON_INDEX];
+    if (maxRange > minRange) {
+        angleRollScale = settings.maxRollRate / maxRange;
+    } else {
+        angleRollScale = settings.maxRollRate / minRange;
+    }
+    maxRange = settings.maxTravelLimits[ELEVATOR_INDEX] - channelCenters[elevatorChannel];
+    minRange = channelCenters[elevatorChannel] - settings.minTravelLimits[ELEVATOR_INDEX];
+    if (maxRange > minRange) {
+        anglePitchScale = settings.maxPitchRate / maxRange;
+    } else {
+        anglePitchScale = settings.maxPitchRate / minRange;
+    }
+    maxRange = settings.maxTravelLimits[RUDDER_INDEX] - channelCenters[RUDDER];
+    minRange = channelCenters[RUDDER] - settings.minTravelLimits[RUDDER_INDEX];
+    if (maxRange > minRange) {
+        angleYawScale = settings.maxYawRate / maxRange;
+    } else {
+        angleYawScale = settings.maxYawRate / minRange;
+    }
 }
 
 void angleModeCalculate(int axes) {
-    
+    float error;
+    float deltaError;
+    float target;
+
+    if (axes & ROLL_AXIS) {
+        rollIgnoreStick = true;
+        target = (rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) * angleRollScale;
+        error = target - rateAverages[ROLL_INDEX];
+        deltaError = error - lastRollError;
+        lastRollError = error;
+        rollITerm += error;
+        if (rollITerm > settings.rollPID._maxI) {
+            rollITerm = settings.rollPID._maxI;
+        } else if (rollITerm < -settings.rollPID._maxI) {
+            rollITerm = -settings.rollPID._maxI;
+        }
+        rpyCorrections[ROLL_INDEX] = (error * settings.rollPID._P
+                + rollITerm * settings.rollPID._I
+                + deltaError * settings.rollPID._D) * rollGains[NORMAL_GAIN];
+    }
+    if (axes & PITCH_AXIS) {
+        pitchIgnoreStick = true;
+        target = (rawServoPositions[elevatorChannel] - channelCenters[elevatorChannel]) * anglePitchScale;
+        error = target - rateAverages[PITCH_INDEX];
+        deltaError = error - lastPitchError;
+        lastPitchError = error;
+        pitchITerm += error;
+        if (pitchITerm > settings.pitchPID._maxI) {
+            pitchITerm = settings.pitchPID._maxI;
+        } else if (pitchITerm < -settings.pitchPID._maxI) {
+            pitchITerm = -settings.pitchPID._maxI;
+        }
+        rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
+                + pitchITerm * settings.pitchPID._I
+                + deltaError * settings.pitchPID._D) * pitchGains[NORMAL_GAIN];
+    }
+    if (axes & YAW_AXIS) {
+        yawIgnoreStick = true;
+        target = (rawServoPositions[RUDDER] - channelCenters[RUDDER]) * angleYawScale;
+        error = target - rateAverages[YAW_INDEX];
+        deltaError = error - lastYawError;
+        lastYawError = error;
+        yawITerm += error;
+        if (yawITerm > settings.yawPID._maxI) {
+            yawITerm = settings.yawPID._maxI;
+        } else if (yawITerm < -settings.yawPID._maxI) {
+            yawITerm = -settings.yawPID._maxI;
+        }
+        rpyCorrections[YAW_INDEX] = (error * settings.yawPID._P
+                + yawITerm * settings.yawPID._I
+                + deltaError * settings.yawPID._D) * yawGains[NORMAL_GAIN];
+    }
 }

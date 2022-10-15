@@ -282,6 +282,9 @@ void MainWindow::getLimitsTabControls() {
     settings.takeoffPitch = ui->takeoffPitchSpinBox->value();
     settings.rollLimit = ui->rollLimitSpinBox->value();
     settings.pitchLimit = ui->pitchLimitSpinBox->value();
+    settings.maxRollRate = ui->maxRollSpinBox->value();
+    settings.maxPitchRate = ui->maxPitchSpinBox->value();
+    settings.maxYawRate = ui->maxYawSpinBox->value();
 }
 
 void MainWindow::setLimitsTabControls() {
@@ -293,6 +296,9 @@ void MainWindow::setLimitsTabControls() {
     ui->takeoffPitchSpinBox->setValue(settings.takeoffPitch);
     ui->rollLimitSpinBox->setValue(settings.rollLimit);
     ui->pitchLimitSpinBox->setValue(settings.pitchLimit);
+    ui->maxRollSpinBox->setValue(settings.maxRollRate);
+    ui->maxPitchSpinBox->setValue(settings.maxPitchRate);
+    ui->maxYawSpinBox->setValue(settings.maxYawRate);
 }
 
 void MainWindow::getTuningTabControls()

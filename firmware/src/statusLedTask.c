@@ -86,6 +86,10 @@ void statusLedTask(void *pvParameters) {
                 LED_A_State = LED_OFF;
                 LED_B_State = LED_BLINK_FAST_A;
                 break;
+            case ANGLE_MODE:
+                LED_A_State = LED_OFF;
+                LED_B_State = LED_BLINK_SLOW_A;
+                break;
             case CUSTOM_MODE_1:
                 LED_A_State = LED_ON;
                 LED_B_State = LED_BLINK_FAST_A;
