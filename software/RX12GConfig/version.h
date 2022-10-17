@@ -14,7 +14,6 @@ public:
     static int firmwareMinorVersion;
     static const QString firmwareVersionString(void);
     static const unsigned int fileVersion = 1;
-    static const unsigned int fileMagicNumber = 0x4d631100;
 };
 
 #endif // VERSION_H

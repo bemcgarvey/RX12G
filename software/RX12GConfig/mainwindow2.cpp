@@ -4,6 +4,7 @@
 #include <QFile>
 #include "version.h"
 #include <QMessageBox>
+#include "settingsfile.h"
 
 void MainWindow::getRxTabControls() {
     if (ui->sbusEnableCheckBox->isChecked()) {
@@ -434,36 +435,14 @@ void MainWindow::setControls()
 bool MainWindow::openFile(QString fileName)
 {
     QFile file(fileName);
-    if (file.open(QIODevice::ReadOnly)) {
-        unsigned int magic;
-        file.read(reinterpret_cast<char *>(&magic), sizeof(magic));
-        if (magic != Version::fileMagicNumber) {
-            return false;
-        }
-        unsigned int version;
-        file.read(reinterpret_cast<char *>(&version), sizeof(version));
-        file.read(reinterpret_cast<char *>(&settings), sizeof(Settings));
-        file.close();
-        return true;
-    } else {
-        return false;
-    }
+    SettingsFile settingsFile(&settings);
+    return settingsFile.load(fileName);
 }
 
 bool MainWindow::saveFile(QString fileName)
 {
-    QFile file(fileName);
-    if (file.open(QIODevice::WriteOnly)) {
-        unsigned int magic = Version::fileMagicNumber;
-        unsigned int fileVersion = Version::fileVersion;
-        file.write(reinterpret_cast<const char *>(&magic), sizeof(magic));
-        file.write(reinterpret_cast<const char *>(&fileVersion), sizeof(fileVersion));
-        file.write(reinterpret_cast<const char *>(&settings), sizeof(Settings));
-        file.close();
-        return true;
-    } else {
-        return false;
-    }
+    SettingsFile settingsFile(&settings);
+    return settingsFile.save(fileName);
 }
 
 void MainWindow::initSettings()

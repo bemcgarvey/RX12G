@@ -22,6 +22,7 @@ SOURCES += \
     mainwindow2.cpp \
     minmaxbar.cpp \
     qhorizonwidget.cpp \
+    settingsfile.cpp \
     version.cpp \
     workerthread.cpp
 
@@ -37,6 +38,7 @@ HEADERS += \
     mainwindow.h \
     minmaxbar.h \
     qhorizonwidget.h \
+    settingsfile.h \
     version.h \
     workerthread.h
 
