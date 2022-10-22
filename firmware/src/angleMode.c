@@ -18,6 +18,9 @@ void initAngleMode(void) {
     } else {
         angleRollScale = settings.maxRollRate / minRange;
     }
+    if (settings.gyroReverseFlags & AILERON_MASK) {
+        angleRollScale = -angleRollScale;
+    }
     maxRange = settings.maxTravelLimits[ELEVATOR_INDEX] - channelCenters[elevatorChannel];
     minRange = channelCenters[elevatorChannel] - settings.minTravelLimits[ELEVATOR_INDEX];
     if (maxRange > minRange) {
@@ -25,12 +28,18 @@ void initAngleMode(void) {
     } else {
         anglePitchScale = settings.maxPitchRate / minRange;
     }
+    if (settings.gyroReverseFlags & ELEVATOR_MASK) {
+        anglePitchScale = -anglePitchScale;
+    }
     maxRange = settings.maxTravelLimits[RUDDER_INDEX] - channelCenters[RUDDER];
     minRange = channelCenters[RUDDER] - settings.minTravelLimits[RUDDER_INDEX];
     if (maxRange > minRange) {
         angleYawScale = settings.maxYawRate / maxRange;
     } else {
         angleYawScale = settings.maxYawRate / minRange;
+    }
+    if (settings.gyroReverseFlags & RUDDER_MASK) {
+        angleYawScale = -angleYawScale;
     }
 }
 

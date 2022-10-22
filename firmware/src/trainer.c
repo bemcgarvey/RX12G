@@ -18,12 +18,18 @@ void initTrainerMode(void) {
     } else {
         rollScale = settings.rollLimit / minRange;
     }
+    if (settings.gyroReverseFlags & AILERON_MASK) {
+        rollScale = -rollScale;
+    }
     maxRange = settings.maxTravelLimits[ELEVATOR_INDEX] - channelCenters[elevatorChannel];
     minRange = channelCenters[elevatorChannel] - settings.minTravelLimits[ELEVATOR_INDEX];
     if (maxRange < minRange) {
         pitchScale = settings.pitchLimit / maxRange;
     } else {
         pitchScale = settings.pitchLimit / minRange;
+    }
+    if (settings.gyroReverseFlags & ELEVATOR_MASK) {
+        pitchScale = -pitchScale;
     }
 }
 
