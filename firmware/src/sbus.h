@@ -12,7 +12,12 @@
 extern "C" {
 #endif
 
+#define SBUS_HEADER     0x0f
+#define SBUS_FOOTER     0x00
+#define SBUS_FAILSAFE   0x08
+    
     void initSBus(void);
+    void processSBusPacket(uint8_t *buffer);
 
 #ifdef	__cplusplus
 }

@@ -14,6 +14,7 @@
 #include "timers.h"
 #include "output.h"
 #include "tasks.h"
+#include "settings.h"
 
 static bool detectedSatellites[3];
 
@@ -32,28 +33,47 @@ void initSatellites(void) {
         detectedSatellites[SAT1] = false;
         detectedSatellites[SAT2] = false;
         detectedSatellites[SAT3] = false;
-        CNPDBbits.CNPDB0 = 1;
-        CNPDCbits.CNPDC15 = 1;
-        CNPDAbits.CNPDA11 = 1;
-        CORETIMER_DelayMs(50);
-        if (SAT1_RX_Get() == 1) {
-            detectedSatellites[SAT1] = true;
+        if (settings.satType == SAT_TYPE_SBUS) {
+            CNPUBbits.CNPUB0 = 1;
+            CNPUCbits.CNPUC15 = 1;
+            CNPUAbits.CNPUA11 = 1;
+            CORETIMER_DelayMs(50);
+            if (SAT1_RX_Get() == 0) {
+                detectedSatellites[SAT1] = true;
+            }
+            if (SAT2_RX_Get() == 0) {
+                detectedSatellites[SAT2] = true;
+            }
+            if (SAT3_RX_Get() == 0) {
+                detectedSatellites[SAT3] = true;
+            }
+            CNPUBbits.CNPUB0 = 0;
+            CNPUCbits.CNPUC15 = 0;
+            CNPUAbits.CNPUA11 = 0;
+        } else {
+            CNPDBbits.CNPDB0 = 1;
+            CNPDCbits.CNPDC15 = 1;
+            CNPDAbits.CNPDA11 = 1;
+            CORETIMER_DelayMs(50);
+            if (SAT1_RX_Get() == 1) {
+                detectedSatellites[SAT1] = true;
+            }
+            if (SAT2_RX_Get() == 1) {
+                detectedSatellites[SAT2] = true;
+            }
+            if (SAT3_RX_Get() == 1) {
+                detectedSatellites[SAT3] = true;
+            }
+            CNPDBbits.CNPDB0 = 0;
+            CNPDCbits.CNPDC15 = 0;
+            CNPDAbits.CNPDA11 = 0;
         }
-        if (SAT2_RX_Get() == 1) {
-            detectedSatellites[SAT2] = true;
-        }
-        if (SAT3_RX_Get() == 1) {
-            detectedSatellites[SAT3] = true;
-        }
-        CNPDBbits.CNPDB0 = 0;
-        CNPDCbits.CNPDC15 = 0;
-        CNPDAbits.CNPDA11 = 0;
     }
     initUARTs(detectedSatellites);
 }
 
 void satPowerOn(bool powerOn) {
-    if (powerOn) {
+    if (powerOn && settings.satType == SAT_TYPE_DSMX) {
         SAT_POWER_Set();
     } else {
         SAT_POWER_Clear();
@@ -61,6 +81,9 @@ void satPowerOn(bool powerOn) {
 }
 
 bool bindSats(void) {
+    if (settings.satType == SAT_TYPE_SBUS) {
+        return true;
+    }
     disableUARTs();
     satPowerOn(false);
     CORETIMER_DelayMs(500);

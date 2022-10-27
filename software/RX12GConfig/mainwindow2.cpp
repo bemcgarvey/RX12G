@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include "RX12G.h"
 #include <QFile>
-#include "version.h"
 #include <QMessageBox>
 #include "settingsfile.h"
 
@@ -38,6 +37,11 @@ void MainWindow::getRxTabControls() {
         settings.channelOrder = CHANNEL_ORDER_AETR;
     } else {
         settings.channelOrder = CHANNEL_ORDER_TAER;
+    }
+    if (ui->satSBUSRadioButton->isChecked()) {
+        settings.satType = SAT_TYPE_SBUS;
+    } else {
+        settings.satType = SAT_TYPE_DSMX;
     }
 }
 
@@ -78,6 +82,11 @@ void MainWindow::setRxTabControls() {
         ui->aetrRadioButton->setChecked(true);
     } else {
         ui->taerRadioButton->setChecked(true);
+    }
+    if (settings.satType == SAT_TYPE_SBUS) {
+        ui->satSBUSRadioButton->setChecked(true);
+    } else {
+        ui->satDSMXRadioButton->setChecked(true);
     }
 }
 

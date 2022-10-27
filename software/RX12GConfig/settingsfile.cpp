@@ -26,6 +26,7 @@ bool SettingsFile::save(QString fileName)
     json["failsafeType"] = m_settings->failsafeType;
     json["rxOnly"] = m_settings->rxOnly;
     json["channelOrder"] = m_settings->channelOrder;
+    json["satType"] = m_settings->satType;
     json["gyroOrientation"] = m_settings->gyroOrientation;
     json["wingType"] = m_settings->wingType;
     json["tailType"] = m_settings->tailType;
@@ -136,7 +137,8 @@ bool SettingsFile::load(QString fileName)
     m_settings->numSBusOutputs = json["numSBusOutputs"].toInt();
     m_settings->failsafeType = json["failsafeType"].toInt();
     m_settings->rxOnly = json["rxOnly"].toInt();
-    m_settings->channelOrder = json["channelOrder"].toInt();
+    m_settings->channelOrder = json["channelOrder"].toInt(CHANNEL_ORDER_TAER);
+    m_settings->satType = json["satType"].toInt(SAT_TYPE_DSMX);
     m_settings->gyroOrientation = json["gyroOrientation"].toInt();
     m_settings->wingType = json["wingType"].toInt();
     m_settings->tailType = json["tailType"].toInt();
