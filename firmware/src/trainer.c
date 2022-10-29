@@ -4,6 +4,7 @@
 #include "attitude.h"
 #include "trainer.h"
 #include "rxTask.h"
+#include "settings.h"
 
 static float rollScale;
 static float pitchScale;
@@ -37,7 +38,8 @@ void trainerModeCalculate(int axes) {
     float error;
     float deltaError;
     float target;
-
+    float gain;
+    
     if (axes & ROLL_AXIS) {
         rollIgnoreStick = true;
         target = (rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) * rollScale;
@@ -55,9 +57,14 @@ void trainerModeCalculate(int axes) {
         } else if (rollITerm < -settings.rollPID._maxI) {
             rollITerm = -settings.rollPID._maxI;
         }
+        if (rollGains[LEVEL_GAIN] > MIN_GAIN) {
+            gain = rollGains[LEVEL_GAIN];
+        } else {
+            gain = MIN_GAIN;
+        }
         rpyCorrections[ROLL_INDEX] = (error * settings.rollPID._P
                 + rollITerm * settings.rollPID._I
-                + deltaError * settings.rollPID._D) * rollGains[LEVEL_GAIN];
+                + deltaError * settings.rollPID._D) * gain;
     }
     if (axes & PITCH_AXIS) {
         pitchIgnoreStick = true;
@@ -76,8 +83,13 @@ void trainerModeCalculate(int axes) {
         } else if (pitchITerm < -settings.pitchPID._maxI) {
             pitchITerm = -settings.pitchPID._maxI;
         }
+        if (pitchGains[LEVEL_GAIN] > MIN_GAIN) {
+            gain = pitchGains[LEVEL_GAIN];
+        } else {
+            gain = MIN_GAIN;
+        }
         rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
                 + pitchITerm * settings.pitchPID._I
-                + deltaError * settings.pitchPID._D) * pitchGains[LEVEL_GAIN];
+                + deltaError * settings.pitchPID._D) * gain;
     }
 }

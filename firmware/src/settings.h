@@ -19,6 +19,10 @@ extern "C" {
 #endif
 
 #define MAX_CHANNELS    20
+    
+//minimum gain for modes that override the sticks
+// if gain is too low in these modes there will be a loss of control    
+#define MIN_GAIN        0.20
 
     enum {
         AILERON_INDEX = 0, ELEVATOR_INDEX = 1, RUDDER_INDEX = 2,
