@@ -121,6 +121,9 @@ void UART4_FAULT_Handler (void)
 if (U4STAbits.OERR == 1) {
         U4STAbits.OERR = 0;
     }
+    uint8_t rx = U4RXREG;
+    (void) rx;
+    IFS2bits.U4RXIF = 0;
     TMR8 = 0;
     IFS2bits.U4EIF = 0;
 }
@@ -138,6 +141,9 @@ void UART5_FAULT_Handler (void)
     if (U5STAbits.OERR == 1) {
         U5STAbits.OERR = 0;
     }
+    uint8_t rx = U5RXREG;
+    (void) rx;
+    IFS2bits.U5RXIF = 0; 
     TMR7 = 0;
     IFS2bits.U5EIF = 0;
 }
@@ -190,6 +196,9 @@ void UART6_FAULT_Handler (void)
     if (U6STAbits.OERR == 1) {
         U6STAbits.OERR = 0;
     }
+    uint8_t rx = U6RXREG;
+    (void) rx;
+    IFS5bits.U6RXIF = 0;
     TMR6 = 0;
     IFS5bits.U6EIF = 0;
 }

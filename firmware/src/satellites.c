@@ -32,7 +32,7 @@ void initSatellites(void) {
     } else if (settings.satType == SAT_TYPE_SBUS) {
         detectedSatellites[SAT1] = true;
         detectedSatellites[SAT2] = true;
-        //BUG SAT3 causes a problem.  WDT???
+        detectedSatellites[SAT3] = true;
     } else {
         detectedSatellites[SAT1] = false;
         detectedSatellites[SAT2] = false;

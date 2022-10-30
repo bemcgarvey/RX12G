@@ -34,7 +34,7 @@ void initSBus(void) {
     //Setup UART3
     //100000 baud, 8E2, inverted polarity
     U3MODEbits.CLKSEL = 0b01; //SYSCLOCK
-    U3BRG = 75; //100000 baud
+    U3BRG = 74; //100000 baud
     U3MODEbits.BRGH = 0;
     U3MODEbits.PDSEL = 0b01; //8E
     U3MODEbits.STSEL = 1; //2 stop bits
@@ -46,7 +46,7 @@ void initSBus(void) {
         //Setup UART1
         //100000 baud, 8E2, inverted polarity
         U1MODEbits.CLKSEL = 0b01; //SYSCLOCK
-        U1BRG = 75; //100000 baud
+        U1BRG = 74; //100000 baud
         U1MODEbits.BRGH = 0;
         U1MODEbits.PDSEL = 0b01; //8E
         U1MODEbits.STSEL = 1; //2 stop bits
@@ -174,4 +174,14 @@ void processSBusPacket(uint8_t *buffer) {
             | (uint16_t) buffer[20] << 9) &0x7ff;
     rawServoPositions[14] = ((uint16_t) buffer[20] >> 2 | (uint16_t) buffer[21] << 6) & 0x7ff;
     rawServoPositions[15] = ((uint16_t) buffer[21] >> 5 | (uint16_t) buffer[22] << 3) & 0x7ff;
+    if (buffer[23] & 0x01) {
+        rawServoPositions[16] = 2047;
+    } else {
+        rawServoPositions[16] = 0;
+    }
+    if (buffer[23] & 0x02) {
+        rawServoPositions[17] = 2047;
+    } else {
+        rawServoPositions[17] = 0;
+    }
 }
