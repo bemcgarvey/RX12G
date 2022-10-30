@@ -32,12 +32,12 @@ void sat3DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle);
 void initUARTs(bool detected[3]) {
     validPacketReceived = false;
     if (settings.satType == SAT_TYPE_SBUS) {
-        U4BRG = 75; //100000 baud
-        U4MODEbits.BRGH = 0;
-        U5BRG = 75; //100000 baud
-        U5MODEbits.BRGH = 0;
-        U6BRG = 75; //100000 baud
-        U6MODEbits.BRGH = 0;
+        U4BRG = 149; //100000 baud
+        U4MODEbits.BRGH = 1;
+        U5BRG = 149; //100000 baud
+        U5MODEbits.BRGH = 1;
+        U6BRG = 149; //100000 baud
+        U6MODEbits.BRGH = 1;
         U4MODEbits.PDSEL = 0b01; //8E
         U4MODEbits.STSEL = 1; //2 stop bits
         U4MODEbits.RXINV = 1; //invert
