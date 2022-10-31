@@ -33,7 +33,11 @@ void _USB_DEVICE_Tasks(void *pvParameters) {
 }
 
 void initQueues(void) {
-    rxQueue = xQueueCreate(6, 16);
+    if (settings.satType == SAT_TYPE_SBUS) {
+        rxQueue = xQueueCreate(6, 25);
+    } else {
+        rxQueue = xQueueCreate(6, 16);
+    }
     imuQueue = xQueueCreate(1, 12);
 }
 

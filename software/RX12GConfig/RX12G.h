@@ -66,6 +66,8 @@ enum {
 
     enum {CHANNEL_ORDER_TAER = 0x00, CHANNEL_ORDER_AETR = 0xae};
 
+    enum {SAT_TYPE_DSMX = 0, SAT_TYPE_SBUS = 1};
+
     typedef struct {
         float _P;
         float _I;
@@ -89,6 +91,7 @@ enum {
         uint8_t failsafeType;
         uint8_t rxOnly;
         uint8_t channelOrder;
+        uint8_t satType;
         //gyro settings
         uint8_t gyroOrientation;
         uint8_t wingType;

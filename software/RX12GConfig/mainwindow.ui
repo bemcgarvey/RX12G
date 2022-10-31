@@ -270,6 +270,32 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QGroupBox" name="satTypeGroupBox">
+                 <property name="title">
+                  <string>Satellite Type</string>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_24">
+                  <item>
+                   <widget class="QRadioButton" name="satDSMXRadioButton">
+                    <property name="text">
+                     <string>DSMX</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="satSBUSRadioButton">
+                    <property name="text">
+                     <string>SBUS</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>

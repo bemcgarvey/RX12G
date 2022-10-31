@@ -3,9 +3,7 @@
 #include "sbus.h"
 #include "settings.h"
 #include "output.h"
-
-#define SBUS_HEADER 0x0f;
-#define SBUS_FOOTER 0x00;
+#include "gyroTask.h"
 
 typedef union __attribute__((packed)) {
 
@@ -36,7 +34,7 @@ void initSBus(void) {
     //Setup UART3
     //100000 baud, 8E2, inverted polarity
     U3MODEbits.CLKSEL = 0b01; //SYSCLOCK
-    U3BRG = 75; //100000 baud
+    U3BRG = 74; //100000 baud
     U3MODEbits.BRGH = 0;
     U3MODEbits.PDSEL = 0b01; //8E
     U3MODEbits.STSEL = 1; //2 stop bits
@@ -48,7 +46,7 @@ void initSBus(void) {
         //Setup UART1
         //100000 baud, 8E2, inverted polarity
         U1MODEbits.CLKSEL = 0b01; //SYSCLOCK
-        U1BRG = 75; //100000 baud
+        U1BRG = 74; //100000 baud
         U1MODEbits.BRGH = 0;
         U1MODEbits.PDSEL = 0b01; //8E
         U1MODEbits.STSEL = 1; //2 stop bits
@@ -147,7 +145,7 @@ void transmitSBusPacket(uint32_t status, uintptr_t context) {
         sbusPacket.flags |= 0x2;
     }
     if (failsafeEngaged) {
-        sbusPacket.flags |= 0x8;
+        sbusPacket.flags |= SBUS_FAILSAFE;
     }
     DCH3CONbits.CHEN = 1;
     if (settings.numSBusOutputs > 1) {
@@ -155,3 +153,35 @@ void transmitSBusPacket(uint32_t status, uintptr_t context) {
     }
 }
 
+void processSBusPacket(uint8_t *buffer) {
+    rawServoPositions[0] = ((uint16_t) buffer[1] | (uint16_t) buffer[2] << 8) & 0x7ff;
+    rawServoPositions[1] = ((uint16_t) buffer[2] >> 3 | (uint16_t) buffer[3] << 5) & 0x7ff;
+    rawServoPositions[2] = ((uint16_t) buffer[3] >> 6 | (uint16_t) buffer[4] << 2
+            | (uint16_t) buffer[5] << 10) & 0x7ff;
+    rawServoPositions[3] = ((uint16_t) buffer[5] >> 1 | (uint16_t) buffer[6] << 7) & 0x7ff;
+    rawServoPositions[4] = ((uint16_t) buffer[6] >> 4 | (uint16_t) buffer[7] << 4) & 0x7ff;
+    rawServoPositions[5] = ((uint16_t) buffer[7] >> 7 | (uint16_t) buffer[8] << 1
+            | (uint16_t) buffer[9] << 9) & 0x7ff;
+    rawServoPositions[6] = ((uint16_t) buffer[9] >> 2 | (uint16_t) buffer[10] << 6) &0x7ff;
+    rawServoPositions[7] = ((uint16_t) buffer[10] >> 5 | (uint16_t) buffer[11] << 3) & 0x7ff;
+    rawServoPositions[8] = ((uint16_t) buffer[12] | (uint16_t) buffer[13] << 8) &0x7ff;
+    rawServoPositions[9] = ((uint16_t) buffer[13] >> 3 | (uint16_t) buffer[14] << 5) & 0x7ff;
+    rawServoPositions[10] = ((uint16_t) buffer[14] >> 6 | (uint16_t) buffer[15] << 2
+            | (uint16_t) buffer[16] << 10) & 0x7ff;
+    rawServoPositions[11] = ((uint16_t) buffer[16] >> 1 | (uint16_t) buffer[17] << 7) & 0x7ff;
+    rawServoPositions[12] = ((uint16_t) buffer[17] >> 4 | (uint16_t) buffer[18] << 4) & 0x7ff;
+    rawServoPositions[13] = ((uint16_t) buffer[18] >> 7 | (uint16_t) buffer[19] << 1
+            | (uint16_t) buffer[20] << 9) &0x7ff;
+    rawServoPositions[14] = ((uint16_t) buffer[20] >> 2 | (uint16_t) buffer[21] << 6) & 0x7ff;
+    rawServoPositions[15] = ((uint16_t) buffer[21] >> 5 | (uint16_t) buffer[22] << 3) & 0x7ff;
+    if (buffer[23] & 0x01) {
+        rawServoPositions[16] = 2047;
+    } else {
+        rawServoPositions[16] = 0;
+    }
+    if (buffer[23] & 0x02) {
+        rawServoPositions[17] = 2047;
+    } else {
+        rawServoPositions[17] = 0;
+    }
+}
