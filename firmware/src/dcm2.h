@@ -1,9 +1,12 @@
-/* 
- * File:   dcm2.h
- * Author: bemcg
- *
- * Created on October 5, 2022, 11:59 AM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: dcm2.h                                    //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: DCM functions                      //
+/////////////////////////////////////////////////////
 
 #ifndef DCM2_H
 #define	DCM2_H

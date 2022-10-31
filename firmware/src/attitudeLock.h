@@ -1,9 +1,12 @@
-/* 
- * File:   attitudeLock.h
- * Author: bemcg
- *
- * Created on June 24, 2022, 5:26 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: attitudeLock.h                            //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: attitude lock mode                 //
+/////////////////////////////////////////////////////
 
 #ifndef ATTITUDELOCK_H
 #define	ATTITUDELOCK_H

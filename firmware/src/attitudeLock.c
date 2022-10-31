@@ -1,3 +1,12 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: attitudeLock.c                            //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: attitude lock mode                 //
+/////////////////////////////////////////////////////
 
 #include "attitudeLock.h"
 #include "attitude.h"

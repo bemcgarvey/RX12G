@@ -1,9 +1,12 @@
-/* 
- * File:   launchAssist.h
- * Author: bemcg
- *
- * Created on June 14, 2022, 5:53 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: launchAssist.h                            //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: launch assist mode                 //
+/////////////////////////////////////////////////////
 
 #ifndef LAUNCHASSIST_H
 #define	LAUNCHASSIST_H

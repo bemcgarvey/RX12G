@@ -1,9 +1,12 @@
-/* 
- * File:   usbcommands.h
- * Author: bemcg
- *
- * Created on May 27, 2022, 10:37 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: usbcommands.h                             //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: USB command defines                //
+/////////////////////////////////////////////////////
 
 #ifndef USBCOMMANDS_H
 #define	USBCOMMANDS_H

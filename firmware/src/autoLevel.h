@@ -1,9 +1,12 @@
-/* 
- * File:   autoLevel.h
- * Author: bemcg
- *
- * Created on June 6, 2022, 11:19 AM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: autoLevel.h                               //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: auto level mode                    //
+/////////////////////////////////////////////////////
 
 #ifndef AUTOLEVEL_H
 #define	AUTOLEVEL_H

@@ -1,9 +1,12 @@
-/* 
- * File:   attitude.h
- * Author: bemcg
- *
- * Created on June 6, 2022, 11:17 AM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: attitude.h                                //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: attitude functions                 //
+/////////////////////////////////////////////////////
 
 #ifndef ATTITUDE_H
 #define	ATTITUDE_H

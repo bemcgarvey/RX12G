@@ -1,9 +1,12 @@
-/* 
- * File:   trainer.h
- * Author: bemcg
- *
- * Created on June 24, 2022, 5:29 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: trainer.h                                 //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: trainer mode                       //
+/////////////////////////////////////////////////////
 
 #ifndef TRAINER_H
 #define	TRAINER_H

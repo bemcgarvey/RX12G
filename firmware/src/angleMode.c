@@ -1,3 +1,13 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: angleMode.c                               //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: Angle rate mode                    //
+/////////////////////////////////////////////////////
+
 #include "definitions.h"
 #include "gyroTask.h"
 #include "attitude.h"

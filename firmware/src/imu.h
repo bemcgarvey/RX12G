@@ -1,9 +1,12 @@
-/* 
- * File:   imu.h
- * Author: bemcg
- *
- * Created on May 29, 2022, 9:08 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: imu.h                                     //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: imu functions                      //
+/////////////////////////////////////////////////////
 
 #ifndef IMU_H
 #define	IMU_H

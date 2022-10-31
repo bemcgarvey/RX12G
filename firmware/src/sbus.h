@@ -1,9 +1,12 @@
-/* 
- * File:   sbus.h
- * Author: bemcg
- *
- * Created on May 24, 2022, 4:36 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: sbus.h                                    //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: sbus functions - in and out        //
+/////////////////////////////////////////////////////
 
 #ifndef SBUS_H
 #define	SBUS_H

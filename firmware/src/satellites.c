@@ -43,13 +43,10 @@ void initSatellites(void) {
         CNCONAbits.EDGEDETECT = 1;
         CNCONBbits.EDGEDETECT = 1;
         CNCONCbits.EDGEDETECT = 1;
-        
         CNNEBbits.CNNEB0 = 1;
         CNENBbits.CNIEB0 = 1;
-        
         CNNECbits.CNNEC15 = 1;
         CNENCbits.CNIEC15 = 1;
-        
         CNNEAbits.CNNEA11 = 1;
         CNENAbits.CNIEA11 = 1;
         int p = PORTA;
@@ -57,15 +54,12 @@ void initSatellites(void) {
         p = PORTC;
         (void) p;
         CORETIMER_DelayMs(1500);
-        
         if (SAT1_RX_Get() == 0 || CNSTATBbits.CNSTATB0 == 1) {
             detectedSatellites[SAT1] = true;
         }
-        
         if (SAT2_RX_Get() == 0 || CNSTATCbits.CNSTATC15 == 1) {
             detectedSatellites[SAT2] = true;
         }
-        
         if (SAT3_RX_Get() == 0 || CNSTATAbits.CNSTATA11 == 1) {
             detectedSatellites[SAT3] = true;
         }

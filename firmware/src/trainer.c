@@ -1,3 +1,13 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: trainer.c                                 //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: trainer mode                       //
+/////////////////////////////////////////////////////
+
 #include "definitions.h"
 #include "autoLevel.h"
 #include "gyroTask.h"

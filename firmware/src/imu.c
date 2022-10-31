@@ -1,3 +1,12 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: imu.c                                     //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: imu functions                      //
+/////////////////////////////////////////////////////
 
 #include "definitions.h"
 #include "imu.h"

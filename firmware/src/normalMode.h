@@ -1,9 +1,12 @@
-/* 
- * File:   normalMode.h
- * Author: bemcg
- *
- * Created on June 17, 2022, 5:39 PM
- */
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: normalMode.h                              //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: normal rate mode                   //
+/////////////////////////////////////////////////////
 
 #ifndef NORMALMODE_H
 #define	NORMALMODE_H

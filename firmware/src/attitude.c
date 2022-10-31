@@ -1,3 +1,13 @@
+/////////////////////////////////////////////////////
+// Project: RX12G                                  //
+// File: attitude.c                                //
+// Target: PIC32MK1024GPK064                       // 
+// Compiler: XC32                                  //
+// Author: Brad McGarvey                           //
+// License: GNU General Public License v3.0        //
+// Description: attitude functions                 //
+/////////////////////////////////////////////////////
+
 #include "definitions.h"
 #include "attitude.h"
 #include "gyroTask.h"
