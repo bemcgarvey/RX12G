@@ -16,9 +16,6 @@
 #include "settings.h"
 #include "imu.h"
 
-//TODO add clock monitoring and NMI handler
-//TODO enable BOR and do fast start when detected
-
 //TODO add soft center for autolevel mode
 
 int main(void) {
