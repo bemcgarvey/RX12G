@@ -24,8 +24,6 @@ QSize GyroDisplay::minimumSizeHint() const
     return QSize(24, 24);
 }
 
-//BUG some lines are missing in release version when not run from Qt Designer
-
 void GyroDisplay::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
@@ -37,28 +35,28 @@ void GyroDisplay::paintEvent(QPaintEvent *event)
         brush.setColor(Qt::white);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(0, 0, width() - 1, height() - 1);
+        painter.drawRect(1, 1, width() - 2, height() - 2);
         return;
     }
     pen.setColor(Qt::black);
-    painter.drawRect(0, 0, width() - 1, height() - 1);
+    painter.drawRect(1, 1, width() - 2, height() - 2);
     int mid;
     int len;
     if (isHorizontal) {
         mid = width() / 2;
         len = (mid * value) / range;
         if (len >= 0) {
-            painter.fillRect(mid, 1, len, height() - 2, Qt::darkGreen);
+            painter.fillRect(mid, 1, len, height() - 3, Qt::darkGreen);
         } else {
-            painter.fillRect(mid, 1, len, height() - 2, Qt::red);
+            painter.fillRect(mid, 1, len, height() - 3, Qt::red);
         }
     } else {
         mid = height() / 2;
         len = (mid * value) / range;
         if (len >= 0) {
-            painter.fillRect(1, mid, width() - 2, -len, Qt::darkGreen);
+            painter.fillRect(1, mid, width() - 3, -len, Qt::darkGreen);
         } else {
-            painter.fillRect(1, mid, width() - 2, -len, Qt::red);
+            painter.fillRect(1, mid, width() - 3, -len, Qt::red);
         }
     }
 }

@@ -55,7 +55,6 @@ void MinMaxBar::setInitialMinMax(int min, int max)
     update();
 }
 
-//BUG some lines are missing in release version when not run from Qt Designer
 void MinMaxBar::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
@@ -66,7 +65,7 @@ void MinMaxBar::paintEvent(QPaintEvent *event)
         pen.setColor(Qt::lightGray);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(0, 0, width() - 1, height() - 1);
+        painter.drawRect(1, 1, width() - 2, height() - 2);
         return;
     }
     QFontMetrics fm = painter.fontMetrics();
@@ -74,7 +73,7 @@ void MinMaxBar::paintEvent(QPaintEvent *event)
     int textWidth = bound.width();
     painter.setBrush(brush);
     painter.setPen(pen);
-    painter.drawRect(0, 0, width() - 1, height() - 1);
+    painter.drawRect(1, 1, width() - 2, height() - 2);
     int left;
     int right;
     if (minValue != -1) {
@@ -84,7 +83,7 @@ void MinMaxBar::paintEvent(QPaintEvent *event)
         if (right - left == 0) {
             len = 1;
         }
-        QRect fill(left + 1, 1, len, height() - 2);
+        QRect fill(left + 1, 1, len, height() - 3);
         painter.fillRect(fill, Qt::red);
     }
     painter.drawText(5, 0, textWidth, height(), Qt::AlignLeft | Qt::AlignVCenter, QString::number(oldMin));
