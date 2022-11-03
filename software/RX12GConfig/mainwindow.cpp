@@ -656,6 +656,7 @@ void MainWindow::on_connectBootloaderPushButton_clicked()
         ui->browsePushButton->setEnabled(true);
         ui->cancelUpdatePushButton->setEnabled(true);
         ui->firmwareFileLabel->setText("Please select a file");
+        ui->updateProgressBar->setValue(0);
         uint16_t version = bootloader->readBootInfo();
         ui->statusbar->showMessage(QString("Connected to bootloader version %1.%2")
                               .arg(version >> 8).arg(version & 0xff), 0);
