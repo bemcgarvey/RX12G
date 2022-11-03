@@ -21,6 +21,7 @@ static volatile __attribute__((coherent, aligned(4))) uint8_t sat3Packet[25];
 
 volatile bool validPacketReceived = false;
 volatile uint32_t lastRxTime[3] = {0, 0, 0};
+volatile uint8_t discardPackets[3] = {1, 1, 1};
 
 void startSat1DMA(uint32_t status, uintptr_t context);
 void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle);
@@ -138,7 +139,11 @@ void startSat1DMA(uint32_t status, uintptr_t context) {
 
 void sat1DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
-        if (settings.satType == SAT_TYPE_DSMX
+        //for DSMX the first packet may be invalid
+        if (settings.satType == SAT_TYPE_DSMX && discardPackets[SAT1] > 0) {
+            discardPackets[SAT1] -= 1;
+        }
+        else if (settings.satType == SAT_TYPE_DSMX
                 || (sat1Packet[0] == SBUS_HEADER && sat1Packet[24] == SBUS_FOOTER
                 && !(sat1Packet[23] & SBUS_FAILSAFE))) {
             validPacketReceived = true;
@@ -163,7 +168,11 @@ void startSat2DMA(uint32_t status, uintptr_t context) {
 
 void sat2DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
-        if (settings.satType == SAT_TYPE_DSMX
+        //for DSMX the first packet may be invalid
+        if (settings.satType == SAT_TYPE_DSMX && discardPackets[SAT2] > 0) {
+            discardPackets[SAT2] -= 1;
+        }
+        else if (settings.satType == SAT_TYPE_DSMX
                 || (sat2Packet[0] == SBUS_HEADER && sat2Packet[24] == SBUS_FOOTER
                 && !(sat2Packet[23] & SBUS_FAILSAFE))) {
             validPacketReceived = true;
@@ -188,7 +197,11 @@ void startSat3DMA(uint32_t status, uintptr_t context) {
 
 void sat3DMADone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
-        if (settings.satType == SAT_TYPE_DSMX
+        //for DSMX the first packet may be invalid
+        if (settings.satType == SAT_TYPE_DSMX && discardPackets[SAT3] > 0) {
+            discardPackets[SAT3] -= 1;
+        }
+        else if (settings.satType == SAT_TYPE_DSMX
                 || (sat3Packet[0] == SBUS_HEADER && sat3Packet[24] == SBUS_FOOTER
                 && !(sat3Packet[23] & SBUS_FAILSAFE))) {
             validPacketReceived = true;
