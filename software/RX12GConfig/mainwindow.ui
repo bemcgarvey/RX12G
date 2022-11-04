@@ -4170,7 +4170,6 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionSelf_Test"/>
     <addaction name="actionUpdate_Firmware"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -4206,11 +4205,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
-   </property>
-  </action>
-  <action name="actionSelf_Test">
-   <property name="text">
-    <string>Self Test</string>
    </property>
   </action>
   <action name="actionUpdate_Firmware">

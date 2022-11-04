@@ -12,6 +12,7 @@ SOURCES += \
     HidUSBLink.cpp \
     QHidWatcher.cpp \
     RX12G.cpp \
+    aboutdialog.cpp \
     bootloader.cpp \
     bootloaderusblink.cpp \
     gyrodisplay.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     HidUSBLink.h \
     QHidWatcher.h \
     RX12G.h \
+    aboutdialog.h \
     bootloader.h \
     bootloaderusblink.h \
     gyrodisplay.h \
@@ -43,6 +45,7 @@ HEADERS += \
     workerthread.h
 
 FORMS += \
+    aboutdialog.ui \
     mainwindow.ui
 
 

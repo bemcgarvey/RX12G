@@ -106,6 +106,8 @@ private slots:
     void on_show9RadioButton_clicked();
     void on_show13RadioButton_clicked();
     void on_show17RadioButton_clicked();
+    void on_actionAbout_RX12G_Configure_triggered();
+
 public slots:
     void onBtlMessage(QString msg);
     void onBtlProgress(int progress);

@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <math.h>
 #include <synchapi.h>
+#include "aboutdialog.h"
 
 //TODO add something to icon to distinguish from RX12
 
@@ -807,5 +808,12 @@ void MainWindow::on_show13RadioButton_clicked()
 void MainWindow::on_show17RadioButton_clicked()
 {
     updateChannelDisplay();
+}
+
+
+void MainWindow::on_actionAbout_RX12G_Configure_triggered()
+{
+    auto dlg = std::make_unique<AboutDialog>(this);
+    dlg->exec();
 }
 
