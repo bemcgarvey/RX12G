@@ -16,8 +16,6 @@
 #include "settings.h"
 #include "imu.h"
 
-//TODO add soft center for autolevel mode
-
 int main(void) {
     if (RCONbits.POR == 1) {
         //power on reset

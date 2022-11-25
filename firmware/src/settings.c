@@ -75,7 +75,6 @@ bool saveSettings(void) {
 }
 
 void loadDefaultSettings(void) {
-    //TODO may want to set some default PID's and gains once testing is done
     memset(&settings, 0, sizeof(settings));
     settings.outputHz = 50;
     settings.sBusPeriodMs = 7;
@@ -85,6 +84,26 @@ void loadDefaultSettings(void) {
         settings.minTravelLimits[i] = 0;
         settings.maxTravelLimits[i] = 2047;
     }
+    for (int i = 0; i < 3; ++i) {
+        settings.normalGains[i] = 100;
+        settings.levelGains[i] = 100;
+        if (i < 2) {
+            settings.lockGains[i] = 100;
+        }
+    }
+    //Some conservative values for defaults
+    settings.rollPID._P = 11;
+    settings.rollPID._I = 1;
+    settings.rollPID._D = 6;
+    settings.rollPID._maxI = 100;
+    settings.pitchPID._P = 15;
+    settings.pitchPID._I = 1;
+    settings.pitchPID._D = 8;
+    settings.pitchPID._maxI = 100;
+    settings.yawPID._P = 11;
+    settings.yawPID._I = 1;
+    settings.yawPID._D = 6;
+    settings.yawPID._maxI = 100;
 }
 
 bool loadPresets(void) {
