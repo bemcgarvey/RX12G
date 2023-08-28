@@ -18,7 +18,7 @@ extern "C" {
 #define GYRO_ODR                    416     //Ouput rate in Hz
 #define CALIBRATION_SAMPLE_COUNT    (2 * GYRO_ODR)     //2 seconds
 #define GYRO_SAMPLE_PERIOD          (1.0 / GYRO_ODR)   //Period in sec.
-#define MAX_MOTION_ALLOWED          50  //Maximum gyro count difference to qualify as not moving
+#define MAX_MOTION_ALLOWED          75  //Maximum gyro count difference to qualify as not moving
 #define UPRIGHT_MIN_VALUE           6000 //minimum raw accelerometer value to qualify as upright
     
     extern bool imuReady;

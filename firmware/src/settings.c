@@ -84,25 +84,26 @@ void loadDefaultSettings(void) {
         settings.minTravelLimits[i] = 0;
         settings.maxTravelLimits[i] = 2047;
     }
+    //Set initial gains to a conservative 50%
     for (int i = 0; i < 3; ++i) {
-        settings.normalGains[i] = 100;
-        settings.levelGains[i] = 100;
+        settings.normalGains[i] = 50;
+        settings.levelGains[i] = 50;
         if (i < 2) {
-            settings.lockGains[i] = 100;
+            settings.lockGains[i] = 50;
         }
     }
     //Some conservative values for defaults
-    settings.rollPID._P = 11;
-    settings.rollPID._I = 1;
-    settings.rollPID._D = 6;
+    settings.rollPID._P = 10;
+    settings.rollPID._I = 2;
+    settings.rollPID._D = 5;
     settings.rollPID._maxI = 100;
-    settings.pitchPID._P = 15;
-    settings.pitchPID._I = 1;
-    settings.pitchPID._D = 8;
+    settings.pitchPID._P = 10;
+    settings.pitchPID._I = 2;
+    settings.pitchPID._D = 5;
     settings.pitchPID._maxI = 100;
-    settings.yawPID._P = 11;
-    settings.yawPID._I = 1;
-    settings.yawPID._D = 6;
+    settings.yawPID._P = 10;
+    settings.yawPID._I = 2;
+    settings.yawPID._D = 5;
     settings.yawPID._maxI = 100;
 }
 

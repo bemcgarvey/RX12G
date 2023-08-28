@@ -15,8 +15,8 @@
 extern "C" {
 #endif
 
-#define MAJOR_VERSION   0
-#define MINOR_VERSION   98
+#define MAJOR_VERSION   1
+#define MINOR_VERSION   0
     
     extern const unsigned int firmwareVersion;
 

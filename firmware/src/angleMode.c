@@ -58,7 +58,7 @@ void angleModeCalculate(int axes) {
     float deltaError;
     float target;
     float gain;
-    
+
     if (axes & ROLL_AXIS) {
         rollIgnoreStick = true;
         target = (rawServoPositions[aileronChannel] - channelCenters[aileronChannel]) * angleRollScale;
@@ -71,9 +71,8 @@ void angleModeCalculate(int axes) {
         } else if (rollITerm < -settings.rollPID._maxI) {
             rollITerm = -settings.rollPID._maxI;
         }
-        if (rollGains[NORMAL_GAIN] > MIN_GAIN) {
-            gain = rollGains[NORMAL_GAIN];
-        } else {
+        gain = rollGains[LOCK_GAIN];
+        if (gain < MIN_GAIN) {
             gain = MIN_GAIN;
         }
         rpyCorrections[ROLL_INDEX] = (error * settings.rollPID._P
@@ -92,9 +91,8 @@ void angleModeCalculate(int axes) {
         } else if (pitchITerm < -settings.pitchPID._maxI) {
             pitchITerm = -settings.pitchPID._maxI;
         }
-        if (pitchGains[NORMAL_GAIN] > MIN_GAIN) {
-            gain = pitchGains[NORMAL_GAIN];
-        } else {
+        gain = pitchGains[LOCK_GAIN];
+        if (gain < MIN_GAIN) {
             gain = MIN_GAIN;
         }
         rpyCorrections[PITCH_INDEX] = (error * settings.pitchPID._P
@@ -113,9 +111,8 @@ void angleModeCalculate(int axes) {
         } else if (yawITerm < -settings.yawPID._maxI) {
             yawITerm = -settings.yawPID._maxI;
         }
-        if (yawGains[NORMAL_GAIN] > MIN_GAIN) {
-            gain = yawGains[NORMAL_GAIN];
-        } else {
+        gain = yawGains[LOCK_GAIN];
+        if (gain < MIN_GAIN) {
             gain = MIN_GAIN;
         }
         rpyCorrections[YAW_INDEX] = (error * settings.yawPID._P
