@@ -817,3 +817,10 @@ void MainWindow::on_actionAbout_RX12G_Configure_triggered()
     dlg->exec();
 }
 
+
+void MainWindow::on_actionUpdate_Firmware_triggered()
+{
+    //Switch to last tab which is firmware update tab
+    ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
+}
+

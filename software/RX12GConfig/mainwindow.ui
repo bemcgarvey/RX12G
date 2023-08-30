@@ -4214,7 +4214,7 @@
   </action>
   <action name="actionAbout_RX12G_Configure">
    <property name="text">
-    <string>About RX12G Configure</string>
+    <string>About RX12G Config</string>
    </property>
   </action>
  </widget>
