@@ -42,12 +42,6 @@ int main(void) {
     startSystemTime();
     initSatellites();
     initOutputs();
-    imuInitialized = false;
-    if (settings.rxOnly != RX_ONLY_MODE) {
-        if (initIMU()) {
-            imuInitialized = true;
-        }
-    }
     //Lock PPS
     __builtin_disable_interrupts();
     SYSKEY = 0x00000000;

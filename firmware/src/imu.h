@@ -22,7 +22,6 @@ extern "C" {
 #define UPRIGHT_MIN_VALUE           6000 //minimum raw accelerometer value to qualify as upright
     
     extern bool imuReady;
-    extern bool imuInitialized;
     bool initIMU(void);
     void imuTask(void *pvParameters);
     void disableAccelOffsets(void);

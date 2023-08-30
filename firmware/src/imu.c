@@ -13,6 +13,7 @@
 #include "settings.h"
 #include "attitude.h"
 #include "tasks.h"
+#include "rtosHandles.h"
 
 #define IMU_DEVICE_ADDRESS  0x6a
 
@@ -58,7 +59,6 @@ TaskHandle_t imuTaskHandle;
 QueueHandle_t imuQueue;
 
 bool imuReady = false;
-bool imuInitialized = false;
 
 int16_t rawImuData[6];
 
@@ -69,7 +69,7 @@ bool initIMU(void) {
     uint8_t wValue[4];
     uint8_t rValue;
     imuReady = false;
-    CORETIMER_DelayMs(70);
+    vTaskDelay(70);
     wValue[0] = WHO_AM_I;
     I2C2_WriteRead(IMU_DEVICE_ADDRESS, wValue, 1, &rValue, 1);
     while (I2C2_IsBusy());
@@ -81,7 +81,7 @@ bool initIMU(void) {
     wValue[1] = SW_RESET;
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    CORETIMER_DelayUs(50);
+    vTaskDelay(1);
     //Device settings
     wValue[0] = INT1_CTRL;
     wValue[1] = 1; //INT1_DRDY_XL
@@ -100,7 +100,7 @@ bool initIMU(void) {
     wValue[1] = 0b01100000; //416Hz, 4g range, LPF2_XL_EN off
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
-    wValue[0] = CTRL8_XL;  //This setting is ignored
+    wValue[0] = CTRL8_XL; //This setting is ignored
     wValue[1] = 0b00000000; //LPF2 at ODR/4 = 104Hz Only if LPF2_XL_EN is on
     I2C2_Write(IMU_DEVICE_ADDRESS, wValue, 2);
     while (I2C2_IsBusy());
@@ -140,6 +140,11 @@ void imuTask(void *pvParameters) {
     int16_t yGyroOffset = 0;
     int16_t zGyroOffset = 0;
     bool moving;
+    if (initIMU()) {
+        vTaskPrioritySet(NULL, IMU_TASK_PRIORITY);  
+    } else {
+        vTaskSuspend(NULL);
+    }
     if (startMode == START_WDTO) {
         imuReady = true;
     } else {
