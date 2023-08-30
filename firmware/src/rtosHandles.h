@@ -14,7 +14,17 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
+    //Task priorities
+#define BUTTON_TASK_PRIORITY        4
+#define RX_TASK_PRIORITY            3   
+#define RX_ONLY_TASK_PRIORITY       2
+#define GYRO_TASK_PRIORITY          2
+#define IMU_TASK_PRIORITY           4
+#define STATUS_LED_TASK_PRIORITY    1
+#define USB_BIND_TASK_PRIORITY      1
+#define DETECT_USB_TASK_PRIORITY    1
+#define USB_DEVICE_TASK_PRIORITY    1
+#define USB_APP_TASK_PRIORITY       1
     //Queues
     extern QueueHandle_t rxQueue;
     extern QueueHandle_t imuQueue;

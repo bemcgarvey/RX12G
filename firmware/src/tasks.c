@@ -42,19 +42,20 @@ void initQueues(void) {
 }
 
 void initTasks(void) {
-    xTaskCreate(buttonTask, "buttonTask", 128, NULL, 4, &buttonTaskHandle);
-    xTaskCreate(rxTask, "rxTask", 128, NULL, 3, &rxTaskHandle);
+    xTaskCreate(buttonTask, "buttonTask", 128, NULL, BUTTON_TASK_PRIORITY, &buttonTaskHandle);
+    xTaskCreate(rxTask, "rxTask", 128, NULL, RX_TASK_PRIORITY, &rxTaskHandle);
     if (settings.rxOnly == RX_ONLY_MODE) {
-        xTaskCreate(rxOnlyTask, "rxOnlyTask", 128, NULL, 2, &rxOnlyTaskHandle);
+        xTaskCreate(rxOnlyTask, "rxOnlyTask", 128, NULL, RX_ONLY_TASK_PRIORITY, &rxOnlyTaskHandle);
     } else {
-        xTaskCreate(gyroTask, "gyroTask", 4096, NULL, 2, &gyroTaskHandle);
+        xTaskCreate(gyroTask, "gyroTask", 4096, NULL, GYRO_TASK_PRIORITY, &gyroTaskHandle);
     }
-    xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, 1, &statusLedTaskHandle);
-    if (imuInitialized) {
-        xTaskCreate(imuTask, "imuTask", 256, NULL, 4, &imuTaskHandle);
+    xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, STATUS_LED_TASK_PRIORITY, &statusLedTaskHandle);
+    if (settings.rxOnly != RX_ONLY_MODE) {
+        //Start at priority 1 but will increase to IMU_TASK_PRIORITY after successful initialization
+        xTaskCreate(imuTask, "imuTask", 256, NULL, 1, &imuTaskHandle);
     }
-    xTaskCreate(detectUSBTask, "detectUSBTask", 128, NULL, 1, &detectUSBTaskHandle);
-    xTaskCreate(usbBindTask, "usbBindTask", 128, NULL, 1, &usbBindTaskHandle);
+    xTaskCreate(detectUSBTask, "detectUSBTask", 128, NULL, DETECT_USB_TASK_PRIORITY, &detectUSBTaskHandle);
+    xTaskCreate(usbBindTask, "usbBindTask", 128, NULL, USB_BIND_TASK_PRIORITY, &usbBindTaskHandle);
     //Create this task suspended - will be resumed when needed and then will suspend itself when done
     vTaskSuspend(usbBindTaskHandle);
     vTaskStartScheduler();

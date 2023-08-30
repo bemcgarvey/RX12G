@@ -22,8 +22,8 @@ void detectUSBTask(void *pvParameters) {
         U1PWRCbits.USBPWR = 1;
         vTaskDelay(30);
         if (U1OTGSTATbits.VBUSVD == 1) {
-            xTaskCreate(_USB_DEVICE_Tasks, "USB_DEVICE_TASKS", 1024, NULL, 1, NULL);
-            xTaskCreate(USBAppTasks, "USBAppTasks", 1024, NULL, 1, &usbAppTaskHandle);
+            xTaskCreate(_USB_DEVICE_Tasks, "USB_DEVICE_TASKS", 1024, NULL, USB_DEVICE_TASK_PRIORITY, NULL);
+            xTaskCreate(USBAppTasks, "USBAppTasks", 1024, NULL, USB_APP_TASK_PRIORITY, &usbAppTaskHandle);
             vTaskSuspend(NULL);
         } else {
             U1PWRCbits.USBPWR = 0;
