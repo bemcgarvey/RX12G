@@ -107,7 +107,7 @@ bool bindSats(void) {
     }
     disableUARTs();
     satPowerOn(false);
-    CORETIMER_DelayMs(500);
+    vTaskDelay(500);
     LATBbits.LATB0 = 1;
     LATCbits.LATC15 = 1;
     LATAbits.LATA11 = 1;
@@ -115,7 +115,7 @@ bool bindSats(void) {
     TRISCbits.TRISC15 = 0;
     TRISAbits.TRISA11 = 0;
     satPowerOn(true);
-    CORETIMER_DelayMs(70);
+    vTaskDelay(70);
     int firstSat = -1;
     int pulseCount = DSMX_EXTERNAL_11MS;
     if (detectedSatellites[SAT1]) {
