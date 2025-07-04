@@ -21,6 +21,7 @@
 #include "rxOnlyTask.h"
 #include "detectUSBTask.h"
 #include "usbBindTask.h"
+#include "crsf.h"
 
 int startMode = START_NORMAL;
 
@@ -35,6 +36,8 @@ void _USB_DEVICE_Tasks(void *pvParameters) {
 void initQueues(void) {
     if (settings.satType == SAT_TYPE_SBUS) {
         rxQueue = xQueueCreate(6, 25);
+    } else if (settings.satType == SAT_TYPE_CRSF) {
+        rxQueue = xQueueCreate(6, CHANNEL_PACKET_LEN);
     } else {
         rxQueue = xQueueCreate(6, 16);
     }

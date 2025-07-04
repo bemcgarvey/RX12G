@@ -20,26 +20,26 @@
 
 // DOM-IGNORE-BEGIN
 /*******************************************************************************
-* Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
-*
-* Subject to your compliance with these terms, you may use Microchip software
-* and any derivatives exclusively with Microchip products. It is your
-* responsibility to comply with third party license terms applicable to your
-* use of third party software (including open source software) that may
-* accompany Microchip software.
-*
-* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
-* EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
-* WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-* IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
-* INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
-* WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
-* BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
-* FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
-* ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
-* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+ * Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries.
+ *
+ * Subject to your compliance with these terms, you may use Microchip software
+ * and any derivatives exclusively with Microchip products. It is your
+ * responsibility to comply with third party license terms applicable to your
+ * use of third party software (including open source software) that may
+ * accompany Microchip software.
+ *
+ * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
+ * EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
+ * WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ * IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
+ * INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
+ * WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
+ * BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
+ * FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
+ * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
+ * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
  *******************************************************************************/
 // DOM-IGNORE-END
 
@@ -52,6 +52,8 @@
 #include "configuration.h"
 #include "interrupts.h"
 #include "definitions.h"
+#include "settings.h"
+#include "crsf.h"
 
 
 // *****************************************************************************
@@ -61,64 +63,55 @@
 // *****************************************************************************
 
 
-void TIMER_2_InterruptHandler( void );
-void EXTERNAL_2_InterruptHandler( void );
-void EXTERNAL_3_InterruptHandler( void );
-void TIMER_5_InterruptHandler( void );
-void DRV_USBFS_USB1_Handler( void );
-void I2C2_BUS_InterruptHandler( void );
-void I2C2_MASTER_InterruptHandler( void );
-void DMA0_InterruptHandler( void );
-void DMA1_InterruptHandler( void );
-void DMA2_InterruptHandler( void );
-void TIMER_6_InterruptHandler( void );
-void TIMER_7_InterruptHandler( void );
-void TIMER_8_InterruptHandler( void );
-void TIMER_9_InterruptHandler( void );
-
+void TIMER_2_InterruptHandler(void);
+void EXTERNAL_2_InterruptHandler(void);
+void EXTERNAL_3_InterruptHandler(void);
+void TIMER_5_InterruptHandler(void);
+void DRV_USBFS_USB1_Handler(void);
+void I2C2_BUS_InterruptHandler(void);
+void I2C2_MASTER_InterruptHandler(void);
+void DMA0_InterruptHandler(void);
+void DMA1_InterruptHandler(void);
+void DMA2_InterruptHandler(void);
+void TIMER_6_InterruptHandler(void);
+void TIMER_7_InterruptHandler(void);
+void TIMER_8_InterruptHandler(void);
+void TIMER_9_InterruptHandler(void);
 
 
 /* All the handlers are defined here.  Each will call its PLIB-specific function. */
 
 
-void TIMER_2_Handler (void)
-{
+void TIMER_2_Handler(void) {
     TIMER_2_InterruptHandler();
 }
 
-void EXTERNAL_2_Handler (void)
-{
+void EXTERNAL_2_Handler(void) {
     EXTERNAL_2_InterruptHandler();
 }
 
-void EXTERNAL_3_Handler (void)
-{
+void EXTERNAL_3_Handler(void) {
     EXTERNAL_3_InterruptHandler();
 }
 
-void TIMER_5_Handler (void)
-{
+void TIMER_5_Handler(void) {
     TIMER_5_InterruptHandler();
 }
 
-void USB_1_Handler (void)
-{
+void USB_1_Handler(void) {
     DRV_USBFS_USB1_Handler();
 }
 
-void I2C2_BUS_Handler (void)
-{
+void I2C2_BUS_Handler(void) {
     I2C2_BUS_InterruptHandler();
-    }
+}
 
-void I2C2_MASTER_Handler (void)
-{
+void I2C2_MASTER_Handler(void) {
     I2C2_MASTER_InterruptHandler();
 }
 
-void UART4_FAULT_Handler (void)
-{
-if (U4STAbits.OERR == 1) {
+void UART4_FAULT_Handler(void) {
+    if (U4STAbits.OERR == 1) {
         U4STAbits.OERR = 0;
     }
     uint8_t rx = U4RXREG;
@@ -128,71 +121,64 @@ if (U4STAbits.OERR == 1) {
     IFS2bits.U4EIF = 0;
 }
 
-void UART4_RX_Handler (void)
-{
+void UART4_RX_Handler(void) {
     TMR8 = 0;
     uint8_t rx = U4RXREG;
     (void) rx;
     IFS2bits.U4RXIF = 0;
 }
 
-void UART5_FAULT_Handler (void)
-{
+void UART5_FAULT_Handler(void) {
     if (U5STAbits.OERR == 1) {
         U5STAbits.OERR = 0;
     }
     uint8_t rx = U5RXREG;
     (void) rx;
-    IFS2bits.U5RXIF = 0; 
+    IFS2bits.U5RXIF = 0;
     TMR7 = 0;
     IFS2bits.U5EIF = 0;
 }
 
-void UART5_RX_Handler (void)
-{
-    TMR7 = 0;
-    uint8_t rx = U5RXREG;
-    (void) rx;
-    IFS2bits.U5RXIF = 0; 
+void UART5_RX_Handler(void) {
+    if (settings.satType == SAT_TYPE_CRSF) {
+        CRSF_RX_InterruptHandler();
+    } else {
+        TMR7 = 0;
+        uint8_t rx = U5RXREG;
+        (void) rx;
+    }
+    IFS2bits.U5RXIF = 0;
 }
 
-void DMA0_Handler (void)
-{
+void DMA0_Handler(void) {
     DMA0_InterruptHandler();
 }
 
-void DMA1_Handler (void)
-{
+void DMA1_Handler(void) {
     DMA1_InterruptHandler();
 }
 
-void DMA2_Handler (void)
-{
+void DMA2_Handler(void) {
     DMA2_InterruptHandler();
 }
 
-void TIMER_6_Handler (void)
-{
+void TIMER_6_Handler(void) {
     TIMER_6_InterruptHandler();
 }
 
-void TIMER_7_Handler (void)
-{
+void TIMER_7_Handler(void) {
     TIMER_7_InterruptHandler();
 }
 
-void TIMER_8_Handler (void)
-{
+void TIMER_8_Handler(void) {
     TIMER_8_InterruptHandler();
 }
 
-void TIMER_9_Handler (void)
-{
+void TIMER_9_Handler(void) {
     TIMER_9_InterruptHandler();
 }
 
-void UART6_FAULT_Handler (void)
-{
+void UART6_FAULT_Handler(void) {
     if (U6STAbits.OERR == 1) {
         U6STAbits.OERR = 0;
     }
@@ -203,8 +189,7 @@ void UART6_FAULT_Handler (void)
     IFS5bits.U6EIF = 0;
 }
 
-void UART6_RX_Handler (void)
-{
+void UART6_RX_Handler(void) {
     TMR6 = 0;
     uint8_t rx = U6RXREG;
     (void) rx;
@@ -217,4 +202,4 @@ void UART6_RX_Handler (void)
 
 /*******************************************************************************
  End of File
-*/
+ */

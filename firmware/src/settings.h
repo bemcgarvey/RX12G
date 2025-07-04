@@ -69,7 +69,7 @@ extern "C" {
 
     enum {CHANNEL_ORDER_TAER = 0x00, CHANNEL_ORDER_AETR = 0xae};
     
-    enum {SAT_TYPE_DSMX = 0, SAT_TYPE_SBUS = 1};
+    enum {SAT_TYPE_DSMX = 0, SAT_TYPE_SBUS = 1, SAT_TYPE_CRSF = 2};
     
     typedef struct {
         float _P;

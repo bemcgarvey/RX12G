@@ -15,6 +15,7 @@
 #include "output.h"
 #include "tasks.h"
 #include "settings.h"
+#include "crsf.h"
 
 static bool detectedSatellites[3];
 
@@ -69,6 +70,11 @@ void initSatellites(void) {
         CNPUBbits.CNPUB0 = 0;
         CNCONCbits.ON = 0;
         CNPUCbits.CNPUC15 = 0;
+    } else if (settings.satType == SAT_TYPE_CRSF) {
+        detectedSatellites[SAT1] = false;
+        detectedSatellites[SAT2] = true;
+        detectedSatellites[SAT3] = false;
+        satPowerOn(false);  //ELRS rx uses 5V from servo pins
     } else {
         detectedSatellites[SAT1] = false;
         detectedSatellites[SAT2] = false;
@@ -102,7 +108,7 @@ void satPowerOn(bool powerOn) {
 }
 
 bool bindSats(void) {
-    if (settings.satType == SAT_TYPE_SBUS) {
+    if (settings.satType == SAT_TYPE_SBUS || settings.satType == SAT_TYPE_CRSF) {
         return true;
     }
     disableUARTs();

@@ -15,6 +15,7 @@
 #include "rtosHandles.h"
 #include "gyroTask.h"
 #include "sbus.h"
+#include "crsf.h"
 
 TaskHandle_t rxTaskHandle;
 QueueHandle_t rxQueue;
@@ -27,13 +28,15 @@ void rxTask(void *pvParameters) {
         channelCenters[i] = 0;
     }
     while (1) {
-        uint16_t buffer[13];  //26 bytes can hold DSMX or SBus packet
+        uint16_t buffer[13];  //26 bytes can hold DSMX or SBus packet or CRSF packet
         BaseType_t result;
         uint8_t phase;
         result = xQueueReceive(rxQueue, buffer, portMAX_DELAY);
         if (result) {
             if (settings.satType == SAT_TYPE_SBUS) {
                 processSBusPacket((uint8_t *)buffer);
+            } else if (settings.satType == SAT_TYPE_CRSF) {
+                processCRSFPacket((uint8_t *)buffer);
             } else {
                 phase = 0;
                 for (int i = 1; i < 8; ++i) {
