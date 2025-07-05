@@ -15,6 +15,8 @@
 #include "uart.h"
 #include "satellites.h"
 #include "gyroTask.h"
+#include <string.h>
+#include <math.h>
 
 volatile __attribute__((coherent, aligned(4))) uint8_t crsfPacket[MAX_CRSF_PACKET];
 volatile __attribute__((coherent, aligned(4))) uint8_t telemetryPacket[MAX_CRSF_PACKET];
@@ -23,6 +25,7 @@ volatile static uint8_t received;
 static uint8_t _lut[256];
 
 void initCRC(uint8_t poly);
+uint8_t calcCRC(uint8_t *data, uint8_t len);
 
 void initCRSF(void) {
     synched = false;
@@ -51,12 +54,18 @@ void initCRSF(void) {
     DCH1DSA = (uint32_t) KVA_TO_PA((uint32_t) & crsfPacket[2]);
     DCH1SSIZ = 1;
     DCH1CSIZ = 1;
-    TMR7_PeriodSet(1500); //1ms may need to go shorter for fast packet rates 1500 would be 100us
+    TMR7_PeriodSet(1500); //100us
     TMR7_CallbackRegister(startCRSFPacket, 0);
     TMR7_Start();
-    CRSF_Frame *frame = (CRSF_Frame *) telemetryPacket;
-    frame->address = CRSF_ADDRESS_FLIGHT_CONTROLLER;
-    //TODO setup DMA for telemetry. Use DMA5 - check PMD to make sure it is enabled
+    //Setup DMA5
+    DCH5CON = 0; //Channel priority 0
+    DCH5ECONbits.CHSIRQ = 70;  //UART5_TX_DONE
+    DCH5ECONbits.SIRQEN = 1;
+    DCH5INT = 0; //No interrupts
+    DCH5SSA = (uint32_t) KVA_TO_PA((uint32_t) & telemetryPacket[0]);
+    DCH5DSA = (uint32_t) KVA_TO_PA((uint32_t) & U5TXREG);
+    DCH5DSIZ = 1;
+    DCH5CSIZ = 1;
 }
 
 void CRSF_RX_InterruptHandler(void) {
@@ -81,7 +90,7 @@ void CRSF_RX_InterruptHandler(void) {
 
 void CRSFPacketDone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle) {
     if (status == DMAC_TRANSFER_EVENT_COMPLETE) {
-        if (crsfPacket[2] == CRSF_FRAMETYPE_RC_CHANNELS_PACKED 
+        if (crsfPacket[2] == CRSF_FRAMETYPE_RC_CHANNELS_PACKED
                 && crsfPacket[0] == CRSF_ADDRESS_FLIGHT_CONTROLLER) {
             validPacketReceived = true;
             lastRxTime[SAT2] = getSystemTime();
@@ -142,10 +151,39 @@ void processCRSFPacket(uint8_t *data) {
     rawServoPositions[15] = ch->ch15;
 }
 
-void sendModeTelemetry(void) {
+const char *modeStrings[] = {"Off", "Normal", "Level", "Trainer"
+    , "Attitude Lock", "Launch Assist", "Angle", "Custom 1", "Custom 2"};
 
+void sendModeTelemetry(int mode) {
+    CRSF_Frame *frame = (CRSF_Frame *) telemetryPacket;
+    frame->address = CRSF_ADDRESS_FLIGHT_CONTROLLER;
+    frame->length = sizeof (CRSF_Sensor_FlightMode) + 2;
+    frame->type = CRSF_FRAMETYPE_FLIGHT_MODE;
+    strncpy((char *) frame->data, modeStrings[mode], 16);
+    frame->data[sizeof(CRSF_Sensor_FlightMode) - 1] = '\0';
+    frame->data[sizeof(CRSF_Sensor_FlightMode)] = calcCRC(&(frame->type), sizeof (CRSF_Sensor_FlightMode) + 1);
+    DCH5SSIZ = sizeof (CRSF_Sensor_FlightMode) + 4;
+    DCH5CONbits.CHEN = 1;
 }
 
-void sendAttitudeTelemetry(void) {
+void sendAttitudeTelemetry(float roll, float pitch, float yaw) {
+    CRSF_Frame *frame = (CRSF_Frame *) telemetryPacket;
+    frame->address = CRSF_ADDRESS_FLIGHT_CONTROLLER;
+    frame->length = sizeof (CRSF_Sensor_Attitude) + 2;
+    frame->type = CRSF_FRAMETYPE_ATTITUDE;
+    CRSF_Sensor_Attitude *attitude = (CRSF_Sensor_Attitude *)frame->data;
+    int16_t temp;
+    temp = (roll * M_PI / 180.0) * 10000;
+    attitude->roll = ((temp >> 8) & 0x00ff) | (temp << 8);
+    temp = (pitch * M_PI / 180.0) * 10000;
+    attitude->pitch = ((temp >> 8) & 0x00ff) | (temp << 8);
+    temp = (yaw * M_PI / 180.0) * 10000;
+    attitude->yaw = ((temp >> 8) & 0x00ff) | (temp << 8);
+    frame->data[sizeof(CRSF_Sensor_Attitude)] = calcCRC(&(frame->type), sizeof (CRSF_Sensor_Attitude) + 1);
+    DCH5SSIZ = sizeof (CRSF_Sensor_Attitude) + 4;
+    DCH5CONbits.CHEN = 1;
+}
 
+bool telemetryBusy(void) {
+    return DCH5CONbits.CHBUSY;
 }

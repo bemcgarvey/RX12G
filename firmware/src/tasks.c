@@ -21,6 +21,7 @@
 #include "rxOnlyTask.h"
 #include "detectUSBTask.h"
 #include "usbBindTask.h"
+#include "crsfTelemetryTask.h"
 #include "crsf.h"
 
 int startMode = START_NORMAL;
@@ -37,7 +38,7 @@ void initQueues(void) {
     if (settings.satType == SAT_TYPE_SBUS) {
         rxQueue = xQueueCreate(6, 25);
     } else if (settings.satType == SAT_TYPE_CRSF) {
-        rxQueue = xQueueCreate(6, CHANNEL_PACKET_LEN);
+        rxQueue = xQueueCreate(6, CRSF_CHANNEL_PACKET_LEN);
     } else {
         rxQueue = xQueueCreate(6, 16);
     }
@@ -51,16 +52,17 @@ void initTasks(void) {
         xTaskCreate(rxOnlyTask, "rxOnlyTask", 128, NULL, RX_ONLY_TASK_PRIORITY, &rxOnlyTaskHandle);
     } else {
         xTaskCreate(gyroTask, "gyroTask", 4096, NULL, GYRO_TASK_PRIORITY, &gyroTaskHandle);
-    }
-    xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, STATUS_LED_TASK_PRIORITY, &statusLedTaskHandle);
-    if (settings.rxOnly != RX_ONLY_MODE) {
         //Start at priority 1 but will increase to IMU_TASK_PRIORITY after successful initialization
         xTaskCreate(imuTask, "imuTask", 256, NULL, 1, &imuTaskHandle);
     }
+    xTaskCreate(statusLedTask, "statusLedTask", 128, NULL, STATUS_LED_TASK_PRIORITY, &statusLedTaskHandle);
     xTaskCreate(detectUSBTask, "detectUSBTask", 128, NULL, DETECT_USB_TASK_PRIORITY, &detectUSBTaskHandle);
     xTaskCreate(usbBindTask, "usbBindTask", 128, NULL, USB_BIND_TASK_PRIORITY, &usbBindTaskHandle);
     //Create this task suspended - will be resumed when needed and then will suspend itself when done
     vTaskSuspend(usbBindTaskHandle);
+    if (settings.satType == SAT_TYPE_CRSF) {
+        xTaskCreate(crsfTelemetryTask, "crsfTelemTask", 512, NULL, CRSF_TELEMETRY_TASK_PRIORITY, &crsfTelemetryTaskHandle);
+    }
     vTaskStartScheduler();
 }
 

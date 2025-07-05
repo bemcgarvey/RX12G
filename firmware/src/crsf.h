@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 #define MAX_CRSF_PACKET     64
-#define CHANNEL_PACKET_LEN  22  //22 bytes channels, leave off the 1 byte CRC
+#define CRSF_CHANNEL_PACKET_LEN  22  //22 bytes channels, leave off the 1 byte CRC
 
     enum {
         CRSF_ADDRESS_BROADCAST = 0x00,
@@ -103,12 +103,12 @@ extern "C" {
         int16_t roll; // radians * 10000
         int16_t yaw; // radians * 10000
     }
-    CRSF_Attitude;
+    CRSF_Sensor_Attitude;
 
     typedef struct __attribute__((packed)) {
         char flight_mode[16];
     }
-    CRSF_FlightMode;
+    CRSF_Sensor_FlightMode;
 
     extern volatile __attribute__((coherent, aligned(4))) uint8_t crsfPacket[MAX_CRSF_PACKET];
     void initCRSF(void);
@@ -116,8 +116,9 @@ extern "C" {
     void CRSFPacketDone(DMAC_TRANSFER_EVENT status, uintptr_t contextHandle);
     void startCRSFPacket(uint32_t status, uintptr_t context);
     void processCRSFPacket(uint8_t *buffer);
-    void sendModeTelemetry(void);
-    void sendAttitudeTelemetry(void);
+    void sendModeTelemetry(int mode);
+    void sendAttitudeTelemetry(float roll, float pitch, float yaw);
+    bool telemetryBusy(void);
 
 #ifdef	__cplusplus
 }

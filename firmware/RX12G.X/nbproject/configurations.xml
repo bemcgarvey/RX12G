@@ -278,6 +278,7 @@
       <itemPath>../src/dcm2.h</itemPath>
       <itemPath>../src/angleMode.h</itemPath>
       <itemPath>../src/crsf.h</itemPath>
+      <itemPath>../src/crsfTelemetryTask.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -448,6 +449,7 @@
       <itemPath>../src/dcm2.c</itemPath>
       <itemPath>../src/angleMode.c</itemPath>
       <itemPath>../src/crsf.c</itemPath>
+      <itemPath>../src/crsfTelemetryTask.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

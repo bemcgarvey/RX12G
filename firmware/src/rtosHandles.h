@@ -25,6 +25,8 @@ extern "C" {
 #define DETECT_USB_TASK_PRIORITY    1
 #define USB_DEVICE_TASK_PRIORITY    1
 #define USB_APP_TASK_PRIORITY       1
+#define CRSF_TELEMETRY_TASK_PRIORITY    1
+    
     //Queues
     extern QueueHandle_t rxQueue;
     extern QueueHandle_t imuQueue;
@@ -39,6 +41,7 @@ extern "C" {
     extern TaskHandle_t rxOnlyTaskHandle;
     extern TaskHandle_t detectUSBTaskHandle;
     extern TaskHandle_t usbBindTaskHandle;
+    extern TaskHandle_t crsfTelemetryTaskHandle;
 
 #ifdef	__cplusplus
 }
