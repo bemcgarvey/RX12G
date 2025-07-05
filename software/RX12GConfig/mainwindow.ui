@@ -293,6 +293,13 @@
                     </property>
                    </widget>
                   </item>
+                  <item>
+                   <widget class="QRadioButton" name="satELRSRadioButton">
+                    <property name="text">
+                     <string>ELRS</string>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
                 </widget>
                </item>
@@ -4177,6 +4184,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout_RX12G_Configure"/>
+    <addaction name="actionELRS_Connections"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -4215,6 +4223,11 @@
   <action name="actionAbout_RX12G_Configure">
    <property name="text">
     <string>About RX12G Config</string>
+   </property>
+  </action>
+  <action name="actionELRS_Connections">
+   <property name="text">
+    <string>ELRS Connections</string>
    </property>
   </action>
  </widget>

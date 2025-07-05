@@ -110,6 +110,8 @@ private slots:
 
     void on_actionUpdate_Firmware_triggered();
 
+    void on_actionELRS_Connections_triggered();
+
 public slots:
     void onBtlMessage(QString msg);
     void onBtlProgress(int progress);

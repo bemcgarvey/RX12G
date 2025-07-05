@@ -35,7 +35,6 @@ int main(void) {
         loadDefaultSettings();
         saveSettings();
     }
-    settings.satType = SAT_TYPE_CRSF; //TODO remove after testing!
     if (settings.failsafeType == PRESET_FAILSAFE) {
         loadPresets();
     }

@@ -40,6 +40,8 @@ void MainWindow::getRxTabControls() {
     }
     if (ui->satSBUSRadioButton->isChecked()) {
         settings.satType = SAT_TYPE_SBUS;
+    } else if (ui->satELRSRadioButton->isChecked()){
+        settings.satType = SAT_TYPE_CRSF;
     } else {
         settings.satType = SAT_TYPE_DSMX;
     }
@@ -85,6 +87,8 @@ void MainWindow::setRxTabControls() {
     }
     if (settings.satType == SAT_TYPE_SBUS) {
         ui->satSBUSRadioButton->setChecked(true);
+    } else if (settings.satType == SAT_TYPE_CRSF) {
+        ui->satELRSRadioButton->setChecked(true);
     } else {
         ui->satDSMXRadioButton->setChecked(true);
     }

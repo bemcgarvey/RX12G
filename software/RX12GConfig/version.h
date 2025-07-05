@@ -8,7 +8,7 @@ class Version
 public:
     Version() = delete;
     static const int clientMajorVersion = 1;
-    static const int clientMinorVersion = 0;
+    static const int clientMinorVersion = 2;
     static const QString clientVersionString(void);
     static int firmwareMajorVersion;
     static int firmwareMinorVersion;

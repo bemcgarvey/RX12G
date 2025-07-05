@@ -824,3 +824,9 @@ void MainWindow::on_actionUpdate_Firmware_triggered()
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
 
+
+void MainWindow::on_actionELRS_Connections_triggered()
+{
+    QMessageBox::information(this, QApplication::applicationName(), "ELRS Connections: \r\n   SAT2 = RX (to ELRS TX)\r\n   SAT1 = TX (to ELRS RX)\r\n\r\nUse servo rails for 5V and GND");
+}
+
